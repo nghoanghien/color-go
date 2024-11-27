@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaBus, FaExclamationCircle, FaMapMarkerAlt, FaFilter, FaSort, FaHeart, FaMapMarker } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
