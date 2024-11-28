@@ -106,11 +106,11 @@ const LandingPage = () => {
   return (
     <div className={`min-h-screen bg-gradient-to-br from-blue-400 via-green-300 to-yellow-200 ${inter.className}`}>
       <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-lg" : "bg-transparent"}}`}>
-        <div className="max-w-3xl mx-auto px-4 py-4" data-aos="fade-down">
+        <div className="max-w-4xl mx-auto px-4 py-4" data-aos="fade-down">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-between w-full md:w-auto">
-              <div className="flex items-center space-x-4">
-                <img src="/images/Logo-no.png" alt="ColorGo Logo" className="h-12 w-12 rounded-[13px]" />
+              <div className="flex items-center space-x-2">
+                <img src="/images/Logo-new.png" alt="ColorGo Logo" className="h-14 w-28 rounded-[13px]" />
                 <span className="text-2xl font-extrabold tracking-tight text-theme-color-primary">ColorGo</span>
               </div>
               <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
