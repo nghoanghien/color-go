@@ -10,6 +10,7 @@ const TripInfoPage = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showError, setShowError] = useState(false);
   const [modalError, setModalError] = useState("");
+  const [showContactError, setShowContactError] = useState(false);
 
   const [contactInfo, setContactInfo] = useState({
     name: "",
@@ -73,6 +74,12 @@ const TripInfoPage = () => {
   };
 
   const handlePayment = () => {
+    if (!contactInfo.name || !contactInfo.phone || !contactInfo.email) {
+      setShowContactError(true);
+      setTimeout(() => setShowContactError(false), 3000);
+      return;
+    }
+    
     if (!acceptTerms) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
@@ -198,6 +205,20 @@ const TripInfoPage = () => {
             <div className="bg-red-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
               <FaExclamationCircle />
               <span>Vui lòng đồng ý với điều khoản và điều kiện</span>
+            </div>
+          </motion.div>
+        )}
+
+        {showContactError && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
+          >
+            <div className="bg-red-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+              <FaExclamationCircle />
+              <span>Vui lòng nhập đầy đủ thông tin liên hệ</span>
             </div>
           </motion.div>
         )}
