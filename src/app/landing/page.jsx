@@ -103,41 +103,47 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-green-300 to-yellow-200">
       <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-lg" : "bg-transparent"}}`}>
-        <div className="container mx-auto px-4 py-4" data-aos="fade-down">
+        <div className="max-w-3xl mx-auto px-4 py-4" data-aos="fade-down">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img src="images.unsplash.com/photo-1516876437184-593fda40c7ce" alt="ColorGo Logo" className="h-10 w-10 rounded-[13px]" />
-              <span className="text-2xl font-bold text-theme-color-primary">ColorGo</span>
+            <div className="flex items-center justify-between w-full md:w-auto">
+              <div className="flex items-center space-x-4">
+                <img src="images.unsplash.com/photo-1516876437184-593fda40c7ce" alt="ColorGo Logo" className="h-10 w-10 rounded-[13px]" />
+                <span className="text-2xl font-bold text-theme-color-primary">ColorGo</span>
+              </div>
+              <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center">
+                <FaUser className="mr-2" /> Đăng Nhập
+              </button>
             </div>
-            <nav className={`${isMenuOpen ? "flex" : "hidden"} md:flex items-center space-x-6`}>
-              <a href="#bookings" className="text-gray-700 hover:text-theme-color-primary transition-colors md:block hidden">Đặt Chỗ Của Tôi</a>
-              <a href="#offers" className="text-gray-700 hover:text-theme-color-primary transition-colors md:block hidden">Ưu Đãi Đặc Biệt</a>
-              <a href="#book" className="text-gray-700 hover:text-theme-color-primary transition-colors md:block hidden">Đặt Vé</a>
+            <nav className="hidden md:flex items-center space-x-6">
+              <a href="#bookings" className="text-gray-700 hover:text-theme-color-primary transition-colors">Đặt Chỗ Của Tôi</a>
+              <a href="#offers" className="text-gray-700 hover:text-theme-color-primary transition-colors">Ưu Đãi Đặc Biệt</a>
+              <a href="#book" className="text-gray-700 hover:text-theme-color-primary transition-colors">Đặt Vé</a>
               <button className="bg-theme-color-primary text-white px-6 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center">
                 <FaUser className="mr-2" /> Đăng Nhập
               </button>
             </nav>
-            <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center">
-              <FaUser className="mr-2" /> Đăng Nhập
-            </button>
           </div>
         </div>
       </header>
 
       <main className="pt-20">
         <section className="hero min-h-screen flex items-center justify-center text-center px-4">
-          <div className="container mx-auto" data-aos="zoom-in">
-            <h1 className="text-3xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
+          <div className="max-w-3xl mx-auto" data-aos="zoom-in">
+            <h1 className="text-3xl md:text-6xl font-bold mb-8 text-white drop-shadow-lg">
               Cuộc sống là một hành trình đầy màu sắc.<br />Đặt vé ngay hôm nay!
             </h1>
-            <button className="bg-theme-color-secondary text-white px-6 md:px-8 py-3 md:py-4 rounded-[13px] text-lg md:text-xl font-bold hover:bg-theme-color-secondary-dark transform hover:scale-105 transition-all">
-              Đặt Ngay!
-            </button>
+            <div className="inline-block">
+              <div className="bg-yellow-300/30 backdrop-blur-sm p-1 rounded-[18px]">
+                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-lg">
+                  Đặt Ngay!
+                </button>
+              </div>
+            </div>
           </div>
         </section>
 
         <section className="bg-white py-16 md:py-20 px-4">
-          <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Tại Sao Chọn ColorGo?</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
               <div className="bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.5)]" data-aos="fade-right">
@@ -165,7 +171,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-16 md:py-20 px-4 bg-gray-50">
-          <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Tuyến Đường Phổ Biến</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {popularRoutes.map((route, index) => (
@@ -185,7 +191,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-16 md:py-20 px-4 bg-white">
-          <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Ưu Đãi Đặc Biệt</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {specialOffers.map((offer, index) => (
@@ -217,7 +223,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-16 md:py-20 px-4">
-          <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Khách Hàng Nói Gì?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {testimonials.map((testimonial, index) => (
@@ -242,7 +248,7 @@ const LandingPage = () => {
       </main>
 
       <footer className="bg-gray-800 text-white py-8 md:py-12 px-4">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8" data-aos="fade-up">
+        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8" data-aos="fade-up">
           <div>
             <h3 className="text-lg md:text-xl font-bold mb-4">ColorGo</h3>
             <p className="text-sm md:text-base">Mang đến trải nghiệm du lịch đầy màu sắc cho mọi người.</p>
@@ -269,7 +275,7 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-        <div className="container mx-auto mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-700 text-center">
+        <div className="max-w-3xl mx-auto mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-700 text-center">
           <p className="text-xs md:text-sm">© 2024 ColorGo. Đã đăng ký bản quyền.</p>
         </div>
       </footer>
