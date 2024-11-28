@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState } from "react";
-import { FaUser, FaLock, FaHeadset, FaSignOutAlt, FaChevronRight, FaMedal, FaCrown, FaGem, FaCircle, FaTicketAlt, FaHeart, FaGift, FaPercent, FaBus } from "react-icons/fa";
+import { FaUser, FaLock, FaHeadset, FaSignOutAlt, FaChevronRight, FaMedal, FaCrown, FaGem, FaCircle, FaTicketAlt, FaHeart, FaTag, FaBus } from "react-icons/fa";
 import { motion } from "framer-motion";
 import '../styles/typography.css';
+import { useRouter } from 'next/navigation';
 
 const AccountPage = () => {
+  const router = useRouter();
+  const [navActiveTab, setNavActiveTab] = useState("account");
   const [membershipLevel, setMembershipLevel] = useState("gold"); // bronze, silver, gold, diamond
-  const [activeTab, setActiveTab] = useState("tickets");
 
   const getMembershipInfo = (level) => {
     switch (level) {
@@ -48,13 +50,26 @@ const AccountPage = () => {
     }
   ];
 
-  const navigationItems = [
-    { id: "tickets", icon: FaBus, label: "Đặt vé" },
-    { id: "favorites", icon: FaHeart, label: "Yêu thích" },
-    { id: "mytickets", icon: FaTicketAlt, label: "Vé của tôi" },
-    { id: "offers", icon: FaGift, label: "Ưu đãi" },
-    { id: "account", icon: FaUser, label: "Tài khoản" }
-  ];
+  const handleNavigation = (tab) => {
+    setNavActiveTab(tab);
+    switch (tab) {
+      case "booking":
+        router.push("/booking");
+        break;
+      case "favorite":
+        router.push("/favourite");
+        break;
+      case "mytickets":
+        router.push("/my-tickets");
+        break;
+      case "offers":
+        router.push("/promotions");
+        break;
+      case "account":
+        router.push("/account");
+        break;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 via-blue-50 to-yellow-50 p-6 pb-24">
@@ -124,23 +139,59 @@ const AccountPage = () => {
       </motion.div>
 
       {/* Updated Fixed Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg">
-        <div className="max-w-md mx-auto">
-          <div className="flex justify-between items-center px-6 py-3">
-            {navigationItems.map((item) => (
-              <motion.div
-                key={item.id}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center cursor-pointer ${activeTab === item.id ? "text-blue-500" : "text-gray-400"}`}
-              >
-                <item.icon className={`text-2xl mb-1 ${activeTab === item.id ? "text-blue-500" : "text-gray-400"}`} />
-                <span className={`text-xs ${activeTab === item.id ? "font-medium" : ""}`}>{item.label}</span>
-              </motion.div>
-            ))}
-          </div>
+      <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
+      >
+        <div className="flex justify-between items-center max-w-lg mx-auto">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("booking")}
+            className={`flex flex-col items-center ${navActiveTab === "booking" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaBus className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Đặt vé</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("favorite")}
+            className={`flex flex-col items-center ${navActiveTab === "favorite" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaHeart className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Yêu thích</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("mytickets")}
+            className={`flex flex-col items-center ${navActiveTab === "mytickets" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaTicketAlt className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Vé của tôi</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("offers")}
+            className={`flex flex-col items-center ${navActiveTab === "offers" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaTag className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Ưu đãi</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("account")}
+            className={`flex flex-col items-center ${navActiveTab === "account" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaUser className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Tài khoản</span>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
