@@ -195,6 +195,11 @@ const OffersPage = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
       {/* Header */}
@@ -283,25 +288,60 @@ const OffersPage = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg">
-        <div className="max-w-md mx-auto">
-          <div className="flex justify-between items-center px-6 py-3">
-            {navigationItems.map((item) => (
-              <motion.div
-                key={item.id}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center cursor-pointer ${activeTab === item.id ? "text-blue-500" : "text-gray-400"}`}
-              >
-                <item.icon className={`text-2xl mb-1 ${activeTab === item.id ? "text-blue-500" : "text-gray-400"}`} />
-                <span className={`text-xs ${activeTab === item.id ? "font-medium" : ""}`}>
-                  {item.label}
-                </span>
-              </motion.div>
-            ))}
-          </div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={itemVariants}
+        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
+      >
+        <div className="flex justify-between items-center max-w-lg mx-auto">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setActiveTab("booking")}
+            className={`flex flex-col items-center ${activeTab === "booking" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaBus className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Đặt vé</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setActiveTab("favorite")}
+            className={`flex flex-col items-center ${activeTab === "favorite" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaHeart className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Yêu thích</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setActiveTab("ticket")}
+            className={`flex flex-col items-center ${activeTab === "ticket" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaTicketAlt className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Vé của tôi</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setActiveTab("offers")}
+            className={`flex flex-col items-center ${activeTab === "offers" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaTag className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Ưu đãi</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setActiveTab("account")}
+            className={`flex flex-col items-center ${activeTab === "account" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaUser className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Tài khoản</span>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       <OfferModal
         isOpen={modalOpen}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
-import { FaArrowLeft, FaArrowRight, FaExclamationCircle, FaMapMarker, FaTicketAlt, FaTimes, FaMoneyBillWave, FaBus, FaHeart, FaTag, FaUser } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaExclamationCircle, FaMapMarker, FaTicketAlt, FaTimes, FaMoneyBillWave } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 const TicketHistoryPage = () => {
@@ -86,7 +86,7 @@ const TicketHistoryPage = () => {
     }
   ];
 
-  const [activeTab, setActiveTab] = useState("ticket");
+  const [activeTab, setActiveTab] = useState("history");
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -194,11 +194,6 @@ const TicketHistoryPage = () => {
     </div>
   );
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <div className="bg-transparent p-4">
@@ -290,19 +285,13 @@ const TicketHistoryPage = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="bg-white/85 backdrop-blur-md rounded-3xl p-6 w-full max-w-md shadow-xl border border-white/20 relative max-h-[calc(100vh-160px)] overflow-hidden flex flex-col"
+              className="bg-white/85 backdrop-blur-md rounded-3xl p-6 w-full max-w-md shadow-xl border border-white/20 relative"
             >
-              <h3 className="text-2xl font-bold mb-4 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600 sticky top-0 bg-white/85 py-2">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600 sticky top-0 bg-white/85 py-2">
                 Chi tiết vé
               </h3>
 
-              <div 
-                className="space-y-6 overflow-y-auto flex-1 pr-2" 
-                style={{ 
-                  scrollbarWidth: "thin",
-                  scrollbarColor: "rgba(155, 155, 155, 0.5) transparent"
-                }}
-              >
+              <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
                 <section className="space-y-4">
                   <h4 className="font-semibold text-gray-700">Thông tin hành khách</h4>
                   <div className="space-y-2 text-gray-600">
@@ -344,7 +333,7 @@ const TicketHistoryPage = () => {
 
               <button
                 onClick={() => setShowTicketModal(false)}
-                className="mt-4 w-full p-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl hover:opacity-90 transition-opacity duration-300 font-medium"
+                className="mt-6 w-full p-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl hover:opacity-90 transition-opacity duration-300 font-medium"
               >
                 Đóng
               </button>
@@ -418,61 +407,6 @@ const TicketHistoryPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={itemVariants}
-        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
-      >
-        <div className="flex justify-between items-center max-w-lg mx-auto">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("booking")}
-            className={`flex flex-col items-center ${activeTab === "booking" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaBus className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Đặt vé</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("favorite")}
-            className={`flex flex-col items-center ${activeTab === "favorite" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaHeart className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Yêu thích</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("ticket")}
-            className={`flex flex-col items-center ${activeTab === "ticket" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaTicketAlt className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Vé của tôi</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("promotions")}
-            className={`flex flex-col items-center ${activeTab === "promotions" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaTag className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Ưu đãi</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("account")}
-            className={`flex flex-col items-center ${activeTab === "account" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaUser className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Tài khoản</span>
-          </motion.button>
-        </div>
-      </motion.div>
     </div>
   );
 };
