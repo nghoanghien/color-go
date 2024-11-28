@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import { FaPlane, FaGift, FaStar, FaUser, FaBars, FaTimes, FaTicketAlt, FaPercent, FaShieldAlt } from "react-icons/fa";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 const LandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,7 +57,7 @@ const LandingPage = () => {
       from: "Hà Nội",
       to: "TP. Hồ Chí Minh",
       price: "1.990.000₫",
-      image: "images.unsplash.com/photo-1513635269975-59663e0ac1ad"
+      image: "images.unsplash.com/photo-1513635269975-593fda40c7ce"
     },
     {
       from: "Đà Nẵng",
@@ -101,24 +104,24 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-green-300 to-yellow-200">
+    <div className={`min-h-screen bg-gradient-to-br from-blue-400 via-green-300 to-yellow-200 ${inter.className}`}>
       <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-lg" : "bg-transparent"}}`}>
         <div className="max-w-3xl mx-auto px-4 py-4" data-aos="fade-down">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-between w-full md:w-auto">
               <div className="flex items-center space-x-4">
                 <img src="images.unsplash.com/photo-1516876437184-593fda40c7ce" alt="ColorGo Logo" className="h-10 w-10 rounded-[13px]" />
-                <span className="text-2xl font-bold text-theme-color-primary">ColorGo</span>
+                <span className="text-2xl font-extrabold tracking-tight text-theme-color-primary">ColorGo</span>
               </div>
-              <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center">
+              <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
                 <FaUser className="mr-2" /> Đăng Nhập
               </button>
             </div>
-            <nav className="hidden md:flex items-center space-x-6">
-              <a href="#bookings" className="text-gray-700 hover:text-theme-color-primary transition-colors">Đặt Chỗ Của Tôi</a>
-              <a href="#offers" className="text-gray-700 hover:text-theme-color-primary transition-colors">Ưu Đãi Đặc Biệt</a>
-              <a href="#book" className="text-gray-700 hover:text-theme-color-primary transition-colors">Đặt Vé</a>
-              <button className="bg-theme-color-primary text-white px-6 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center">
+            <nav className="hidden md:flex items-center space-x-8">
+              <a href="#bookings" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Đặt Chỗ Của Tôi</a>
+              <a href="#offers" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Ưu Đãi Đặc Biệt</a>
+              <a href="#book" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Đặt Vé</a>
+              <button className="bg-theme-color-primary text-white px-6 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
                 <FaUser className="mr-2" /> Đăng Nhập
               </button>
             </nav>
@@ -129,12 +132,13 @@ const LandingPage = () => {
       <main className="pt-20">
         <section className="hero min-h-screen flex items-center justify-center text-center px-4">
           <div className="max-w-3xl mx-auto" data-aos="zoom-in">
-            <h1 className="text-3xl md:text-6xl font-bold mb-8 text-white drop-shadow-lg">
-              Cuộc sống là một hành trình đầy màu sắc.<br />Đặt vé ngay hôm nay!
+            <h1 className="text-4xl md:text-7xl font-black mb-8 text-white drop-shadow-lg tracking-tight leading-tight">
+              Cuộc sống là một hành trình<br />đầy màu sắc
+              <span className="block text-3xl md:text-5xl mt-4 font-bold tracking-normal">Đặt vé ngay hôm nay!</span>
             </h1>
             <div className="inline-block">
               <div className="bg-yellow-300/30 backdrop-blur-sm p-1 rounded-[18px]">
-                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-lg">
+                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-lg tracking-wide">
                   Đặt Ngay!
                 </button>
               </div>
@@ -144,27 +148,27 @@ const LandingPage = () => {
 
         <section className="bg-white py-16 md:py-20 px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Tại Sao Chọn ColorGo?</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Tại Sao Chọn ColorGo?</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
               <div className="bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.5)]" data-aos="fade-right">
                 <FaPlane className="text-4xl md:text-5xl text-theme-color-primary mb-4" />
-                <h3 className="text-lg md:text-xl font-bold mb-2">Giá Tốt Nhất</h3>
-                <p className="text-sm md:text-base">Đảm bảo giá thấp nhất trên mọi tuyến đường với cam kết về giá.</p>
+                <h3 className="text-xl md:text-2xl font-bold mb-2 tracking-tight">Giá Tốt Nhất</h3>
+                <p className="text-base md:text-lg text-gray-600 leading-relaxed">Đảm bảo giá thấp nhất trên mọi tuyến đường với cam kết về giá.</p>
               </div>
               <div className="bg-gradient-to-br from-green-50 to-yellow-50 p-6 rounded-xl shadow-[0_0_20px_rgba(52,211,153,0.5)]" data-aos="fade-up">
                 <FaGift className="text-4xl md:text-5xl text-theme-color-secondary mb-4" />
-                <h3 className="text-lg md:text-xl font-bold mb-2">Ưu Đãi Đặc Biệt</h3>
-                <p className="text-sm md:text-base">Giảm giá thường xuyên và nhiều ưu đãi cho khách hàng thân thiết.</p>
+                <h3 className="text-xl md:text-2xl font-bold mb-2 tracking-tight">Ưu Đãi Đặc Biệt</h3>
+                <p className="text-base md:text-lg text-gray-600 leading-relaxed">Giảm giá thường xuyên và nhiều ưu đãi cho khách hàng thân thiết.</p>
               </div>
               <div className="bg-gradient-to-br from-yellow-50 to-blue-50 p-6 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.5)]" data-aos="fade-left">
                 <FaStar className="text-4xl md:text-5xl text-yellow-400 mb-4" />
-                <h3 className="text-lg md:text-xl font-bold mb-2">Hỗ Trợ 24/7</h3>
-                <p className="text-sm md:text-base">Hỗ trợ khách hàng xuyên suốt cho mọi nhu cầu du lịch của bạn.</p>
+                <h3 className="text-xl md:text-2xl font-bold mb-2 tracking-tight">Hỗ Trợ 24/7</h3>
+                <p className="text-base md:text-lg text-gray-600 leading-relaxed">Hỗ trợ khách hàng xuyên suốt cho mọi nhu cầu du lịch của bạn.</p>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl shadow-[0_0_20px_rgba(147,51,234,0.5)]" data-aos="fade-left">
                 <FaShieldAlt className="text-4xl md:text-5xl text-purple-600 mb-4" />
-                <h3 className="text-lg md:text-xl font-bold mb-2">An Toàn Trên Từng Chặng Đường</h3>
-                <p className="text-sm md:text-base">Đảm bảo an toàn tối đa cho mọi hành trình của bạn.</p>
+                <h3 className="text-xl md:text-2xl font-bold mb-2 tracking-tight">An Toàn Trên Từng Chặng Đường</h3>
+                <p className="text-base md:text-lg text-gray-600 leading-relaxed">Đảm bảo an toàn tối đa cho mọi hành trình của bạn.</p>
               </div>
             </div>
           </div>
@@ -172,7 +176,7 @@ const LandingPage = () => {
 
         <section className="py-16 md:py-20 px-4 bg-gray-50">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Tuyến Đường Phổ Biến</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Tuyến Đường Phổ Biến</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {popularRoutes.map((route, index) => (
                 <div key={index} className="bg-white rounded-xl overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-shadow" data-aos="flip-left" data-aos-delay={index * 100}>
@@ -192,7 +196,7 @@ const LandingPage = () => {
 
         <section className="py-16 md:py-20 px-4 bg-white">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Ưu Đãi Đặc Biệt</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Ưu Đãi Đặc Biệt</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {specialOffers.map((offer, index) => (
                 <div key={offer.id} className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all duration-300" data-aos="flip-up" data-aos-delay={index * 100}>
@@ -224,7 +228,7 @@ const LandingPage = () => {
 
         <section className="py-16 md:py-20 px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12" data-aos="fade-up">Khách Hàng Nói Gì?</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Khách Hàng Nói Gì?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {testimonials.map((testimonial, index) => (
                 <div key={testimonial.id} className="bg-white p-4 md:p-6 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)]" data-aos="zoom-in-up" data-aos-delay={index * 100}>

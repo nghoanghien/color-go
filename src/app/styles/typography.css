@@ -1,0 +1,55 @@
+/* Modern Typography System */
+
+/* Headings */
+h1, .h1 {
+  @apply text-4xl md:text-6xl font-black tracking-tight leading-tight;
+}
+
+h2, .h2 {
+  @apply text-3xl md:text-4xl font-extrabold tracking-tight;
+}
+
+h3, .h3 {
+  @apply text-2xl md:text-3xl font-bold tracking-tight;
+}
+
+/* Body Text */
+.text-body-large {
+  @apply text-lg md:text-xl font-medium leading-relaxed tracking-wide;
+}
+
+.text-body {
+  @apply text-base md:text-lg font-normal leading-relaxed;
+}
+
+.text-body-small {
+  @apply text-sm md:text-base font-normal leading-relaxed;
+}
+
+/* Special Text */
+.text-display {
+  @apply text-5xl md:text-7xl font-black tracking-tighter leading-none;
+}
+
+.text-caption {
+  @apply text-sm font-medium tracking-wide;
+}
+
+/* Navigation */
+.nav-link {
+  @apply text-base font-medium tracking-wide;
+}
+
+/* Buttons */
+.btn-text {
+  @apply text-base font-semibold tracking-wide;
+}
+
+/* Gradients */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-500;
+}
+
+.text-gradient-alt {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500;
+} 

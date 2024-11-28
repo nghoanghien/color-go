@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaUser, FaLock, FaHeadset, FaSignOutAlt, FaChevronRight, FaMedal, FaCrown, FaGem, FaCircle, FaTicketAlt, FaHeart, FaGift, FaPercent, FaBus } from "react-icons/fa";
 import { motion } from "framer-motion";
+import '../styles/typography.css';
 
 const AccountPage = () => {
   const [membershipLevel, setMembershipLevel] = useState("gold"); // bronze, silver, gold, diamond
