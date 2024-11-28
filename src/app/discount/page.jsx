@@ -51,7 +51,7 @@ const OfferModal = ({ isOpen, onClose, offerDetails }) => {
                 </div>
                 <div className="flex items-center text-gray-600">
                   <FaCalendarAlt className="mr-2 text-blue-500" />
-                  <span>Có hiệu lực đến: {offerDetails.expiry || "Không thời hạn"}</span>
+                  <span>Có hi���u lực đến: {offerDetails.expiry || "Không thời hạn"}</span>
                 </div>
               </div>
 
@@ -289,9 +289,6 @@ const OffersPage = () => {
 
       {/* Bottom Navigation */}
       <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={itemVariants}
         className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
       >
         <div className="flex justify-between items-center max-w-lg mx-auto">
@@ -348,6 +345,16 @@ const OffersPage = () => {
         onClose={() => setModalOpen(false)}
         offerDetails={selectedOffer}
       />
+
+      <style jsx global>{`
+        * {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        *::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 };

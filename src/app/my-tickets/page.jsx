@@ -433,8 +433,6 @@ const TicketHistoryPage = () => {
       </AnimatePresence>
 
       <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
         className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
       >
         <div className="flex justify-between items-center max-w-lg mx-auto">
@@ -485,6 +483,16 @@ const TicketHistoryPage = () => {
           </motion.button>
         </div>
       </motion.div>
+
+      <style jsx global>{`
+        * {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;     /* Firefox */
+        }
+        *::-webkit-scrollbar {
+          display: none;            /* Chrome, Safari and Opera */
+        }
+      `}</style>
     </div>
   );
 };

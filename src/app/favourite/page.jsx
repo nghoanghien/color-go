@@ -303,9 +303,6 @@ const FavoriteTicketsPage = () => {
       </AnimatePresence>
 
       <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={itemVariants}
         className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
       >
         <div className="flex justify-between items-center max-w-lg mx-auto">
@@ -356,6 +353,16 @@ const FavoriteTicketsPage = () => {
           </motion.button>
         </div>
       </motion.div>
+
+      <style jsx global>{`
+        * {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        *::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 };

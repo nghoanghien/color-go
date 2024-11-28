@@ -489,9 +489,7 @@ const BookingPage = () => {
       </div>
 
       <motion.div
-        custom={{ y: 50 }}
-        variants={itemVariants}
-        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg"
+        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
       >
         <div className="flex justify-between items-center max-w-lg mx-auto">
           <motion.button
@@ -543,18 +541,12 @@ const BookingPage = () => {
       </motion.div>
 
       <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+        * {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #E9D5FF;
-          border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #D8B4FE;
+        *::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </motion.div>
