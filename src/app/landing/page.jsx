@@ -110,7 +110,7 @@ const LandingPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-between w-full md:w-auto">
               <div className="flex items-center space-x-4">
-                <img src="images.unsplash.com/photo-1516876437184-593fda40c7ce" alt="ColorGo Logo" className="h-10 w-10 rounded-[13px]" />
+                <img src="/images/Logo-no.png" alt="ColorGo Logo" className="h-12 w-12 rounded-[13px]" />
                 <span className="text-2xl font-extrabold tracking-tight text-theme-color-primary">ColorGo</span>
               </div>
               <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
