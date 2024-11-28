@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from "react";
-import { FaBus, FaGift, FaTicketAlt, FaUser, FaCalendar, FaExchangeAlt, FaHeart, FaStar, FaTag } from "react-icons/fa";
+import { FaBus, FaGift, FaTicketAlt, FaUser, FaCalendar, FaExchangeAlt, FaHeart, FaStar, FaTag, FaChevronLeft, FaChevronRight, FaCalendarAlt, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 const BookingPage = () => {
@@ -172,6 +172,162 @@ const BookingPage = () => {
     }
   };
 
+  const DatePickerModal = ({ isOpen, onClose, selectedDate, onSelectDate }) => {
+    const modalVariants = {
+      hidden: { opacity: 0, y: 50, scale: 0.95 },
+      visible: { 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        transition: {
+          type: "spring",
+          duration: 0.3,
+          bounce: 0.2
+        }
+      },
+      exit: { 
+        opacity: 0, 
+        y: 50, 
+        scale: 0.95,
+        transition: {
+          duration: 0.2
+        }
+      }
+    };
+
+    const [currentMonth, setCurrentMonth] = useState(() => {
+      // Khởi tạo calendar với tháng của ngày đang được chọn
+      return selectedDate || new Date();
+    });
+
+    const getDaysInMonth = (date) => {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayOfMonth = new Date(year, month, 1).getDay();
+      
+      const days = [];
+      for (let i = 0; i < firstDayOfMonth; i++) {
+        days.push(null);
+      }
+      
+      for (let i = 1; i <= daysInMonth; i++) {
+        days.push(new Date(year, month, i));
+      }
+      
+      return days;
+    };
+
+    const isDateDisabled = (date) => {
+      if (!date) return true;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date < today;
+    };
+
+    const formatDate = (date) => {
+      return new Intl.DateTimeFormat("vi-VN", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(date);
+    };
+
+    return (
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-4 bg-black/40 backdrop-blur-md rounded-[2.5rem]"
+              onClick={onClose}
+            />
+            
+            <motion.div
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="relative bg-white/90 backdrop-blur-md rounded-3xl p-6 m-4 w-full max-w-md shadow-xl border border-white/20"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <FaChevronLeft className="text-gray-600" />
+                  </button>
+                  <span className="font-medium text-gray-600">
+                    {new Intl.DateTimeFormat("vi-VN", { month: "long", year: "numeric" }).format(currentMonth)}
+                  </span>
+                  <button
+                    onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <FaChevronRight className="text-gray-600" />
+                  </button>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <FaTimes className="text-gray-600" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-7 gap-2 mb-4">
+                {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day) => (
+                  <div key={day} className="text-center text-gray-600 font-medium">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-7 gap-2">
+                {getDaysInMonth(currentMonth).map((date, index) => (
+                  <motion.button
+                    key={index}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    disabled={isDateDisabled(date)}
+                    onClick={() => {
+                      if (date) {
+                        onSelectDate(date);
+                        onClose();
+                      }
+                    }}
+                    className={`
+                      p-2 rounded-lg text-center relative
+                      ${!date ? 'invisible' : ''}
+                      ${isDateDisabled(date) ? 'text-gray-300 cursor-not-allowed' : 
+                        date?.toDateString() === selectedDate?.toDateString()
+                          ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white'
+                          : 'hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50'
+                      }
+                    `}
+                  >
+                    {date?.getDate()}
+                  </motion.button>
+                ))}
+              </div>
+
+              <div className="mt-6 p-4 bg-yellow-50 rounded-xl">
+                <p className="text-sm text-yellow-700 flex items-start">
+                  <FaCalendarAlt className="mr-2 mt-1 flex-shrink-0" />
+                  Ngày đã chọn: {selectedDate ? formatDate(selectedDate) : "Chưa chọn ngày"}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    );
+  };
+
   return (
     <motion.div
       initial="hidden"
@@ -188,11 +344,13 @@ const BookingPage = () => {
           <motion.h1 
             custom={{ x: -100 }}
             variants={itemVariants}
-            className="text-3xl font-bold mb-2 text-gray-800"
+            className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent"
           >
             Đặt vé xe khách
           </motion.h1>
-          <p className="text-gray-600 mb-8 italic">"Vì cuộc sống là những chuyến đi đầy sắc màu"</p>
+          <p className="text-lg bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-8 italic">
+            "Cuộc sống là những hành trình đầy sắc màu"
+          </p>
           
           <div className="flex flex-col md:flex-row items-center justify-between mb-8 space-y-4 md:space-y-0">
             <motion.div custom={{ x: -50 }} variants={itemVariants} className="w-full md:w-5/12 text-center">
@@ -234,33 +392,19 @@ const BookingPage = () => {
               <label className="block text-gray-600 text-lg font-medium mb-3">Ngày đi</label>
               <div
                 className="flex items-center justify-between p-4 rounded-xl cursor-pointer bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 transition-colors border border-green-100"
-                onClick={() => setShowCalendar(!showCalendar)}
+                onClick={() => setShowCalendar(true)}
               >
                 <span className="text-gray-700">{date.toLocaleDateString("vi-VN")}</span>
-                <FaCalendar className="text-blue-400" />
+                <FaCalendarAlt className="text-blue-400" />
               </div>
-              {showCalendar && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute z-10 mt-2 bg-white rounded-xl shadow-2xl border border-green-100"
-                >
-                  <div className="p-4">
-                    <input 
-                      type="date" 
-                      value={date.toISOString().split('T')[0]}
-                      onChange={(e) => {
-                        setDate(new Date(e.target.value));
-                        setShowCalendar(false);
-                      }}
-                      className="w-full bg-gradient-to-r from-green-50 to-blue-50 text-gray-700 rounded-lg p-2 border border-green-100"
-                      min={new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
-                </motion.div>
-              )}
             </div>
+
+            <DatePickerModal
+              isOpen={showCalendar}
+              onClose={() => setShowCalendar(false)}
+              selectedDate={date}
+              onSelectDate={setDate}
+            />
 
             <motion.button
               custom={{ y: 30 }}
