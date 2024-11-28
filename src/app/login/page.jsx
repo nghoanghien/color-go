@@ -153,9 +153,7 @@ const LoginPage = () => {
               <div>
                 <div className="md:hidden mb-4 md:mb-6">
                   <h1 className="text-3xl md:text-5xl font-extrabold text-center poppins bg-white rounded-xl py-2 px-3 md:py-3 md:px-4 shadow-lg">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 animate-gradient-x">
-                      ColorGo
-                    </span>
+                    <img src="/images/Logo-new.png" alt="ColorGo Logo" className="w-32 md:w-48" />
                   </h1>
                 </div>
                 <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 font-dancing-script bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300 animate-text">
@@ -189,9 +187,7 @@ const LoginPage = () => {
           <div ref={loginRef} className="p-6 md:p-12 flex flex-col justify-center items-center space-y-6 md:space-y-8 bg-gradient-to-br from-emerald-50 to-indigo-50">
             <div className="transform hover:scale-105 transition-transform duration-300 hidden md:block">
               <h1 className="text-3xl md:text-5xl font-extrabold text-center poppins">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 animate-gradient-x">
-                  ColorGo
-                </span>
+                <img src="/images/Logo-new.png" alt="ColorGo Logo" className="w-32 md:w-48" />
               </h1>
             </div>
 
