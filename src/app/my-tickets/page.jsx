@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from "react";
-import { FaArrowLeft, FaArrowRight, FaExclamationCircle, FaMapMarker, FaTicketAlt, FaTimes, FaMoneyBillWave } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaExclamationCircle, FaMapMarker, FaTicketAlt, FaTimes, FaMoneyBillWave, FaBus, FaHeart, FaUser, FaTag } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/navigation';
 
 const TicketHistoryPage = () => {
   const initialTickets = [
@@ -94,6 +95,8 @@ const TicketHistoryPage = () => {
   const [error, setError] = useState("");
   const [ticketsData, setTicketsData] = useState(initialTickets);
   const [showNotification, setShowNotification] = useState(false);
+  const [navActiveTab, setNavActiveTab] = useState("ticket");
+  const router = useRouter();
 
   const handleCancelTicket = (ticketId, e) => {
     e.stopPropagation();
@@ -194,6 +197,27 @@ const TicketHistoryPage = () => {
     </div>
   );
 
+  const handleNavigation = (tab) => {
+    setNavActiveTab(tab);
+    switch (tab) {
+      case "booking":
+        router.push("/booking");
+        break;
+      case "favorite":
+        router.push("/favourite");
+        break;
+      case "ticket":
+        router.push("/my-tickets");
+        break;
+      case "promotions":
+        router.push("/promotions");
+        break;
+      case "account":
+        router.push("/account");
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <div className="bg-transparent p-4">
@@ -285,13 +309,13 @@ const TicketHistoryPage = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="bg-white/85 backdrop-blur-md rounded-3xl p-6 w-full max-w-md shadow-xl border border-white/20 relative"
+              className="bg-white/85 backdrop-blur-md rounded-3xl p-6 w-full max-w-md shadow-xl border border-white/20 relative mb-20"
             >
               <h3 className="text-2xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600 sticky top-0 bg-white/85 py-2">
                 Chi tiết vé
               </h3>
 
-              <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
+              <div className="space-y-6 max-h-[calc(100vh-320px)] overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
                 <section className="space-y-4">
                   <h4 className="font-semibold text-gray-700">Thông tin hành khách</h4>
                   <div className="space-y-2 text-gray-600">
@@ -407,6 +431,60 @@ const TicketHistoryPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
+      >
+        <div className="flex justify-between items-center max-w-lg mx-auto">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("booking")}
+            className={`flex flex-col items-center ${navActiveTab === "booking" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaBus className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Đặt vé</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("favorite")}
+            className={`flex flex-col items-center ${navActiveTab === "favorite" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaHeart className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Yêu thích</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("ticket")}
+            className={`flex flex-col items-center ${navActiveTab === "ticket" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaTicketAlt className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Vé của tôi</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("promotions")}
+            className={`flex flex-col items-center ${navActiveTab === "promotions" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaTag className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Ưu đãi</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleNavigation("account")}
+            className={`flex flex-col items-center ${navActiveTab === "account" ? "text-blue-500" : "text-gray-400"}`}
+          >
+            <FaUser className="text-2xl mb-1" />
+            <span className="text-xs font-medium">Tài khoản</span>
+          </motion.button>
+        </div>
+      </motion.div>
     </div>
   );
 };
