@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
-import { FaArrowLeft, FaBus, FaExclamationCircle, FaMapMarkerAlt, FaHeart, FaMapMarker, FaInfoCircle, FaTicketAlt, FaTag, FaUser } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { FaBus, FaExclamationCircle, FaHeart, FaMapMarker, FaMapMarkerAlt } from "react-icons/fa";
 
 const FavoriteTicketsPage = () => {
   const [tickets, setTickets] = useState([
@@ -63,7 +63,6 @@ const FavoriteTicketsPage = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [ticketToRemove, setTicketToRemove] = useState(null);
   const [removedTickets, setRemovedTickets] = useState([]);
-  const [activeTab, setActiveTab] = useState("favorite");
 
   const filteredTickets = tickets.filter(ticket => favorites.includes(ticket.id));
 
@@ -105,11 +104,6 @@ const FavoriteTicketsPage = () => {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: 50 }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
   };
 
   return (
@@ -301,58 +295,6 @@ const FavoriteTicketsPage = () => {
           </div>
         )}
       </AnimatePresence>
-
-      <motion.div
-        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
-      >
-        <div className="flex justify-between items-center max-w-lg mx-auto">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("booking")}
-            className={`flex flex-col items-center ${activeTab === "booking" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaBus className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Đặt vé</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("favorite")}
-            className={`flex flex-col items-center ${activeTab === "favorite" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaHeart className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Yêu thích</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("ticket")}
-            className={`flex flex-col items-center ${activeTab === "ticket" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaTicketAlt className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Vé của tôi</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("promotions")}
-            className={`flex flex-col items-center ${activeTab === "promotions" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaTag className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Ưu đãi</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("account")}
-            className={`flex flex-col items-center ${activeTab === "account" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaUser className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Tài khoản</span>
-          </motion.button>
-        </div>
-      </motion.div>
 
       <style jsx global>{`
         * {

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
-import { FaUser, FaLock, FaHeadset, FaSignOutAlt, FaChevronRight, FaMedal, FaCrown, FaGem, FaCircle, FaTicketAlt, FaHeart, FaGift, FaPercent, FaBus, FaTag, FaInfoCircle, FaTimes, FaClock, FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { FaCalendarAlt, FaPercent, FaTag, FaTimes } from "react-icons/fa";
 
 const OfferModal = ({ isOpen, onClose, offerDetails }) => {
   return (
@@ -51,7 +51,7 @@ const OfferModal = ({ isOpen, onClose, offerDetails }) => {
                 </div>
                 <div className="flex items-center text-gray-600">
                   <FaCalendarAlt className="mr-2 text-blue-500" />
-                  <span>Có hi���u lực đến: {offerDetails.expiry || "Không thời hạn"}</span>
+                  <span>Có hiu lực đến: {offerDetails.expiry || "Không thời hạn"}</span>
                 </div>
               </div>
 
@@ -75,7 +75,6 @@ const OfferModal = ({ isOpen, onClose, offerDetails }) => {
 };
 
 const OffersPage = () => {
-  const [activeTab, setActiveTab] = useState("offers");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -173,14 +172,6 @@ const OffersPage = () => {
     }
   ];
 
-  const navigationItems = [
-    { id: "tickets", icon: FaBus, label: "Đặt vé" },
-    { id: "favorites", icon: FaHeart, label: "Yêu thích" },
-    { id: "mytickets", icon: FaTicketAlt, label: "Vé của tôi" },
-    { id: "offers", icon: FaGift, label: "Ưu đãi" },
-    { id: "account", icon: FaUser, label: "Tài khoản" }
-  ];
-
   const handleOpenModal = (offer) => {
     setSelectedOffer(offer);
     setModalOpen(true);
@@ -194,11 +185,6 @@ const OffersPage = () => {
     }, 3000);
     return () => clearInterval(timer);
   }, []);
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
@@ -286,59 +272,6 @@ const OffersPage = () => {
           ))}
         </div>
       </div>
-
-      {/* Bottom Navigation */}
-      <motion.div
-        className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
-      >
-        <div className="flex justify-between items-center max-w-lg mx-auto">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("booking")}
-            className={`flex flex-col items-center ${activeTab === "booking" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaBus className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Đặt vé</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("favorite")}
-            className={`flex flex-col items-center ${activeTab === "favorite" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaHeart className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Yêu thích</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("ticket")}
-            className={`flex flex-col items-center ${activeTab === "ticket" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaTicketAlt className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Vé của tôi</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("offers")}
-            className={`flex flex-col items-center ${activeTab === "offers" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaTag className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Ưu đãi</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setActiveTab("account")}
-            className={`flex flex-col items-center ${activeTab === "account" ? "text-blue-500" : "text-gray-400"}`}
-          >
-            <FaUser className="text-2xl mb-1" />
-            <span className="text-xs font-medium">Tài khoản</span>
-          </motion.button>
-        </div>
-      </motion.div>
 
       <OfferModal
         isOpen={modalOpen}
