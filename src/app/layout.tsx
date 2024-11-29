@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body>{children}</body>
+      <body>{(typeof window !== "undefined") ? children : null}</body>
     </html>
   );
 }

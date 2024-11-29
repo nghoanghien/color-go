@@ -14,8 +14,9 @@ const LoginPage = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const loginRef = useRef(null);
-
+  
   useEffect(() => {
+
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
       updateMascotMood(e);
