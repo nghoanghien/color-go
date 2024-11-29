@@ -23,29 +23,31 @@ const RegisterPage = () => {
     };
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (!isScrolling) {
-        setIsScrolling(true);
+      if (typeof window !== 'undefined') {
+        const currentScrollY = window.scrollY;
+        
+        if (!isScrolling) {
+          setIsScrolling(true);
+        }
+        setScrollY(currentScrollY);
+
+        if (currentScrollY > lastScrollY) {
+          setShowRegisterButton(false);
+        } else {
+          setShowRegisterButton(true);
+        }
+
+        if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
+          setShowRegisterButton(false);
+        }
+
+        setLastScrollY(currentScrollY);
+
+        clearTimeout(window.scrollTimeout);
+        window.scrollTimeout = setTimeout(() => {
+          setIsScrolling(false);
+        }, 150);
       }
-      setScrollY(currentScrollY);
-
-      if (currentScrollY > lastScrollY) {
-        setShowRegisterButton(false);
-      } else {
-        setShowRegisterButton(true);
-      }
-
-      if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
-        setShowRegisterButton(false);
-      }
-
-      setLastScrollY(currentScrollY);
-
-      clearTimeout(window.scrollTimeout);
-      window.scrollTimeout = setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -170,7 +172,7 @@ const RegisterPage = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 md:p-8 overflow-y-auto relative">
       <div 
         className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden"
-        style={window.innerWidth <= 768 ? mobileScrollStyle : {}}
+        style={typeof window !== 'undefined' && window.innerWidth <= 768 ? mobileScrollStyle : {}}
       >
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="p-6 md:p-12 bg-gradient-to-br from-blue-500 to-purple-600">

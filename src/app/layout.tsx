@@ -1,5 +1,3 @@
-'use client';
-
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from 'next/font/google';
@@ -22,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body>{(typeof window !== "undefined") ? children : null}</body>
+      <body>{children}</body>
     </html>
   );
 }
