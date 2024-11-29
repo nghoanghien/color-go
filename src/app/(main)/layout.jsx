@@ -87,7 +87,7 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
 };
 
 export default function Layout({ children }) {
-  const currentTab = location.pathname.split('/').at(-1);
+  const currentTab = typeof window === 'undefined' ? 'booking' : location.pathname.split('/').at(-1);
   const [activeTab, setActiveTab] = useState(currentTab); // Default active tab
 
   return (
