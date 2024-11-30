@@ -85,7 +85,7 @@ const LandingPage = () => {
     },
     {
       id: 2,
-      title: "Ưu Đãi Sinh Viên",
+      title: "Ưu Đãi Sinh Viên Trên Toàn Quốc",
       code: "STUDENT25",
       description: "Giảm 25% cho sinh viên có thẻ học sinh hợp lệ",
       expiry: "30/09/2024",
@@ -94,9 +94,9 @@ const LandingPage = () => {
     },
     {
       id: 3,
-      title: "Khuyến Mãi Cuối Tuần",
+      title: "Khuyến Mãi Cuối Mỗi Tuần",
       code: "WEEKEND15",
-      description: "Giảm 15% cho đặt vé vào cuối tuần",
+      description: "Giảm 15% cho đặt vé vào cuối mỗi tuần",
       expiry: "31/12/2024",
       discount: "15%",
       image: "images.unsplash.com/photo-1488085061387-422e29b40080"
@@ -106,11 +106,11 @@ const LandingPage = () => {
   return (
     <div className={`min-h-screen bg-gradient-to-br from-blue-400 via-green-300 to-yellow-200 ${inter.className}`}>
       <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-lg" : "bg-transparent"}}`}>
-        <div className="max-w-3xl mx-auto px-4 py-4" data-aos="fade-down">
+        <div className="max-w-4xl mx-auto px-4 py-4" data-aos="fade-down">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-between w-full md:w-auto">
-              <div className="flex items-center space-x-4">
-                <img src="images.unsplash.com/photo-1516876437184-593fda40c7ce" alt="ColorGo Logo" className="h-10 w-10 rounded-[13px]" />
+              <div className="flex items-center space-x-2">
+                <img src="/images/Logo-new.png" alt="ColorGo Logo" className="h-14 w-28 rounded-[13px]" />
                 <span className="text-2xl font-extrabold tracking-tight text-theme-color-primary">ColorGo</span>
               </div>
               <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
@@ -133,8 +133,8 @@ const LandingPage = () => {
         <section className="hero min-h-screen flex items-center justify-center text-center px-4">
           <div className="max-w-3xl mx-auto" data-aos="zoom-in">
             <h1 className="text-4xl md:text-7xl font-black mb-8 text-white drop-shadow-lg tracking-tight leading-tight">
-              Cuộc sống là một hành trình<br />đầy màu sắc
-              <span className="block text-3xl md:text-5xl mt-4 font-bold tracking-normal">Đặt vé ngay hôm nay!</span>
+              Cuộc sống là một hành trình<br />đầy sắc màu
+              <span className="block text-3xl md:text-5xl mt-6 font-bold tracking-normal">Đặt vé ngay hôm nay!</span>
             </h1>
             <div className="inline-block">
               <div className="bg-yellow-300/30 backdrop-blur-sm p-1 rounded-[18px]">
@@ -147,7 +147,7 @@ const LandingPage = () => {
         </section>
 
         <section className="bg-white py-16 md:py-20 px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Tại Sao Chọn ColorGo?</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
               <div className="bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.5)]" data-aos="fade-right">
@@ -175,7 +175,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-16 md:py-20 px-4 bg-gray-50">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Tuyến Đường Phổ Biến</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {popularRoutes.map((route, index) => (
@@ -194,8 +194,8 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <section className="py-16 md:py-20 px-4 bg-white">
-          <div className="max-w-3xl mx-auto">
+        <section className="py-16 md:py-20 px-4 bg-white mb-16">
+          <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Ưu Đãi Đặc Biệt</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {specialOffers.map((offer, index) => (
@@ -227,7 +227,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-16 md:py-20 px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 tracking-tight" data-aos="fade-up">Khách Hàng Nói Gì?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {testimonials.map((testimonial, index) => (
@@ -252,7 +252,7 @@ const LandingPage = () => {
       </main>
 
       <footer className="bg-gray-800 text-white py-8 md:py-12 px-4">
-        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8" data-aos="fade-up">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8" data-aos="fade-up">
           <div>
             <h3 className="text-lg md:text-xl font-bold mb-4">ColorGo</h3>
             <p className="text-sm md:text-base">Mang đến trải nghiệm du lịch đầy màu sắc cho mọi người.</p>
@@ -279,7 +279,7 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-        <div className="max-w-3xl mx-auto mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-700 text-center">
+        <div className="max-w-5xl mx-auto mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-700 text-center">
           <p className="text-xs md:text-sm">© 2024 ColorGo. Đã đăng ký bản quyền.</p>
         </div>
       </footer>
