@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
 import * as XLSX from 'xlsx';
+import { FiUploadCloud } from "react-icons/fi";
 import InventoryTable from './components/InventoryTable';
 import ModalAddItem from './components/ModalAddItem';
 import ModalEditItem from './components/ModalEditItem';
 import ModalDetails from './components/ModalDetails';
 import FilterModal from './components/FilterModal';
-import UploadZone from './components/UploadZone';
-import useInventory from './hooks/useInventory';
 
 const WarehouseManager = () => {
   const [activeTab, setActiveTab] = useState("warehouse");
+  const [files, setFiles] = useState([]);
   const [deletedItems, setDeletedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -28,6 +29,9 @@ const WarehouseManager = () => {
     price: "",
     description: ""
   });
+  const [inventory, setInventory] = useState([]);
+  const [productHistory, setProductHistory] = useState({});
+  
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({
     categories: [],
@@ -35,8 +39,6 @@ const WarehouseManager = () => {
     priceRange: [0, 1000],
     entryDateRange: [null, null]
   });
-  const { inventory, setInventory, productHistory, setProductHistory, errorMessage, setErrorMessage, onDrop } = useInventory();
-
   const [filteredInventory, setFilteredInventory] = useState(inventory);
 
   const categories = [
@@ -47,23 +49,82 @@ const WarehouseManager = () => {
     "Dây sạc"
   ];
 
-  useEffect(() => {
-    let filtered = inventory;
+  const [errorMessage, setErrorMessage] = useState("");
 
-    if (filterCriteria.categories.length > 0) {
-      filtered = filtered.filter(item => filterCriteria.categories.includes(item.category));
-    }
+  const onDrop = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    const reader = new FileReader();
 
-    filtered = filtered.filter(item => 
-      item.quantity >= filterCriteria.quantityRange[0] && item.quantity <= filterCriteria.quantityRange[1]
-    );
+    reader.onload = (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
 
-    filtered = filtered.filter(item => 
-      item.price >= filterCriteria.priceRange[0] && item.price <= filterCriteria.priceRange[1]
-    );
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        
+        const requiredColumns = ['Tên sản phẩm', 'SL', 'Giá', 'Danh mục', 'Mô tả'];
+        const missingColumns = requiredColumns.filter(col => !jsonData.every(item => item[col] !== undefined));
 
-    setFilteredInventory(filtered);
-  }, [inventory]);
+        if (missingColumns.length > 0) {
+            setErrorMessage(`Không tìm thấy các cột: ${missingColumns.join(', ')}`);
+            return;
+        }
+
+        setErrorMessage("");
+
+        jsonData.forEach(item => {
+            const productName = item['Tên sản phẩm'];
+            const existingItem = inventory.find(i => i.productName == productName);
+
+            const quantity = item['SL'] || 0;
+            const price = item['Giá'] || 0;
+
+            if (existingItem) {
+                existingItem.quantity = parseInt(existingItem.quantity) + parseInt(quantity);
+                existingItem.price = (parseFloat(existingItem.price) + parseFloat(price)) / 2;
+                setInventory(prev => prev.map(item => {
+                    if (item.productName === productName) {
+                        return {
+                            ...item,
+                            quantity: existingItem.quantity,
+                            price: existingItem.price
+                        };
+                    }
+                    return item;
+                }));
+            } else {
+                setInventory(prev => [...prev, {
+                    productName: productName,
+                    category: item['Danh mục'],
+                    quantity: quantity,
+                    price: price,
+                    description: item['Mô tả'] || ""
+                }]);
+            }
+
+            const historyEntry = {
+                productName: productName,
+                quantity: quantity,
+                price: price,
+                timestamp: new Date().toISOString(),
+                action: "add"
+            };
+
+            setProductHistory(prev => ({
+                ...prev,
+                [productName]: [...(prev[productName] || []), historyEntry]
+            }));
+        });
+    };
+
+    reader.readAsArrayBuffer(file);
+  }, [inventory, setInventory, setProductHistory]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false
+  });
 
   const handleModalSubmit = (e) => {
     e.preventDefault();
@@ -209,6 +270,12 @@ const WarehouseManager = () => {
     setFilterModalOpen(false);
   };
 
+  useEffect(() => {
+    if (activeTab === "reports") {
+      setFilteredInventory(inventory);
+    }
+  }, [activeTab]);
+
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       {errorMessage && (
@@ -229,7 +296,11 @@ const WarehouseManager = () => {
 
       {activeTab === "warehouse" && (
         <>
-          <UploadZone onDrop={onDrop} />
+          <div {...getRootProps()} className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-500"}`}>
+            <input {...getInputProps()} />
+            <FiUploadCloud className="w-12 h-12 mx-auto text-gray-400" />
+            <p className="mt-2 text-gray-600">Kéo & thả tệp dữ liệu kho vào đây, hoặc nhấp để chọn tệp</p>
+          </div>
 
           <div className="mt-8">
             <button
@@ -241,7 +312,7 @@ const WarehouseManager = () => {
           </div>
 
           <InventoryTable 
-            inventory={filteredInventory} 
+            inventory={inventory} 
             handleRowClick={handleRowClick} 
             handleDeleteInventoryItem={handleDeleteInventoryItem} 
             handleEditClick={handleEditClick} 

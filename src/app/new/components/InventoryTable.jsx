@@ -32,7 +32,7 @@ const InventoryTable = ({ inventory, handleRowClick, handleDeleteInventoryItem, 
                     e.stopPropagation();
                     handleDeleteInventoryItem(item);
                   }} 
-                  className="text-red-600"
+                  className="text-red-600 mr-5"
                 >
                   <FiTrash2 />
                 </button>
