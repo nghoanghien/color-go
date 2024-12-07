@@ -336,8 +336,9 @@ const BookingPage = () => {
     >
       <div className="p-6 pb-24">
         <motion.div
-          custom={{ y: -50 }}
-          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
           className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl mb-8 border border-green-100"
         >
           <motion.h1 
