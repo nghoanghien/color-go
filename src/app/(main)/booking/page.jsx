@@ -334,7 +334,7 @@ const BookingPage = () => {
       variants={containerVariants}
       className="min-h-screen bg-gradient-to-b from-green-50 via-blue-50 to-yellow-50"
     >
-      <div className="p-6 pb-24">
+      <div className=" mx-auto p-6 pb-24 max-w-4xl">
         <motion.div
           initial="hidden"
           animate="visible"
