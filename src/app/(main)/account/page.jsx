@@ -4,8 +4,14 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaChevronRight, FaCircle, FaCrown, FaGem, FaHeadset, FaLock, FaMedal, FaSignOutAlt } from "react-icons/fa";
 import '../styles/typography.css';
+import { signOut, useUserInfomation } from "@/firebase/authenticate";
+import { useRouter } from "next/navigation";
 
 const AccountPage = () => {
+  const router = useRouter();
+
+  const [isLoading, user] = useUserInfomation();
+
   const [membershipLevel, setMembershipLevel] = useState("gold"); // bronze, silver, gold, diamond
 
   const getMembershipInfo = (level) => {
@@ -43,11 +49,17 @@ const AccountPage = () => {
       id: 3,
       icon: FaSignOutAlt,
       title: "Đăng xuất",
-      description: "Đăng xuất khỏi tài khoản"
+      description: "Đăng xuất khỏi tài khoản",
+      onClick: () => {
+        signOut();
+        router.push("/login");
+      }
     }
   ];
 
-  return (
+  console.log({user})
+
+  return isLoading ? '' : (
     <div className="min-h-screen bg-gradient-to-b from-green-50 via-blue-50 to-yellow-50 p-6 pb-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -60,7 +72,7 @@ const AccountPage = () => {
           <div className="flex items-center space-x-6">
             <div className="relative">
               <img
-                src="images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                src={user.photoURL}
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover border-4 border-green-100"
               />
@@ -69,12 +81,12 @@ const AccountPage = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-800 mb-1">Nguyễn Văn A</h1>
-              <div className="flex items-center space-x-2">
+              <h1 className="text-2xl font-bold text-gray-800 mb-1">{user.displayName}</h1>
+              {/* <div className="flex items-center space-x-2">
                 <MembershipIcon className={`${membershipInfo.color} text-sm`} />
                 <span className="text-gray-600">Hội viên {membershipInfo.text}</span>
-              </div>
-              <p className="text-gray-500 text-sm mt-1">ID: 123456789</p>
+              </div> */}
+              {/* <p className="text-gray-500 text-sm mt-1">{user.uid}</p> */}
             </div>
           </div>
         </div>
@@ -87,6 +99,7 @@ const AccountPage = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="bg-white rounded-2xl p-4 shadow-lg cursor-pointer"
+              onClick={item.onClick}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">

@@ -1,5 +1,7 @@
 'use client';
 
+import { signIn } from "@/firebase/authenticate";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { FaGoogle, FaFacebook, FaBus, FaRoad, FaShieldAlt, FaTicketAlt, FaMapMarkedAlt, FaUserShield, FaClock, FaCompass, FaChevronDown, FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -14,6 +16,8 @@ const LoginPage = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const loginRef = useRef(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -143,6 +147,11 @@ const LoginPage = () => {
     transform: `translateY(${isScrolling ? -scrollY * 0.1 : 0}px)`,
   };
 
+  async function handleSignIn() {
+    const result = await signIn();
+    router.replace('/booking')
+  }
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 md:p-8 overflow-y-auto relative">
       <div 
@@ -246,7 +255,7 @@ const LoginPage = () => {
                   <button
                     type="button"
                     className="w-full py-3 md:py-4 text-sm md:text-base bg-red-500 text-white rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-red-600 transform transition-all hover:scale-105"
-                    onClick={() => setMascotMood("excited")}
+                    onClick={handleSignIn}
                   >
                     <FaGoogle />
                     <span>Đăng nhập với Google</span>
