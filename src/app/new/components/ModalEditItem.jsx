@@ -20,6 +20,7 @@ const ModalEditItem = ({ isEditModalOpen, setIsEditModalOpen, editItem, setEditI
           </div>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div>
+              <label className="block mb-1">Tên sản phẩm</label>
               <input
                 type="text"
                 placeholder="Tên sản phẩm"
@@ -30,6 +31,7 @@ const ModalEditItem = ({ isEditModalOpen, setIsEditModalOpen, editItem, setEditI
               />
             </div>
             <div>
+              <label className="block mb-1">Danh Mục</label>
               <select
                 value={editItem.category}
                 onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
@@ -43,6 +45,7 @@ const ModalEditItem = ({ isEditModalOpen, setIsEditModalOpen, editItem, setEditI
               </select>
             </div>
             <div>
+              <label className="block mb-1">Số lượng</label>
               <input
                 type="text"
                 placeholder="Số lượng"
@@ -53,6 +56,7 @@ const ModalEditItem = ({ isEditModalOpen, setIsEditModalOpen, editItem, setEditI
               />
             </div>
             <div>
+              <label className="block mb-1">Giá</label>
               <input
                 type="text"
                 placeholder="Giá"
@@ -63,6 +67,7 @@ const ModalEditItem = ({ isEditModalOpen, setIsEditModalOpen, editItem, setEditI
               />
             </div>
             <div>
+              <label className="block mb-1">Mô tả</label>
               <textarea
                 placeholder="Mô tả"
                 value={editItem.description}

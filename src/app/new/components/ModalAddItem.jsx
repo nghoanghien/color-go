@@ -17,6 +17,7 @@ const ModalAddItem = ({ isModalOpen, setIsModalOpen, newItem, setNewItem, handle
           </div>
           <form onSubmit={handleModalSubmit} className="space-y-4">
             <div>
+              <label className="block mb-1">Tên sản phẩm</label>
               <input
                 type="text"
                 placeholder="Tên sản phẩm"
@@ -27,6 +28,7 @@ const ModalAddItem = ({ isModalOpen, setIsModalOpen, newItem, setNewItem, handle
               />
             </div>
             <div>
+              <label className="block mb-1">Danh Mục</label>
               <select
                 value={newItem.category}
                 onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
@@ -40,6 +42,7 @@ const ModalAddItem = ({ isModalOpen, setIsModalOpen, newItem, setNewItem, handle
               </select>
             </div>
             <div>
+              <label className="block mb-1">Số lượng</label>
               <input
                 type="text"
                 placeholder="Số lượng"
@@ -50,6 +53,7 @@ const ModalAddItem = ({ isModalOpen, setIsModalOpen, newItem, setNewItem, handle
               />
             </div>
             <div>
+              <label className="block mb-1">Giá</label>
               <input
                 type="text"
                 placeholder="Giá"
@@ -60,6 +64,7 @@ const ModalAddItem = ({ isModalOpen, setIsModalOpen, newItem, setNewItem, handle
               />
             </div>
             <div>
+              <label className="block mb-1">Mô tả</label>
               <textarea
                 placeholder="Mô tả"
                 value={newItem.description}
