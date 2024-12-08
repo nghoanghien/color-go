@@ -43,7 +43,7 @@ const UnderDevelopmentPage = () => {
           transition={{ delay: 0.5 }}
           className="space-y-4"
         >
-          <h2 className="text-2xl font-bold text-gray-800">Tính năng đang phát triển</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Tính năng sắp ra mắt!</h2>
           <p className="text-lg text-gray-600">
             Chúng tôi luôn nỗ lực mang đến trải nghiệm tốt nhất cho bạn.
             <br />
