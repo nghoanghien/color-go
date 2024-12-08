@@ -3,8 +3,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { FaBus, FaExclamationCircle, FaHeart, FaMapMarker, FaMapMarkerAlt } from "react-icons/fa";
+import { useRouter } from 'next/navigation';
 
 const FavoriteTicketsPage = () => {
+  const router = useRouter();
   const [tickets, setTickets] = useState([
     {
       id: 1,
@@ -106,6 +108,10 @@ const FavoriteTicketsPage = () => {
     exit: { opacity: 0, y: 50 }
   };
 
+  const handleClickTicket = () => {
+    router.push("/choose");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <AnimatePresence>
@@ -151,16 +157,9 @@ const FavoriteTicketsPage = () => {
               exit={{ opacity: 0, scale: 0.8 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-white rounded-2xl p-4 shadow-lg relative overflow-hidden transition-all duration-500"
+              className={`bg-white rounded-2xl p-4 shadow-lg relative overflow-hidden transition-all duration-500 ${favorites.includes(ticket.id) ? "hover:shadow-rainbow" : ""}`}
             >
-              <button
-                onClick={() => handleRemoveFromFavorites(ticket.id)}
-                className="absolute top-1 right-2 z-20 p-1.5 rounded-full hover:bg-gray-100 transition-all duration-300"
-              >
-                <FaHeart className="text-lg text-[#ff4757]" />
-              </button>
-
-              <div className="flex justify-between items-center mb-6 relative z-10">
+              <div className="flex justify-between items-center mb-4 relative z-10">
                 <div className="flex flex-col w-full">
                   <div className="flex items-center space-x-2 mb-2">
                     <div className="text-xl font-bold text-gray-800">{ticket.departureTime}</div>
@@ -179,6 +178,22 @@ const FavoriteTicketsPage = () => {
                 </div>
                 <div className="text-right ml-4">
                   <p className="text-2xl font-bold text-blue-500">{ticket.price}đ</p>
+                  <div className="flex justify-between items-center mt-0">
+                    <button
+                      onClick={() => handleClickTicket(ticket.id)}
+                      className="flex items-center justify-center px-1 py-1 mr-0.5 font-bold bg-gradient-to-r from-green-300/50 to-blue-300/50 text-white text-sm rounded-lg transition-all duration-300"
+                    >
+                      Chọn ghế
+                    </button>
+                    <button
+                      onClick={() => handleRemoveFromFavorites(ticket.id)}
+                      className="flex items-center justify-center p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-all duration-300"
+                    >
+                      <FaHeart
+                        className={`text-sm transition-colors duration-300 ${favorites.includes(ticket.id) ? "text-[#ff4757]" : "text-[#ccc]"}`}
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
 
