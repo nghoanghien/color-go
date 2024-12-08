@@ -3,8 +3,11 @@
 import React from "react";
 import { FaArrowLeft, FaBus } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useRouter } from 'next/navigation';
+
 
 const PaymentSuccessPage = () => {
+  const router = useRouter();
   const tripData = {
     busCompany: "Hoàng Long",
     selectedSeats: ["A01", "A02", "A03"],
@@ -29,7 +32,7 @@ const PaymentSuccessPage = () => {
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" />
+            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.replace("/booking")}}/>
           </button>
           <h1 className="text-xl font-bold text-gray-800">Về trang chủ</h1>
         </div>
