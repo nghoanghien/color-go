@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaMapMarkerAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/navigation';
+
 
 const PickupDropoffPage = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("pickup");
   const [selectedPickup, setSelectedPickup] = useState(null);
   const [selectedDropoff, setSelectedDropoff] = useState(null);
@@ -45,13 +48,17 @@ const PickupDropoffPage = () => {
     }
   };
 
+  const handleContinueClick = () => {
+    router.push("/ticket-info");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70">
       <div className="p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
             <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-              <FaArrowLeft className="text-gray-600 text-xl" />
+              <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}}/>
             </button>
             <h1 className="text-xl font-bold text-gray-800">Chọn điểm đón - điểm trả</h1>
           </div>
@@ -132,6 +139,7 @@ const PickupDropoffPage = () => {
                 : "bg-gray-100 text-gray-400 cursor-not-allowed"
             }`}
             disabled={!selectedPickup || !selectedDropoff}
+            onClick={handleContinueClick}
           >
             Tiếp tục
           </button>
