@@ -3,8 +3,11 @@
 import React, { useState } from "react";
 import { FaArrowLeft, FaTimes, FaLock, FaExclamationCircle, FaTicketAlt, FaTag } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/navigation';
+
 
 const PaymentConfirmationPage = () => {
+  const router = useRouter();
   const [selectedPayment, setSelectedPayment] = useState("");
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -79,6 +82,7 @@ const PaymentConfirmationPage = () => {
       return;
     }
     // Handle payment logic
+    router.push("/payment-success");
   };
 
   const handleApplyCoupon = () => {
@@ -90,7 +94,7 @@ const PaymentConfirmationPage = () => {
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" />
+            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}} />
           </button>
           <h1 className="text-xl font-bold text-gray-800">Xác nhận thanh toán</h1>
         </div>
@@ -116,7 +120,7 @@ const PaymentConfirmationPage = () => {
         </div>
 
         <h2 className="text-lg font-semibold text-gray-800">Chi tiết hóa đơn</h2>
-        <div className="bg-white rounded-2xl p-6 space-y-4">
+        <div className="bg-white rounded-2xl p-6 space-y-4 font-medium">
           <div className="space-y-3">
             <div className="flex justify-between text-gray-600">
               <span>Dịch vụ</span>
