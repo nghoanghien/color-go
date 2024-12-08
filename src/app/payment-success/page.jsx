@@ -92,7 +92,7 @@ const PaymentSuccessPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
               <div className="flex-1 space-y-2 text-left">
                 <div className="text-2xl font-bold text-gray-800">{tripData.departure.time}</div>
                 <div className="text-sm font-medium text-blue-600">{tripData.departure.date}</div>
@@ -104,7 +104,7 @@ const PaymentSuccessPage = () => {
                 <div className="text-base font-semibold text-blue-600 bg-blue-50 px-4 py-1.5 rounded-full shadow-sm">
                   {tripData.duration}
                 </div>
-                <div className="w-20 border-t-2 border-dashed border-blue-300 relative">
+                <div className="w-12 border-t-2 border-dashed border-blue-300 relative">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white p-1 rounded-full shadow-md">
                     <FaBus className="text-blue-500 text-lg" />
                   </div>
