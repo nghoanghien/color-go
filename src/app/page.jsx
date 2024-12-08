@@ -5,10 +5,12 @@ import { FaPlane, FaGift, FaStar, FaUser, FaBars, FaTimes, FaTicketAlt, FaPercen
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Inter } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
 const LandingPage = () => {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -27,6 +29,10 @@ const LandingPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleClick = () => {
+    router.push("/login");
+  }
 
   const testimonials = [
     {
@@ -113,15 +119,16 @@ const LandingPage = () => {
                 <img src="/images/Logo-new.png" alt="ColorGo Logo" className="h-14 w-28 rounded-[13px]" />
                 <span className="text-2xl font-extrabold tracking-tight text-theme-color-primary">ColorGo</span>
               </div>
-              <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
+              <button className="md:hidden bg-theme-color-primary text-white px-4 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide" onClick={handleClick}>
                 <FaUser className="mr-2" /> Đăng Nhập
               </button>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#bookings" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Đặt Chỗ Của Tôi</a>
-              <a href="#offers" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Ưu Đãi Đặc Biệt</a>
-              <a href="#book" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Đặt Vé</a>
-              <button className="bg-theme-color-primary text-white px-6 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide">
+              <a href="/login" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Đặt Chỗ Của Tôi</a>
+              <a href="/login" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Ưu Đãi Đặc Biệt</a>
+              <a href="/login" className="text-gray-700 hover:text-theme-color-primary transition-colors font-medium tracking-wide">Đặt Vé</a>
+              <button 
+              className="bg-theme-color-primary text-white px-6 py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center font-medium tracking-wide" onClick={handleClick}>
                 <FaUser className="mr-2" /> Đăng Nhập
               </button>
             </nav>
@@ -138,7 +145,7 @@ const LandingPage = () => {
             </h1>
             <div className="inline-block">
               <div className="bg-yellow-300/30 backdrop-blur-sm p-1 rounded-[18px]">
-                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-lg tracking-wide">
+                <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-lg tracking-wide" onClick={handleClick}>
                   Đặt Ngay!
                 </button>
               </div>
@@ -184,7 +191,7 @@ const LandingPage = () => {
                   <div className="p-4 md:p-6">
                     <h3 className="text-lg md:text-xl font-bold mb-2">{route.from} → {route.to}</h3>
                     <p className="text-xl md:text-2xl font-bold text-theme-color-primary">{route.price}</p>
-                    <button className="mt-4 w-full bg-theme-color-primary text-white py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors text-sm md:text-base">
+                    <button className="mt-4 w-full bg-theme-color-primary text-white py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors text-sm md:text-base" onClick={handleClick}>
                       Đặt Ngay
                     </button>
                   </div>
@@ -215,7 +222,7 @@ const LandingPage = () => {
                       <button className="text-theme-color-primary font-bold hover:text-theme-color-primary-dark">Sao chép</button>
                     </div>
                     <p className="text-xs md:text-sm text-gray-500">Hết hạn: {offer.expiry}</p>
-                    <button className="mt-4 w-full bg-theme-color-primary text-white py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center justify-center text-sm md:text-base">
+                    <button className="mt-4 w-full bg-theme-color-primary text-white py-2 rounded-[13px] hover:bg-theme-color-primary-dark transition-colors flex items-center justify-center text-sm md:text-base" onClick={handleClick}>
                       <FaPercent className="mr-2" />
                       Áp Dụng Ngay
                     </button>
