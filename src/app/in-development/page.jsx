@@ -3,14 +3,18 @@
 import React from "react";
 import { FaArrowLeft, FaTools } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useRouter } from 'next/navigation';
+
 
 const UnderDevelopmentPage = () => {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" />
+            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}} />
           </button>
           <h1 className="text-xl font-bold text-gray-800">Quay lại</h1>
         </div>
@@ -58,7 +62,7 @@ const UnderDevelopmentPage = () => {
           className="pt-8"
         >
           <img 
-            src="https://images.unsplash.com/photo-1599305445671-ac291c95aaa9" 
+            src="/images/Logo-new.png" 
             alt="Website Logo" 
             className="h-12 mx-auto object-contain"
           />
