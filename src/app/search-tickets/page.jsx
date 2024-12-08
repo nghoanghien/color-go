@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaBus, FaExclamationCircle, FaMapMarkerAlt, FaFilter, FaSort, FaHeart, FaMapMarker } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/navigation';
+
 
 const SearchResultsPage = () => {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showSortModal, setShowSortModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -169,6 +172,10 @@ const SearchResultsPage = () => {
     setShowRouteModal(true);
   };
 
+  const handleClickTicket = () => {
+    router.push("/choose");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <AnimatePresence>
@@ -189,7 +196,7 @@ const SearchResultsPage = () => {
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-2 bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
-            <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
+            <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300" onClick={() => router.back()}>
               <FaArrowLeft className="text-gray-600 text-xl" />
             </button>
             <div className="flex items-center gap-1 text-gray-600 font-semibold">
@@ -230,6 +237,7 @@ const SearchResultsPage = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className={`bg-white rounded-2xl p-4 shadow-lg relative overflow-hidden transition-all duration-500 ${favorites.includes(ticket.id) ? "hover:shadow-rainbow" : ""}`}
+            onClick={handleClickTicket}
           >
             <button
               onClick={() => toggleFavorite(ticket.id)}
