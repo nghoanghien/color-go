@@ -16,7 +16,7 @@ const SearchResultsPage = () => {
   const [favorites, setFavorites] = useState([]);
   const [notification, setNotification] = useState({ show: false, message: "" });
 
-  const [tickets, setTickets] = useState([
+  const [originalTickets] = useState([
     {
       id: 1,
       departureTime: "08:00",
@@ -24,7 +24,7 @@ const SearchResultsPage = () => {
       from: "Hà Nội",
       to: "Hải Phòng",
       busCompany: "Hoàng Long",
-      price: "250.000",
+      price: "250000",
       seatsAvailable: 15,
       route: [
         { time: "08:00", location: "Bến xe Mỹ Đình - Hà Nội" },
@@ -40,7 +40,7 @@ const SearchResultsPage = () => {
       from: "Hà Nội",
       to: "Hải Phòng",
       busCompany: "Phương Trang",
-      price: "280.000",
+      price: "280000",
       seatsAvailable: 8,
       route: [
         { time: "09:30", location: "Bến xe Giáp Bát - Hà Nội" },
@@ -56,7 +56,7 @@ const SearchResultsPage = () => {
       from: "Hà Nội",
       to: "Hải Phòng",
       busCompany: "Thành Bưởi",
-      price: "260.000",
+      price: "260000",
       seatsAvailable: 12,
       route: [
         { time: "10:45", location: "Bến xe Nước Ngầm - Hà Nội" },
@@ -66,6 +66,8 @@ const SearchResultsPage = () => {
       ]
     }
   ]);
+
+  const [tickets, setTickets] = useState(originalTickets);
 
   const toggleFavorite = (ticketId) => {
     const isFavorite = favorites.includes(ticketId);
@@ -140,6 +142,12 @@ const SearchResultsPage = () => {
   };
 
   const handleFilter = () => {
+    const filteredTickets = originalTickets.filter(ticket => {
+      const withinPriceRange = parseFloat(ticket.price) >= priceRange.min && parseFloat(ticket.price) <= priceRange.max;
+      const matchesCompany = selectedCompanies.length === 0 || selectedCompanies.includes(ticket.busCompany);
+      return withinPriceRange && matchesCompany;
+    });
+    setTickets(filteredTickets);
     setShowFilterModal(false);
   };
 
@@ -147,6 +155,7 @@ const SearchResultsPage = () => {
     setSelectedCompanies([]);
     setPriceRange({ min: 0, max: 1000000 });
     setShowFilterModal(false);
+    setTickets(originalTickets); // Reset to original tickets
   };
 
   const modalVariants = {
