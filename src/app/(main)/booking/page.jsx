@@ -3,10 +3,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaExchangeAlt, FaTimes } from "react-icons/fa";
+import { useRouter } from 'next/navigation';
 
 import LocationModal from "@/components/location-modal"
 
 const BookingPage = () => {
+  const router = useRouter();
   const [date, setDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [showFromModal, setShowFromModal] = useState(false);
@@ -92,7 +94,7 @@ const BookingPage = () => {
     setValidationErrors(errors);
 
     if (!errors.from && !errors.to) {
-      console.log("Searching for routes...");
+      router.push('/search-tickets');
     }
   };
 
