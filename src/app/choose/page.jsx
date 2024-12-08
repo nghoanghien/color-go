@@ -5,8 +5,11 @@ import { FaArrowLeft, FaExclamationCircle, FaBus } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import { BsClockFill } from "react-icons/bs";
+import { useRouter } from 'next/navigation';
+
 
 const SeatSelectionPage = () => {
+  const router = useRouter();
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -209,13 +212,17 @@ const SeatSelectionPage = () => {
     return seats;
   };
 
+  const handleLocationSelectionClick = () => {
+    router.push("/location");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 bg-white/30 backdrop-blur-sm rounded-full px-4 py-3 shadow-sm">
             <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-              <FaArrowLeft className="text-gray-600 text-xl" />
+              <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}}/>
             </button>
             <div className="flex flex-col">
               <div className="flex items-center gap-2 text-gray-600 font-semibold">
@@ -304,6 +311,7 @@ const SeatSelectionPage = () => {
                 ${selectedSeats.length > 0 
                   ? "bg-gradient-to-r from-green-500 to-blue-500 text-white" 
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+              onClick={handleLocationSelectionClick}
             >
               Chọn điểm đón trả
             </motion.button>
