@@ -122,6 +122,21 @@ const SearchResultsPage = () => {
   const handleSort = (option) => {
     setSortOption(option);
     setShowSortModal(false);
+    sortTickets(option);
+  };
+
+  const sortTickets = (option) => {
+    let sortedTickets = [...tickets];
+    if (option === "price-asc") {
+      sortedTickets.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (option === "price-desc") {
+      sortedTickets.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (option === "time-asc") {
+      sortedTickets.sort((a, b) => a.departureTime.localeCompare(b.departureTime));
+    } else if (option === "time-desc") {
+      sortedTickets.sort((a, b) => b.departureTime.localeCompare(a.departureTime));
+    }
+    setTickets(sortedTickets);
   };
 
   const handleFilter = () => {
