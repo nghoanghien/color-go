@@ -3,8 +3,11 @@
 import React, { useState } from "react";
 import { FaArrowLeft, FaPen, FaBus, FaMapMarker, FaExclamationCircle, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/navigation';
+
 
 const TripInfoPage = () => {
+  const router = useRouter();
   const [showContactModal, setShowContactModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -85,7 +88,9 @@ const TripInfoPage = () => {
       setTimeout(() => setShowError(false), 3000);
       return;
     }
+
     // Handle payment logic
+    router.push("/payment");
   };
 
   return (
@@ -93,7 +98,7 @@ const TripInfoPage = () => {
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" />
+            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}} />
           </button>
           <h1 className="text-xl font-bold text-gray-800">Thông tin chuyến đi</h1>
         </div>
