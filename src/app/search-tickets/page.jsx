@@ -1,14 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaBus, FaExclamationCircle, FaMapMarkerAlt, FaFilter, FaSort, FaHeart, FaMapMarker } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 const SearchResultsPage = () => {
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
+  const to = searchParams.get('to');
+  const date = new Date(parseInt(searchParams.get('date')));
+
+  const selectedDateRef = useRef(null);
+
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(date);
   const [showSortModal, setShowSortModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showRouteModal, setShowRouteModal] = useState(false);
@@ -90,12 +97,14 @@ const SearchResultsPage = () => {
     }, 3000);
   };
 
+  const DATE_ABSOLUTE_OFFSET = 8;
   const getDates = () => {
     const dates = [];
-    for (let i = -3; i <= 3; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() + i);
-      dates.push(date);
+    for (let i = -DATE_ABSOLUTE_OFFSET; i <= DATE_ABSOLUTE_OFFSET; i++) {
+      const currDate = new Date(date);
+      currDate.setDate(currDate.getDate() + i);
+      if (currDate.getTime() < new Date().getTime()) continue;
+      dates.push(currDate);
     }
     return dates;
   };
@@ -176,6 +185,10 @@ const SearchResultsPage = () => {
     router.push("/choose");
   }
 
+  useEffect(() => {
+    selectedDateRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center'});
+  }, [])
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <AnimatePresence>
@@ -200,9 +213,9 @@ const SearchResultsPage = () => {
               <FaArrowLeft className="text-gray-600 text-xl" />
             </button>
             <div className="flex items-center gap-1 text-gray-600 font-semibold">
-              <span className="text-base">{tickets[0].from}</span>
+              <span className="text-base">{from}</span>
               <span className="text-base">→</span>
-              <span className="text-base">{tickets[0].to}</span>
+              <span className="text-base">{to}</span>
               <span className="text-base">•</span>
               <span className="text-base">{formatDate(selectedDate)}</span>
             </div>
@@ -216,6 +229,7 @@ const SearchResultsPage = () => {
             <div className="inline-flex space-x-4 w-max">
               {getDates().map((date, index) => (
                 <motion.div
+                  ref={date.toDateString() === selectedDate.toDateString() ? selectedDateRef : undefined}
                   key={index}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleDateSelect(date)}
