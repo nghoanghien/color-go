@@ -1,14 +1,14 @@
 import { db } from '../firebase/store';
 import { collection, getDocs } from 'firebase/firestore';
 
-export const getRouteNames = async () => {
+export const getRouteNames = async (type: 'departure' | 'arrival' = 'departure' ) => {
     const routesCollection = collection(db, 'routes'); 
     const routesSnapshot = await getDocs(routesCollection);
     const routesData = routesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     // Group routes by departure location. 
     const groupedRoutes = routesData.reduce<Record<string, string[]>>((acc, route: any) => {
-        const location = route.departureLocation as string;
+        const location = (type === 'departure' ? route.departureLocation : route.arrivalLocation) as string;
         if (!acc[location]) {
             acc[location] = [];
         }

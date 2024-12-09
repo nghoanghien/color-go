@@ -375,6 +375,7 @@ const BookingPage = () => {
         </motion.div>
 
         <LocationModal
+          type='departure'
           isOpen={showFromModal}
           onClose={() => setShowFromModal(false)}
           locations={locations}
@@ -387,6 +388,7 @@ const BookingPage = () => {
         />
 
         <LocationModal
+          type='arrival'
           isOpen={showToModal}
           onClose={() => setShowToModal(false)}
           locations={locations}

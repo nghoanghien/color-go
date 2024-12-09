@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { getRouteNames } from "../services/routes";
 import { useState, useEffect } from "react";
 
-const LocationModal = ({ isOpen, onClose, onSelect, title, position }) => {
+const LocationModal = ({ isOpen, onClose, onSelect, title, position, type }) => {
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const routeNames = await getRouteNames();
+      const routeNames = await getRouteNames(type);
       setLocations(Array.from(Object.keys(routeNames)));
     })();
   }, []);
