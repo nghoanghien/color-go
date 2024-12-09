@@ -94,7 +94,7 @@ const BookingPage = () => {
     setValidationErrors(errors);
 
     if (!errors.from && !errors.to) {
-      router.push('/search-tickets');
+      router.push(`/search-tickets?from=${fromLocation}&to=${toLocation}&date=${date.getTime()}`);
     }
   };
 
