@@ -43,7 +43,10 @@ const AccountPage = () => {
       id: 2,
       icon: FaHeadset,
       title: "Liên hệ hỗ trợ",
-      description: "Hỗ trợ 24/7"
+      description: "Hỗ trợ 24/7",
+      onClick: () => {
+        router.push("/contact-and-support");
+      }
     },
     {
       id: 3,
