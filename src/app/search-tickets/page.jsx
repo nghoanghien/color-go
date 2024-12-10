@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaBus, FaExclamationCircle, FaMapMarkerAlt, FaFilter, FaSort, FaHeart, FaMapMarker } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { getRouteList } from "@/services/routes";
 
 
 const SearchResultsPage = () => {
@@ -26,56 +27,14 @@ const SearchResultsPage = () => {
   const [favorites, setFavorites] = useState([]);
   const [notification, setNotification] = useState({ show: false, message: "" });
 
-  const [originalTickets] = useState([
-    {
-      id: 1,
-      departureTime: "08:00",
-      arrivalTime: "12:00",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      busCompany: "Hoàng Long",
-      price: "250000",
-      seatsAvailable: 15,
-      route: [
-        { time: "08:00", location: "Bến xe Mỹ Đình - Hà Nội" },
-        { time: "09:30", location: "Trạm dừng Hưng Yên" },
-        { time: "10:45", location: "Trạm dừng Hải Dương" },
-        { time: "12:00", location: "Bến xe Niệm Nghĩa - Hải Phòng" }
-      ]
-    },
-    {
-      id: 2,
-      departureTime: "09:30",
-      arrivalTime: "13:30",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      busCompany: "Phương Trang",
-      price: "280000",
-      seatsAvailable: 8,
-      route: [
-        { time: "09:30", location: "Bến xe Giáp Bát - Hà Nội" },
-        { time: "11:00", location: "Trạm dừng Hưng Yên" },
-        { time: "12:15", location: "Trạm dừng Hải Dương" },
-        { time: "13:30", location: "Bến xe Cầu Rào - Hải Phòng" }
-      ]
-    },
-    {
-      id: 3,
-      departureTime: "10:45",
-      arrivalTime: "14:45",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      busCompany: "Thành Bưởi",
-      price: "260000",
-      seatsAvailable: 12,
-      route: [
-        { time: "10:45", location: "Bến xe Nước Ngầm - Hà Nội" },
-        { time: "12:15", location: "Trạm dừng Bắc Ninh" },
-        { time: "13:30", location: "Trạm dừng Hải Dương" },
-        { time: "14:45", location: "Bến xe Lạc Long - Hải Phòng" }
-      ]
-    }
-  ]);
+  useEffect(() => {
+    (async () => {
+      const data = await getRouteList(from, to, selectedDate);
+      setTickets(data);
+    })()
+  }, []);
+
+  const [originalTickets] = useState([]);
 
   const [tickets, setTickets] = useState(originalTickets);
 
@@ -110,9 +69,12 @@ const SearchResultsPage = () => {
   };
 
   const formatDate = (date) => {
+    if (isNaN(date.getTime())) {
+        return ""; // Return an empty string if the date is invalid
+    }
     return new Intl.DateTimeFormat("vi-VN", {
-      day: "numeric",
-      month: "numeric"
+        day: "numeric",
+        month: "numeric"
     }).format(date);
   };
 
@@ -156,7 +118,7 @@ const SearchResultsPage = () => {
   const handleFilter = () => {
     const filteredTickets = originalTickets.filter(ticket => {
       const withinPriceRange = parseFloat(ticket.price) >= priceRange.min && parseFloat(ticket.price) <= priceRange.max;
-      const matchesCompany = selectedCompanies.length === 0 || selectedCompanies.includes(ticket.busCompany);
+      const matchesCompany = selectedCompanies.length === 0 || selectedCompanies.includes(ticket.name);
       return withinPriceRange && matchesCompany;
     });
     setTickets(filteredTickets);
@@ -176,8 +138,8 @@ const SearchResultsPage = () => {
     exit: { opacity: 0, y: 50 }
   };
 
-  const handleRouteClick = (route) => {
-    setSelectedRoute(route);
+  const handleRouteClick = (stops) => {
+    setSelectedRoute(stops);
     setShowRouteModal(true);
   };
 
@@ -185,12 +147,22 @@ const SearchResultsPage = () => {
     router.push("/choose");
   }
 
+  const timeString = (timestamp) => {
+    if (timestamp && timestamp.seconds) {
+      const date = new Date(timestamp.seconds * 1000);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+  //return ""; // Trả về chuỗi rỗng nếu không có timestamp hợp lệ
+  }
+
   useEffect(() => {
-    selectedDateRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center'});
+    selectedDateRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
   }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
+
+      {/* Phần thông báo cho nút trái tim yêu thích */}
       <AnimatePresence>
         {notification.show && (
           <motion.div
@@ -205,7 +177,8 @@ const SearchResultsPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
+      
+      {/* Thanh trên cùng có nút mũi tên quay lại */}
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-2 bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
@@ -223,9 +196,10 @@ const SearchResultsPage = () => {
         </div>
       </div>
 
+      {/* Thanh cuộn chọn ngày */}
       <div className="bg-transparent mt-2 p-4">
         <div className="max-w-2xl mx-auto">
-          <div className="overflow-x-auto" style={{scrollbarWidth: "none", msOverflowStyle: "none", WebkitScrollbar: {display: "none"}}}>
+          <div className="overflow-x-auto" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitScrollbar: { display: "none" } }}>
             <div className="inline-flex space-x-4 w-max">
               {getDates().map((date, index) => (
                 <motion.div
@@ -255,38 +229,38 @@ const SearchResultsPage = () => {
             <div className="flex justify-between items-center mb-4 relative z-10">
               <div className="flex flex-col w-full">
                 <div className="flex items-center space-x-2 mb-2">
-                  <div className="text-xl font-bold text-gray-800">{ticket.departureTime}</div>
+                  <div className="text-xl font-bold text-gray-800">{timeString(ticket.departureTime)}</div>
                   <div className="flex-1 flex items-center justify-center relative">
                     <div className="border-t-2 border-dashed border-gray-300 w-full absolute"></div>
                     <div className="transform rotate-0 bg-white px-2 z-10">
                       <FaBus className="text-gray-500 text-xl" />
                     </div>
                   </div>
-                  <div className="text-xl font-bold text-gray-800">{ticket.arrivalTime}</div>
+                  <div className="text-xl font-bold text-gray-800">{timeString(ticket.arrivalTime)}</div>
                 </div>
                 <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>{ticket.from}</span>
-                  <span>{ticket.to}</span>
+                  <span>{ticket.departureLocation}</span>
+                  <span>{ticket.arrivalLocation}</span>
                 </div>
               </div>
               <div className="text-right ml-4">
                 <p className="text-2xl font-bold text-blue-500">{ticket.price}đ</p>
                 <div className="flex justify-between items-center mt-0">
-                <button
-                  onClick={handleClickTicket}
-                  className="flex items-center justify-center px-1 py-1 mr-0.5 font-bold bg-gradient-to-r from-green-300/50 to-blue-300/50 text-white text-sm rounded-lg transition-all duration-300"
-                >
-                  Chọn ghế
-                </button>
-                <button
-                  onClick={() => toggleFavorite(ticket.id)}
-                  className="flex items-center justify-center p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-all duration-300"
-                >
-                  <FaHeart
-                    className={`text-sm transition-colors duration-300 ${favorites.includes(ticket.id) ? "text-[#ff4757]" : "text-[#ccc]"}`}
-                  />
-                </button>
-              </div>
+                  <button
+                    onClick={handleClickTicket}
+                    className="flex items-center justify-center px-1 py-1 mr-0.5 font-bold bg-gradient-to-r from-green-300/50 to-blue-300/50 text-white text-sm rounded-lg transition-all duration-300"
+                  >
+                    Chọn ghế
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(ticket.id)}
+                    className="flex items-center justify-center p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-all duration-300"
+                  >
+                    <FaHeart
+                      className={`text-sm transition-colors duration-300 ${favorites.includes(ticket.id) ? "text-[#ff4757]" : "text-[#ccc]"}`}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -294,26 +268,27 @@ const SearchResultsPage = () => {
 
             <div className="flex justify-between items-start relative z-10">
               <div>
-                <h2 className="text-lg font-semibold text-gray-800">{ticket.busCompany}</h2>
-                <button 
-                  onClick={() => handleRouteClick(ticket.route)}
+                <h2 className="text-lg font-semibold text-gray-800">{ticket.name}</h2>
+                <button
+                  onClick={() => handleRouteClick(ticket.stops)}
                   className="flex items-center mt-2 text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"
                 >
                   <FaMapMarkerAlt className="mr-2 text-blue-500" />
                   <span className="font-semibold">Lộ trình</span>
                 </button>
               </div>
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end w-fit flex-shrink-0">
                 <div className="mt-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg border border-blue-100">
-                  {ticket.seatsAvailable} chỗ trống
+                  {ticket.totalSeat} chỗ trống
                 </div>
               </div>
             </div>
-            
+
           </motion.div>
         ))}
       </div>
 
+      {/* khung "Sắp xếp và Bộ lọc" */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[60%] max-w-sm z-50">
         <div className="bg-gradient-to-r from-green-300/50 to-blue-300/50 backdrop-blur-sm rounded-full shadow-lg p-2 flex justify-around items-center space-x-2">
           <button
@@ -334,6 +309,7 @@ const SearchResultsPage = () => {
         </div>
       </div>
 
+      {/* Modal cho button "Lộ trình" */}  
       <AnimatePresence>
         {showRouteModal && selectedRoute && (
           <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-50">
@@ -345,21 +321,21 @@ const SearchResultsPage = () => {
               className="bg-white/85 backdrop-blur-md rounded-3xl p-6 m-4 w-full max-w-md shadow-xl border border-white/20"
             >
               <h3 className="text-2xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600">Lộ trình chi tiết</h3>
-              
+
               <div className="space-y-6 relative">
                 {selectedRoute.map((stop, index) => (
                   <div key={index} className="flex items-start space-x-4">
-                    <div className="w-24 text-sm text-gray-600 pt-1">{stop.time}</div>
-                    
+                    <div className="w-16 text-sm text-gray-600 pt-1">{timeString(stop.datetime)}</div>
+
                     <div className="relative flex flex-col items-center -my-2">
                       <FaMapMarker className="text-blue-500 z-10 bg-white" />
                       {index < selectedRoute.length - 1 && (
                         <div className="h-full border-l-2 border-dashed border-gray-300 absolute top-4"></div>
                       )}
                     </div>
-                    
+
                     <div className="flex-1">
-                      <p className="text-gray-800 font-medium">{stop.location}</p>
+                      <p className="text-gray-800 font-medium">{stop.stop}</p>
                     </div>
                   </div>
                 ))}
@@ -383,6 +359,7 @@ const SearchResultsPage = () => {
         )}
       </AnimatePresence>
 
+      {/* Modal cho button "Sắp xếp" */}
       <AnimatePresence>
         {showSortModal && (
           <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-50">
@@ -428,6 +405,7 @@ const SearchResultsPage = () => {
         )}
       </AnimatePresence>
 
+      {/* Modal cho button "Bộ lọc" */}
       <AnimatePresence>
         {showFilterModal && (
           <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-50">

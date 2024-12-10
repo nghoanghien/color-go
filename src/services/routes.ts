@@ -1,8 +1,8 @@
 import { db } from '../firebase/store';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
-export const getRouteNames = async (type: 'departure' | 'arrival' = 'departure' ) => {
-    const routesCollection = collection(db, 'routes'); 
+export const getRouteNames = async (type: 'departure' | 'arrival' = 'departure') => {
+    const routesCollection = collection(db, 'routes');
     const routesSnapshot = await getDocs(routesCollection);
     const routesData = routesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
@@ -18,3 +18,13 @@ export const getRouteNames = async (type: 'departure' | 'arrival' = 'departure' 
 
     return groupedRoutes;
 };
+
+export const getRouteList = async (from: string, to: string, date: Date) => {
+    const q = query(collection(db, "routes"), where("departureLocation", "==", from), where("arrivalLocation", "==", to));
+
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs.map(d => d.data());
+
+    return data;
+
+}
