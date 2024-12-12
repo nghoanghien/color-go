@@ -9,6 +9,9 @@ import ModalAddItem from './components/ModalAddItem';
 import ModalEditItem from './components/ModalEditItem';
 import ModalDetails from './components/ModalDetails';
 import FilterModal from './components/FilterModal';
+import jsPDF from 'jspdf';
+//import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
 
 const WarehouseManager = () => {
   const [activeTab, setActiveTab] = useState("warehouse");
@@ -238,7 +241,13 @@ const WarehouseManager = () => {
   };
 
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredInventory);
+    const filteredData = filteredInventory.map(item => ({
+        'Tên Sản Phẩm': item.productName,
+        'Danh Mục': item.category,
+        'Số Lượng Tồn Kho': item.quantity,
+        'Giá Tiền': item.price
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory");
     XLSX.writeFile(workbook, "inventory.xlsx");
@@ -268,6 +277,44 @@ const WarehouseManager = () => {
 
     setFilteredInventory(filtered);
     setFilterModalOpen(false);
+  };
+
+  const exportToWord = () => {
+    const blob = new Blob([`
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Inventory Report</title>
+                <style>
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                </style>
+            </head>
+            <body>
+                <h1>Báo cáo sản phẩm</h1>
+                <table>
+                    <tr>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Danh Mục</th>
+                        <th>Số Lượng Tồn Kho</th>
+                        <th>Giá Tiền</th>
+                    </tr>
+                    ${filteredInventory.map(item => `
+                        <tr>
+                            <td>${item.productName}</td>
+                            <td>${item.category}</td>
+                            <td>${item.quantity}</td>
+                            <td>${item.price}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            </body>
+        </html>
+    `], {
+        type: 'application/msword'
+    });
+    saveAs(blob, 'inventory.doc');
   };
 
   useEffect(() => {
@@ -353,6 +400,9 @@ const WarehouseManager = () => {
             </button>
             <button onClick={exportToExcel} className="ml-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
               Xuất Excel
+            </button>
+            <button onClick={exportToWord} className="ml-4 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+              Xuất Word
             </button>
             <table className="w-full mt-4">
               <thead className="bg-gray-50">
