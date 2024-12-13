@@ -46,7 +46,10 @@ const AccountPage = () => {
       id: 1,
       icon: FaLock,
       title: "Bảo mật",
-      description: "Cài đặt mật khẩu và bảo mật tài khoản"
+      description: "Cài đặt mật khẩu và bảo mật tài khoản",
+      onClick: () => {
+        router.push("/forgot-password");
+      }
     },
     {
       id: 2,
