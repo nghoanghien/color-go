@@ -85,10 +85,10 @@ const AccountPage = () => {
             </div>
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-gray-800 mb-1">{user.displayName}</h1>
-              {/* <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
                 <MembershipIcon className={`${membershipInfo.color} text-sm`} />
-                <span className="text-gray-600">Hội viên {membershipInfo.text}</span>
-              </div> */}
+                <span className="text-gray-600" onClick={() => {router.push("/membership")}}>Hội viên {membershipInfo.text}</span>
+              </div>
               {/* <p className="text-gray-500 text-sm mt-1">{user.uid}</p> */}
             </div>
           </div>
