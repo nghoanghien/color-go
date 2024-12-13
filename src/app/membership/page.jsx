@@ -95,21 +95,6 @@ const LoyaltyPage = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 space-y-8 mt-8">
-        <div className="flex space-x-4 bg-white rounded-lg p-2 shadow-md">
-          <button
-            onClick={() => setActiveTab("points")}
-            className={`flex-1 py-2 rounded-lg transition-all duration-300 ${activeTab === "points" ? "bg-gradient-to-r from-blue-500 to-green-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}
-          >
-            Điểm của tôi
-          </button>
-          <button
-            onClick={() => setActiveTab("history")}
-            className={`flex-1 py-2 rounded-lg transition-all duration-300 ${activeTab === "history" ? "bg-gradient-to-r from-blue-500 to-green-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}
-          >
-            Lịch sử
-          </button>
-        </div>
-
         <AnimatePresence mode="wait">
           {activeTab === "points" ? (
             <motion.div
@@ -193,6 +178,21 @@ const LoyaltyPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md p-2 flex justify-around z-20">
+        <button
+          onClick={() => setActiveTab("points")}
+          className={`flex-1 py-2 rounded-lg transition-all duration-300 text-center ${activeTab === "points" ? "bg-gradient-to-r from-blue-500 to-green-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}
+        >
+          Điểm của tôi
+        </button>
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`flex-1 py-2 rounded-lg transition-all duration-300 text-center ${activeTab === "history" ? "bg-gradient-to-r from-blue-500 to-green-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}
+        >
+          Lịch sử
+        </button>
       </div>
     </div>
   );
