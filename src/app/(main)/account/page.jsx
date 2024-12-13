@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { FaChevronRight, FaCircle, FaCrown, FaGem, FaHeadset, FaLock, FaMedal, FaSignOutAlt } from "react-icons/fa";
+import { FaChevronRight, FaCircle, FaCrown, FaGem, FaHeadset, FaLock, FaMedal, FaSignOutAlt, FaWallet } from "react-icons/fa";
 import '../styles/typography.css';
 import { signOut, useUserInfomation } from "@/firebase/authenticate";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,15 @@ const AccountPage = () => {
   const MembershipIcon = membershipInfo.icon;
 
   const menuItems = [
+    {
+      id: 0,
+      icon: FaWallet,
+      title: "Ví ColorPay",
+      description: "Thanh toán dễ dàng và tiện lợi",
+      onClick: () => {
+        router.push("/wallet");
+      }
+    },
     {
       id: 1,
       icon: FaLock,
