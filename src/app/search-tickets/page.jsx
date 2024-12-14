@@ -106,7 +106,7 @@ const SearchResultsPage = () => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("date", date.getTime().toString());
 
-    router.push(`/search-tickets?${params.toString()}`);
+    router.replace(`/search-tickets?${params.toString()}`);
 
     setSelectedDate(date);
   };
