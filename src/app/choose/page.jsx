@@ -20,22 +20,28 @@ const SeatSelectionPage = () => {
   const [departureTime, setDepartureTime] = useState('');
   const [coachCompany, setCoachCompany] = useState({});
 
-  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [selectedSeats, setSelectedSeats] = useState(searchParams.get('seats')?.split(',') ?? []);
   const [disabledSeats, setDisabledSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCarDetailModalOpen, setIsCarDetailModalOpen] = useState(false);
-  const basePrice = 250000;
+  const [basePrice, setBasePrice] = useState(250000);
 
   const handleSeatSelection = (seatNumber) => {
     if (selectedSeats.includes(seatNumber)) {
       setSelectedSeats(selectedSeats.filter((seat) => seat !== seatNumber));
-      setTotalPrice(totalPrice - basePrice);
     } else {
       setSelectedSeats([...selectedSeats, seatNumber]);
-      setTotalPrice(totalPrice + basePrice);
     }
   };
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("seats", selectedSeats.join(","));
+    router.replace(`/choose?${newSearchParams.toString()}`);
+
+    setTotalPrice(selectedSeats.length * basePrice);
+  }, [selectedSeats, basePrice]);
 
   const modalVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -52,7 +58,7 @@ const SeatSelectionPage = () => {
 
       setName(route.name);
       setDepartureTime(route.departureTime);
-
+      setBasePrice(route.price);
       setDisabledSeats(route.bookedSeats);
 
       setCoachCompany(coachCompany);
@@ -244,7 +250,9 @@ const SeatSelectionPage = () => {
   };
 
   const handleLocationSelectionClick = () => {
-    router.push("/location");
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set("seats", selectedSeats.join(","));
+    router.push(`/location?${newSearchParams.toString()}`);
   }
 
   return isLoading ? <LoadingOverlay isLoading /> : (
