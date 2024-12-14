@@ -14,6 +14,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getRouteList } from "@/services/routes";
+import { useUserInfomation } from "@/firebase/authenticate";
+import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user";
+import LoadingOverlay from "@/components/loading-overlay";
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
@@ -38,6 +41,8 @@ const SearchResultsPage = () => {
     message: "",
   });
 
+  const [isLoading, user] = useUserInfomation();
+
   useEffect(() => {
     (async () => {
       const data = await getRouteList(from, to, selectedDate);
@@ -53,9 +58,11 @@ const SearchResultsPage = () => {
     const isFavorite = favorites.includes(ticketId);
     if (isFavorite) {
       setFavorites(favorites.filter((id) => id !== ticketId));
+      removeTicketFromFavorites(user.uid, ticketId);
       showNotification("Đã xóa khỏi danh sách yêu thích");
     } else {
       setFavorites([...favorites, ticketId]);
+      addTicketToFavorites(user.uid, ticketId);
       showNotification("Đã thêm vào danh sách yêu thích");
     }
   };
