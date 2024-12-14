@@ -20,7 +20,6 @@ const PickupDropoffPage = () => {
   const [selectedDropoff, setSelectedDropoff] = useState(null);
 
   const pickupPoints = route.stops ?? [];
-  console.log({pickupPoints})
 
   const dropoffPoints = route.stops ?? [];
 

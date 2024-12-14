@@ -49,7 +49,6 @@ export const getRouteList = async (from: string, to: string, date: Date) => {
   const querySnapshot = await getDocs(q);
   const data = querySnapshot.docs.map((d) => ({ ...d.data(), id: d.id }));
 
-  console.log({data})
   return data;
 };
 
