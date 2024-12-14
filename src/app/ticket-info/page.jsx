@@ -26,25 +26,33 @@ const TripInfoPage = () => {
   const [modalError, setModalError] = useState("");
   const [showContactError, setShowContactError] = useState(false);
 
-  const [contactInfo, setContactInfo] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
+  const [contactInfo, setContactInfo] = useState(
+    searchParams.has("contact")
+      ? JSON.parse(searchParams.get("contact"))
+      : {
+          name: "",
+          phone: "",
+          email: "",
+        }
+  );
 
-  const [isLoading, route] = useRouteDetail(searchParams.get('id'));
+  const [isLoading, route] = useRouteDetail(searchParams.get("id"));
 
   const [tripData, setTripData] = useState(null);
 
   useEffect(() => {
     (async () => {
       if (!route.stops) return;
-      const pickup = route.stops.find(d => d.stop == searchParams.get('pickup'))
-      const dropoff = route.stops.find(d => d.stop == searchParams.get('dropoff'))
+      const pickup = route.stops.find(
+        (d) => d.stop == searchParams.get("pickup")
+      );
+      const dropoff = route.stops.find(
+        (d) => d.stop == searchParams.get("dropoff")
+      );
 
       const tripData = {
         busCompany: route.name,
-        selectedSeats: searchParams.get('seats').split(','),
+        selectedSeats: searchParams.get("seats").split(","),
         departure: {
           time: timeString(pickup.datetime),
           date: formatDate(route.departureTime),
@@ -57,16 +65,25 @@ const TripInfoPage = () => {
           location: route.arrivalLocation,
           dropoffPoint: dropoff.address,
         },
-        duration: `${Math.floor((dropoff.datetime - pickup.datetime) / 60 / 60)} giờ`,
+        duration: `${Math.floor(
+          (dropoff.datetime - pickup.datetime) / 60 / 60
+        )} giờ`,
         price: new Intl.NumberFormat("vi-VN", {
           style: "currency",
           currency: "VND",
-        }).format(route.price * searchParams.get('seats').split(',').length),
+        }).format(route.price * searchParams.get("seats").split(",").length),
       };
 
       setTripData(tripData);
     })();
   }, [route]);
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("contact", JSON.stringify(contactInfo));
+
+    router.replace(`/ticket-info?${newSearchParams.toString()}`);
+  }, [contactInfo]);
 
   const modalVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -118,7 +135,7 @@ const TripInfoPage = () => {
     }
 
     // Handle payment logic
-    router.push("/payment");
+    router.push(`/payment?${searchParams.toString()}`);
   };
 
   return !tripData ? (
@@ -259,7 +276,7 @@ const TripInfoPage = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100 p-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="text-2xl font-bold text-blue-600">
-            {tripData.price}đ
+            {tripData.price}
           </div>
           <button
             onClick={handlePayment}
