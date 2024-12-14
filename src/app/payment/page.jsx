@@ -1,8 +1,10 @@
 "use client";
 
 import LoadingOverlay from "@/components/loading-overlay";
+import { useUserInfomation } from "@/firebase/authenticate";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { getPromotionList } from "@/services/promotion";
+import { createTicket } from "@/services/ticket";
 import { formatDate } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -58,6 +60,7 @@ const PaymentConfirmationPage = () => {
   ];
 
   const [isLoading, route] = useRouteDetail(searchParams.get("id"));
+  const [_, user] = useUserInfomation();
 
   const [invoiceDetails, setInvoiceDetails] = useState(null);
   const [grandTotal, setGrandTotal] = useState(0);
@@ -107,14 +110,23 @@ const PaymentConfirmationPage = () => {
     exit: { opacity: 0, y: 50 },
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
+    const ticketData = {
+      routeId: searchParams.get('id'),
+      seats: searchParams.get('seats').split(','),
+      contact: searchParams.get('contact'),
+      pickup: searchParams.get('pickup'),
+      dropoff: searchParams.get('dropoff'),
+      status: 1,
+    }
+    await createTicket(user.uid, ticketData);
+
     if (!selectedPayment) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-    // Handle payment logic
-    router.push("/payment-success");
+    router.push("/payment-success?" + searchParams.toString());
   };
 
   const handleApplyCoupon = () => {
