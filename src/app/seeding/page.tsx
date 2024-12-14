@@ -67,12 +67,7 @@ function generateCoachCompanyData(name: any) {
 }
 
 const provinces = [
-  "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ",
-  "Nghệ An", "Quảng Ninh", "Lâm Đồng", "Thừa Thiên Huế", "Bình Dương",
-  "Đồng Nai", "Khánh Hòa", "Quảng Nam", "Bình Định", "Thanh Hóa",
-  "Hải Dương", "Nam Định", "Thái Bình", "Hòa Bình", "Bắc Giang",
-  "Bắc Ninh", "Phú Thọ", "Vĩnh Phúc", "Thái Nguyên", "Bình Phước",
-  "Bình Thuận", "Sóc Trăng", "Kiên Giang", "An Giang", "Bạc Liêu"
+  "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "Bình Định"
 ];
 
 const busCompanies = [
@@ -125,10 +120,11 @@ export default function Page() {
   const [dateNum, setDateNum] = useState(5);
 
   function handleGenerateRoutes() {
+    const ONE_DAY_TIME = 24 * 60 * 60 * 1000;
     Array(dateNum * 2).fill('').forEach((_, dateOffset) => {  
       provinces.forEach(province => {
-        const departureTimeNum = new Date().getTime() + (dateOffset) * Math.random() * 24 * 60 * 60 * 1000;
-        const arrivalTimeNum = departureTimeNum + 24 * 60 * 60 * 1000; 
+        const departureTimeNum = new Date().getTime() + (dateOffset) * ONE_DAY_TIME + Math.random() * ONE_DAY_TIME;
+        const arrivalTimeNum = departureTimeNum + Math.random() * ONE_DAY_TIME; 
         const routeData = {
           departureLocation: province,
           departureTime: new Date(departureTimeNum),
@@ -136,7 +132,7 @@ export default function Page() {
           arrivalTime: new Date(arrivalTimeNum),
           name: excludeAndPickRandom(busCompanies, ''),
           stops: pickRandomBusStopsWithTime(busStops, new Date(departureTimeNum), Math.ceil(Math.random() * 5 + 5)),
-          price: Math.ceil(Math.random()) * 50_000 + 150_000,
+          price: Math.ceil(Math.random() * 50_000) + 150_000,
           totalSeat: 36,
           bookedSeats: []
         };
@@ -155,11 +151,6 @@ export default function Page() {
       addDoc(coachCollection, companyData);     
     }
   }
-
-  function hi() {
-    console.log("hi");
-  }
-
 
   return (
     <div>

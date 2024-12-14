@@ -171,8 +171,8 @@ const SearchResultsPage = () => {
     setShowRouteModal(true);
   };
 
-  const handleClickTicket = () => {
-    router.push("/choose");
+  const handleClickTicket = (id) => {
+    router.push(`/choose?id=${id}`);
   };
 
   const timeString = (timestamp) => {
@@ -313,7 +313,7 @@ const SearchResultsPage = () => {
                 </p>
                 <div className="flex justify-between items-center mt-0">
                   <button
-                    onClick={handleClickTicket}
+                    onClick={() => handleClickTicket(ticket.id)}
                     className="flex items-center justify-center px-1 py-1 mr-0.5 font-bold bg-gradient-to-r from-green-300/50 to-blue-300/50 text-white text-sm rounded-lg transition-all duration-300"
                   >
                     Chọn ghế

@@ -1,15 +1,24 @@
 'use client';
 
-import React, { useState } from "react";
-import { FaArrowLeft, FaExclamationCircle, FaBus } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
-import { motion, AnimatePresence } from "framer-motion";
+import { getCoachDetail } from "@/services/coachCompany";
+import { getDetailRoute } from "@/services/routes";
+import { formatDate, timeString } from "@/utils/time-manipulation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
-import { useRouter } from 'next/navigation';
+import { FaArrowLeft, FaBus, FaExclamationCircle } from "react-icons/fa";
 
 const SeatSelectionPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [name, setName] = useState('');
+  const [departureTime, setDepartureTime] = useState('');
+  const [coachCompany, setCoachCompany] = useState({});
+
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [disabledSeats, setDisabledSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCarDetailModalOpen, setIsCarDetailModalOpen] = useState(false);
@@ -30,6 +39,22 @@ const SeatSelectionPage = () => {
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: 50 },
   };
+
+  useEffect(() => {
+    const id = searchParams.get('id');
+    (async () => {
+      const route = await getDetailRoute(id);
+
+      const coachCompany = await getCoachDetail(route.name);
+
+      setName(route.name);
+      setDepartureTime(route.departureTime);
+
+      setDisabledSeats(route.bookedSeats);
+
+      setCoachCompany(coachCompany);
+    })()
+  }, [])
 
   // Modal xuất hiện khi nhấn vào "Chi tiết xe"
   const CarDetailModal = () => (
@@ -52,28 +77,28 @@ const SeatSelectionPage = () => {
                 <div className="flex items-start space-x-4">
                   <div className="w-24 text-sm text-gray-600 pt-1">Nhà xe</div>
                   <div className="flex-1">
-                    <p className="text-gray-800 font-medium">Hoàng Long</p>
+                    <p className="text-gray-800 font-medium">{name}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
                   <div className="w-24 text-sm text-gray-600 pt-1">Loại xe</div>
                   <div className="flex-1">
-                    <p className="text-gray-800 font-medium">Giường nằm 2 tầng</p>
+                    <p className="text-gray-800 font-medium">{coachCompany.type}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
                   <div className="w-24 text-sm text-gray-600 pt-1">Số ghế</div>
                   <div className="flex-1">
-                    <p className="text-gray-800 font-medium">36 ghế</p>
+                    <p className="text-gray-800 font-medium">{coachCompany.numberSeat} ghế</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
                   <div className="w-24 text-sm text-gray-600 pt-1">Tiện ích</div>
                   <div className="flex-1">
-                    <p className="text-gray-800 font-medium">WiFi, Nước uống, Chăn mền</p>
+                    <p className="text-gray-800 font-medium">{coachCompany.facility}</p>
                   </div>
                 </div>
               </div>
@@ -188,7 +213,7 @@ const SeatSelectionPage = () => {
       for (let col = 0; col < 3; col++) {
         const seatNum = `${prefix}${String(startNum + col + (row * 3)).padStart(2, "0")}`;
         const isSelected = selectedSeats.includes(seatNum);
-        const isDisabled = ["A01", "A05", "B02", "B06", "A13", "A16", "B14", "B17"].includes(seatNum);
+        const isDisabled = disabledSeats.includes(seatNum);
 
         rowSeats.push(
           <button
@@ -227,12 +252,12 @@ const SeatSelectionPage = () => {
             </button>
             <div className="flex flex-col">
               <div className="flex items-center gap-2 text-gray-600 font-semibold">
-                <span className="text-base">Hoàng Long</span>
+                <span className="text-base">{coachCompany.name}</span>
                 <span className="text-sm">•</span>
-                <span className="text-base">08:00</span>
+                <span className="text-base">{departureTime ? timeString(departureTime) : ''}</span>
               </div>
               <div className="text-sm text-gray-500">
-                Thứ Hai, 15/01/2024
+                {departureTime ? formatDate(departureTime) : ''}
               </div>
             </div>
           </div>
