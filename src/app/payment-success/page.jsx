@@ -1,33 +1,65 @@
 'use client';
 
 import React from "react";
+import { useState, useEffect } from "react";
 import { FaArrowLeft, FaBus } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useRouteDetail } from "@/hooks/useRouteDetail";
+import LoadingOverlay from "@/components/loading-overlay";
+import { formatDate, timeString } from "@/utils/time-manipulation";
 
 
 const PaymentSuccessPage = () => {
   const router = useRouter();
-  const tripData = {
-    busCompany: "Hoàng Long",
-    selectedSeats: ["A01", "A02", "A03"],
-    departure: {
-      time: "08:00",
-      date: "15/03/2024",
-      location: "Bến xe Mỹ Đình - Hà Nội",
-      pickupPoint: "Điểm đón: Cổng bến xe Mỹ Đình"
-    },
-    arrival: {
-      time: "12:00",
-      date: "15/03/2024",
-      location: "Bến xe Niệm Nghĩa - Hải Phòng",
-      dropoffPoint: "Điểm trả: Cổng bến xe Niệm Nghĩa"
-    },
-    duration: "4 giờ",
-    price: "750.000"
-  };
+  const searchParams = useSearchParams();
 
-  return (
+  const [isLoading, route] = useRouteDetail(searchParams.get("id"));
+
+  const [tripData, setTripData] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      if (!route.stops) return;
+      const pickup = route.stops.find(
+        (d) => d.stop == searchParams.get("pickup")
+      );
+      const dropoff = route.stops.find(
+        (d) => d.stop == searchParams.get("dropoff")
+      );
+
+      const tripData = {
+        busCompany: route.name,
+        selectedSeats: searchParams.get("seats").split(","),
+        departure: {
+          time: timeString(pickup.datetime),
+          date: formatDate(route.departureTime),
+          location: route.departureLocation,
+          pickupPoint: pickup.address,
+        },
+        arrival: {
+          time: timeString(dropoff.datetime),
+          date: formatDate(route.arrivalTime),
+          location: route.arrivalLocation,
+          dropoffPoint: dropoff.address,
+        },
+        duration: `${Math.floor(
+          (dropoff.datetime - pickup.datetime) / 60 / 60
+        )} giờ`,
+        price: new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(route.price * searchParams.get("seats").split(",").length),
+      };
+
+      setTripData(tripData);
+    })();
+  }, [route]);
+
+
+  return !tripData ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
