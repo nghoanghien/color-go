@@ -1,5 +1,6 @@
 'use client';
 
+import LoadingOverlay from "@/components/loading-overlay";
 import { getCoachDetail } from "@/services/coachCompany";
 import { getDetailRoute } from "@/services/routes";
 import { formatDate, timeString } from "@/utils/time-manipulation";
@@ -12,6 +13,8 @@ import { FaArrowLeft, FaBus, FaExclamationCircle } from "react-icons/fa";
 const SeatSelectionPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const [name, setName] = useState('');
   const [departureTime, setDepartureTime] = useState('');
@@ -53,6 +56,8 @@ const SeatSelectionPage = () => {
       setDisabledSeats(route.bookedSeats);
 
       setCoachCompany(coachCompany);
+
+      setIsLoading(false);
     })()
   }, [])
 
@@ -242,7 +247,7 @@ const SeatSelectionPage = () => {
     router.push("/location");
   }
 
-  return (
+  return isLoading ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">

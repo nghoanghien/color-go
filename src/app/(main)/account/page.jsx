@@ -6,6 +6,7 @@ import { FaChevronRight, FaCircle, FaCrown, FaGem, FaHeadset, FaLock, FaMedal, F
 import '../styles/typography.css';
 import { signOut, useUserInfomation } from "@/firebase/authenticate";
 import { useRouter } from "next/navigation";
+import LoadingOverlay from '@/components/loading-overlay'
 
 const AccountPage = () => {
   const router = useRouter();
@@ -72,9 +73,7 @@ const AccountPage = () => {
     }
   ];
 
-  console.log({user})
-
-  return isLoading ? '' : (
+  return isLoading ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-50 via-blue-50 to-yellow-50 p-6 pb-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
