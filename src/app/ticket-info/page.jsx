@@ -1,13 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState } from "react";
-import { FaArrowLeft, FaPen, FaBus, FaMapMarker, FaExclamationCircle, FaTimes } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import {
+  FaArrowLeft,
+  FaPen,
+  FaBus,
+  FaMapMarker,
+  FaExclamationCircle,
+  FaTimes,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/navigation';
-
+import { useRouter, useSearchParams } from "next/navigation";
+import { useRouteDetail } from "@/hooks/useRouteDetail";
+import LoadingOverlay from "@/components/loading-overlay";
+import { formatDate, timeString } from "@/utils/time-manipulation";
 
 const TripInfoPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [showContactModal, setShowContactModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -18,38 +29,55 @@ const TripInfoPage = () => {
   const [contactInfo, setContactInfo] = useState({
     name: "",
     phone: "",
-    email: ""
+    email: "",
   });
 
-  const tripData = {
-    busCompany: "Hoàng Long",
-    selectedSeats: ["A01", "A02", "A03"],
-    departure: {
-      time: "08:00",
-      date: "15/03/2024",
-      location: "Bến xe Mỹ Đình - Hà Nội",
-      pickupPoint: "Điểm đón: Cổng bến xe Mỹ Đình"
-    },
-    arrival: {
-      time: "12:00",
-      date: "15/03/2024",
-      location: "Bến xe Niệm Nghĩa - Hải Phòng",
-      dropoffPoint: "Điểm trả: Cổng bến xe Niệm Nghĩa"
-    },
-    duration: "4 giờ",
-    price: "750.000"
-  };
+  const [isLoading, route] = useRouteDetail(searchParams.get('id'));
+
+  const [tripData, setTripData] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      if (!route.stops) return;
+      const pickup = route.stops.find(d => d.stop == searchParams.get('pickup'))
+      const dropoff = route.stops.find(d => d.stop == searchParams.get('dropoff'))
+
+      const tripData = {
+        busCompany: route.name,
+        selectedSeats: searchParams.get('seats').split(','),
+        departure: {
+          time: timeString(pickup.datetime),
+          date: formatDate(route.departureTime),
+          location: route.departureLocation,
+          pickupPoint: pickup.address,
+        },
+        arrival: {
+          time: timeString(dropoff.datetime),
+          date: formatDate(route.arrivalTime),
+          location: route.arrivalLocation,
+          dropoffPoint: dropoff.address,
+        },
+        duration: `${Math.floor((dropoff.datetime - pickup.datetime) / 60 / 60)} giờ`,
+        price: new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(route.price * searchParams.get('seats').split(',').length),
+      };
+
+      setTripData(tripData);
+    })();
+  }, [route]);
 
   const modalVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 50 }
+    exit: { opacity: 0, y: 50 },
   };
 
   const handleContactInfoChange = (field, value) => {
-    setContactInfo(prev => ({
+    setContactInfo((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -82,7 +110,7 @@ const TripInfoPage = () => {
       setTimeout(() => setShowContactError(false), 3000);
       return;
     }
-    
+
     if (!acceptTerms) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
@@ -93,28 +121,46 @@ const TripInfoPage = () => {
     router.push("/payment");
   };
 
-  return (
+  return !tripData ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}} />
+            <FaArrowLeft
+              className="text-gray-600 text-xl"
+              onClick={() => {
+                router.back();
+              }}
+            />
           </button>
-          <h1 className="text-xl font-bold text-gray-800">Thông tin chuyến đi</h1>
+          <h1 className="text-xl font-bold text-gray-800">
+            Thông tin chuyến đi
+          </h1>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 space-y-6 mt-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">Chuyến đi của bạn</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">
+          Chuyến đi của bạn
+        </h2>
         <div className="bg-white rounded-2xl p-6 shadow-lg">
           <div className="space-y-4">
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-blue-600">{tripData.busCompany}</h3>
+              <h3 className="text-2xl font-bold text-blue-600">
+                {tripData.busCompany}
+              </h3>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Số ghế:</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Số ghế:
+                </span>
                 <div className="flex flex-wrap gap-1.5">
                   {tripData.selectedSeats.map((seat) => (
-                    <span key={seat} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md border border-blue-100 text-sm">
+                    <span
+                      key={seat}
+                      className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md border border-blue-100 text-sm"
+                    >
                       {seat}
                     </span>
                   ))}
@@ -124,14 +170,24 @@ const TripInfoPage = () => {
 
             <div className="flex items-center gap-4 mt-6">
               <div className="flex-1 space-y-1">
-                <div className="text-2xl font-bold text-gray-800">{tripData.departure.time}</div>
-                <div className="text-sm text-gray-600">{tripData.departure.date}</div>
-                <div className="text-base font-medium text-gray-800">{tripData.departure.location}</div>
-                <div className="text-sm text-gray-600">{tripData.departure.pickupPoint}</div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {tripData.departure.time}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {tripData.departure.date}
+                </div>
+                <div className="text-base font-medium text-gray-800">
+                  {tripData.departure.location}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {tripData.departure.pickupPoint}
+                </div>
               </div>
 
               <div className="flex flex-col items-center">
-                <div className="text-base font-semibold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">{tripData.duration}</div>
+                <div className="text-base font-semibold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
+                  {tripData.duration}
+                </div>
                 <div className="w-16 border-t-2 border-dashed border-gray-300 my-2 relative">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <FaBus className="text-gray-500" />
@@ -140,17 +196,27 @@ const TripInfoPage = () => {
               </div>
 
               <div className="flex-1 space-y-1 text-right">
-                <div className="text-2xl font-bold text-gray-800">{tripData.arrival.time}</div>
-                <div className="text-sm text-gray-600">{tripData.arrival.date}</div>
-                <div className="text-base font-medium text-gray-800">{tripData.arrival.location}</div>
-                <div className="text-sm text-gray-600">{tripData.arrival.dropoffPoint}</div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {tripData.arrival.time}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {tripData.arrival.date}
+                </div>
+                <div className="text-base font-medium text-gray-800">
+                  {tripData.arrival.location}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {tripData.arrival.dropoffPoint}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800">Thông tin liên hệ</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            Thông tin liên hệ
+          </h2>
           <div
             onClick={() => setShowContactModal(true)}
             className="bg-white p-4 rounded-xl flex items-center justify-between cursor-pointer hover:shadow-md transition-all duration-300"
@@ -159,7 +225,9 @@ const TripInfoPage = () => {
               type="text"
               placeholder="Nhập thông tin liên hệ"
               className="w-full bg-transparent outline-none"
-              value={`${contactInfo.name ? contactInfo.name + " - " : ""}${contactInfo.phone ? contactInfo.phone + " - " : ""}${contactInfo.email}`}
+              value={`${contactInfo.name ? contactInfo.name + " - " : ""}${
+                contactInfo.phone ? contactInfo.phone + " - " : ""
+              }${contactInfo.email}`}
               readOnly
             />
             <FaPen className="text-gray-400" />
@@ -182,14 +250,17 @@ const TripInfoPage = () => {
             >
               điều kiện, điều khoản
             </button>{" "}
-            của nhà xe, cũng như chính sách hoàn/hủy vé trong phần thông tin phía trên
+            của nhà xe, cũng như chính sách hoàn/hủy vé trong phần thông tin
+            phía trên
           </label>
         </div>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100 p-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="text-2xl font-bold text-blue-600">{tripData.price}đ</div>
+          <div className="text-2xl font-bold text-blue-600">
+            {tripData.price}đ
+          </div>
           <button
             onClick={handlePayment}
             className="px-8 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-xl hover:opacity-90 transition-opacity duration-300 font-medium"
@@ -248,31 +319,43 @@ const TripInfoPage = () => {
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Họ tên
+                  </label>
                   <input
                     type="text"
                     value={contactInfo.name}
-                    onChange={(e) => handleContactInfoChange("name", e.target.value)}
+                    onChange={(e) =>
+                      handleContactInfoChange("name", e.target.value)
+                    }
                     placeholder="Nhập họ tên của bạn"
                     className="w-full p-4 border border-gray-200 rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Số điện thoại
+                  </label>
                   <input
                     type="tel"
                     value={contactInfo.phone}
-                    onChange={(e) => handleContactInfoChange("phone", e.target.value)}
+                    onChange={(e) =>
+                      handleContactInfoChange("phone", e.target.value)
+                    }
                     placeholder="Nhập số điện thoại"
                     className="w-full p-4 border border-gray-200 rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={contactInfo.email}
-                    onChange={(e) => handleContactInfoChange("email", e.target.value)}
+                    onChange={(e) =>
+                      handleContactInfoChange("email", e.target.value)
+                    }
                     placeholder="Nhập địa chỉ email"
                     className="w-full p-4 border border-gray-200 rounded-xl"
                   />
