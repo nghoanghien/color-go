@@ -43,6 +43,29 @@ function pickRandomBusStopsWithTime(busStops_: {stop: string, address: string}[]
   return selectedStops;
 }
 
+function generateCoachCompanyData(name: any) {
+  const facilities = [
+    "Wifi, nước uống, chăn mềm",
+    "Wifi, nước uống",
+    "Nước uống, chăn mềm",
+    "Wifi, nước uống, ổ cắm sạc",
+  ];
+
+  const termConditions = [
+    "1. Chính sách hủy vé: Không hoàn tiền trong vòng 24 giờ trước giờ khởi hành.",
+    "2. Chính sách đặt vé: Vui lòng đặt vé trước ít nhất 2 giờ.",
+    "3. Quy định hành lý: Hành lý không quá 20kg, cấm mang vật phẩm nguy hiểm.",
+  ];
+
+  return {
+    name: name,
+    facility: facilities[Math.floor(Math.random() * facilities.length)],
+    numberSeat: 36,
+    termConditions: termConditions,
+    type: "Giường nằm 2 tầng",
+  };
+}
+
 const provinces = [
   "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ",
   "Nghệ An", "Quảng Ninh", "Lâm Đồng", "Thừa Thiên Huế", "Bình Dương",
@@ -102,7 +125,7 @@ export default function Page() {
   const [dateNum, setDateNum] = useState(5);
 
   function handleGenerateRoutes() {
-    Array(dateNum * 2).fill('').forEach((_, dateOffset) => {
+    Array(dateNum * 2).fill('').forEach((_, dateOffset) => {  
       provinces.forEach(province => {
         const departureTimeNum = new Date().getTime() + (dateOffset) * Math.random() * 24 * 60 * 60 * 1000;
         const arrivalTimeNum = departureTimeNum + 24 * 60 * 60 * 1000; 
@@ -123,10 +146,32 @@ export default function Page() {
     })
   }
 
+  function addCoachCompanies() {
+    console.log("hi");
+    const coachCollection = collection(db, "coachCompanies");
+  
+    for (const company of busCompanies) {
+      const companyData = generateCoachCompanyData(company);     
+      addDoc(coachCollection, companyData);     
+    }
+  }
 
-  return <div>
-    <label htmlFor="date-num">Date num: </label>
-    <input id="date-num" value={dateNum} onChange={e => setDateNum(parseInt(e.target.value))} type="number" />
-    <button onClick={handleGenerateRoutes}>Generate routes</button>
-  </div>
+  function hi() {
+    console.log("hi");
+  }
+
+
+  return (
+    <div>
+      <div>
+        <label htmlFor="date-num">Date num: </label>
+        <input id="date-num" value={dateNum} onChange={e => setDateNum(parseInt(e.target.value))} type="number" />
+        <button onClick={handleGenerateRoutes}>Generate routes</button>
+      </div>
+    <button onClick={addCoachCompanies}>Add data for coachCompanies</button>
+    <button onClick={() => console.log("Button clicked!")}>Test Button</button>
+
+    </div>
+  );
 }
+

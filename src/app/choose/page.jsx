@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BsClockFill } from "react-icons/bs";
 import { useRouter } from 'next/navigation';
 
-
 const SeatSelectionPage = () => {
   const router = useRouter();
   const [selectedSeats, setSelectedSeats] = useState([]);
@@ -32,6 +31,7 @@ const SeatSelectionPage = () => {
     exit: { opacity: 0, y: 50 },
   };
 
+  // Modal xuất hiện khi nhấn vào "Chi tiết xe"
   const CarDetailModal = () => (
     <AnimatePresence mode="wait">
       {isCarDetailModalOpen && (
@@ -98,6 +98,7 @@ const SeatSelectionPage = () => {
     </AnimatePresence>
   );
 
+  // Modal xuất hiện khi nhấn vào chính sách hủy vé
   const CancellationModal = () => (
     <AnimatePresence mode="wait">
       {isModalOpen && (
@@ -249,6 +250,7 @@ const SeatSelectionPage = () => {
           </button>
         </div>
 
+        {/* Phần chú thích loại ghế*/}
         <div className="flex justify-center items-center space-x-6 bg-white/50 backdrop-blur-sm rounded-xl p-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-white border border-gray-200" />
@@ -265,6 +267,7 @@ const SeatSelectionPage = () => {
         </div>
       </div>
 
+      {/* Phần lưới chọn ghế*/}
       <div className="max-w-2xl mx-auto mt-8 px-4">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg">
           <div className="flex flex-row justify-center items-start space-x-8">
@@ -287,6 +290,7 @@ const SeatSelectionPage = () => {
         </div>
       </div>
 
+      {/* Nút "Chính sách hủy vé" */}
       <div className="max-w-2xl mx-auto mt-4 px-4 text-center mb-24">
         <button
           onClick={() => setIsModalOpen(true)}
