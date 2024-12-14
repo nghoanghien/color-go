@@ -3,30 +3,26 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaMapMarkerAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import LoadingOverlay from "@/components/loading-overlay";
+import { useRouteDetail } from "@/hooks/useRouteDetail";
+import { timeString } from "@/utils/time-manipulation";
 
 
 const PickupDropoffPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [isLoading, route] = useRouteDetail(searchParams.get('id'));
+
   const [activeTab, setActiveTab] = useState("pickup");
   const [selectedPickup, setSelectedPickup] = useState(null);
   const [selectedDropoff, setSelectedDropoff] = useState(null);
 
-  const pickupPoints = [
-    { id: 1, name: "Bến xe Mỹ Đình - Hà Nội", address: "20 Phạm Hùng, Nam Từ Liêm", time: "08:00" },
-    { id: 2, name: "Bến xe Giáp Bát - Hà Nội", address: "718 Giải Phóng, Hoàng Mai", time: "08:30" },
-    { id: 3, name: "Bến xe Nước Ngầm - Hà Nội", address: "Ngọc Hồi, Thanh Trì", time: "09:00" },
-    { id: 4, name: "Bến xe Yên Nghĩa - Hà Nội", address: "Yên Nghĩa, Hà Đông", time: "09:30" },
-    { id: 5, name: "Bến xe Gia Lâm - Hà Nội", address: "Gia Lâm, Long Biên", time: "10:00" }
-  ];
+  const pickupPoints = route.stops ?? [];
+  console.log({pickupPoints})
 
-  const dropoffPoints = [
-    { id: 1, name: "Bến xe Niệm Nghĩa - Hải Phòng", address: "71 Lạch Tray, Ngô Quyền", time: "12:00" },
-    { id: 2, name: "Bến xe Cầu Rào - Hải Phòng", address: "395 Tôn Đức Thắng, Lê Chân", time: "12:30" },
-    { id: 3, name: "Bến xe Lạc Long - Hải Phòng", address: "Lạch Tray, Ngô Quyền", time: "13:00" },
-    { id: 4, name: "Bến xe Thượng Lý - Hải Phòng", address: "Thượng Lý, Hồng Bàng", time: "13:30" },
-    { id: 5, name: "Bến xe Đồ Sơn - Hải Phòng", address: "Đồ Sơn, Hải Phòng", time: "14:00" }
-  ];
+  const dropoffPoints = route.stops ?? [];
 
   const tabVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -38,7 +34,23 @@ const PickupDropoffPage = () => {
     if (selectedPickup && activeTab === "pickup") {
       setTimeout(() => setActiveTab("dropoff"), 200);
     }
+
+    if (!selectedPickup) return;
+    
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("pickup", selectedPickup.stop);
+
+    router.replace(`/location?${newSearchParams.toString()}`);
   }, [selectedPickup]);
+
+  useEffect(() => {
+    if (!selectedDropoff) return;
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("dropoff", selectedDropoff.stop);
+
+    router.replace(`/location?${newSearchParams.toString()}`);
+  }, [selectedDropoff]);
 
   const handlePointSelection = (point, type) => {
     if (type === "pickup") {
@@ -49,10 +61,10 @@ const PickupDropoffPage = () => {
   };
 
   const handleContinueClick = () => {
-    router.push("/ticket-info");
+    router.push(`/ticket-info?${searchParams.toString()}`);
   }
 
-  return (
+  return isLoading ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70">
       <div className="p-4">
         <div className="max-w-2xl mx-auto">
@@ -95,7 +107,7 @@ const PickupDropoffPage = () => {
                     key={point.id}
                     onClick={() => handlePointSelection(point, activeTab)}
                     className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
-                      (activeTab === "pickup" ? selectedPickup?.id : selectedDropoff?.id) === point.id
+                      (activeTab === "pickup" ? selectedPickup?.address : selectedDropoff?.address) === point.address
                         ? "bg-green-100/50 border-2 border-green-500"
                         : "bg-white/70 hover:bg-white border border-gray-100"
                     }`}
@@ -103,10 +115,10 @@ const PickupDropoffPage = () => {
                     <div className="flex items-start space-x-3">
                       <FaMapMarkerAlt className="text-blue-500 text-xl mt-1" />
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-800">{point.name}</h3>
+                        <h3 className="font-medium text-gray-800">{point.stop}</h3>
                         <p className="text-sm text-gray-500 mt-1">{point.address}</p>
                         <div className="mt-2 inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-sm">
-                          {point.time}
+                          {timeString(point.datetime)}
                         </div>
                       </div>
                     </div>
@@ -123,13 +135,13 @@ const PickupDropoffPage = () => {
           <div className="flex items-center justify-between">
             <span className="text-gray-600">Điểm đón:</span>
             <span className="font-medium text-gray-800">
-              {selectedPickup ? selectedPickup.name : "Chưa chọn"}
+              {selectedPickup ? selectedPickup.stop : "Chưa chọn"}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-600">Điểm trả:</span>
             <span className="font-medium text-gray-800">
-              {selectedDropoff ? selectedDropoff.name : "Chưa chọn"}
+              {selectedDropoff ? selectedDropoff.stop : "Chưa chọn"}
             </span>
           </div>
           <button

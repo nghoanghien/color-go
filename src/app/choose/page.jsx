@@ -250,7 +250,7 @@ const SeatSelectionPage = () => {
   };
 
   const handleLocationSelectionClick = () => {
-    const newSearchParams = new URLSearchParams();
+    const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("seats", selectedSeats.join(","));
     router.push(`/location?${newSearchParams.toString()}`);
   }
