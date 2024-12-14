@@ -111,6 +111,12 @@ const PaymentConfirmationPage = () => {
   };
 
   const handlePayment = async () => {
+    if (!selectedPayment) {
+      setShowError(true);
+      setTimeout(() => setShowError(false), 3000);
+      return;
+    }
+
     const ticketData = {
       routeId: searchParams.get('id'),
       seats: searchParams.get('seats').split(','),
@@ -121,11 +127,6 @@ const PaymentConfirmationPage = () => {
     }
     await createTicket(user.uid, ticketData);
 
-    if (!selectedPayment) {
-      setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
-      return;
-    }
     router.push("/payment-success?" + searchParams.toString());
   };
 
