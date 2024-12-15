@@ -1,6 +1,5 @@
 import { db } from "@/firebase/store";
-import { ref } from "firebase/database";
-import { arrayUnion, doc, getDoc, updateDoc,  } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, updateDoc, } from "firebase/firestore";
 
 export async function createTicket(userId: string, ticket: any) {
   const routeId = ticket.routeId;
@@ -47,7 +46,7 @@ export async function getTicketsFromIds(ticketIds: any) {
   }
 }
 
-async function updateTicketStatus(userId: any, ticketId: any) {
+export async function updateTicketStatus(userId: string, ticketId: string) {
   try {
     // Lấy tài liệu người dùng từ Firestore
     const userRef = doc(db, 'users', userId);
@@ -87,3 +86,25 @@ async function updateTicketStatus(userId: any, ticketId: any) {
   }
 }
 
+export async function getTickets(userId: any) {
+  try {
+      if (!userId) {
+          throw new Error("User ID is required");
+      }
+
+      // Tham chiếu đến document trong collection `users`
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+          // Lấy dữ liệu từ document
+          const userData = userDoc.data();
+          return userData.tickets || [];
+      } else {
+          throw new Error("User not found");
+      }
+  } catch (error: any) {
+      console.error("Error fetching favorite tickets:", error.message);
+      throw error;
+  }
+}

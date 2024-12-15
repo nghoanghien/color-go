@@ -84,8 +84,8 @@ const FavoriteTicketsPage = () => {
     exit: { opacity: 0, y: 50 }
   };
 
-  const handleClickTicket = () => {
-    router.push("/choose");
+  const handleClickTicket = (id) => {
+    router.push(`/choose?id=${id}`);
   }
 
   return isLoading ? (
@@ -184,7 +184,7 @@ const FavoriteTicketsPage = () => {
 
               <div className="flex justify-between items-start relative z-10">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-800">{ticket.busCompany}</h2>
+                  <h2 className="text-lg font-semibold text-gray-800">{ticket.name}</h2>
                   <button 
                     onClick={() => handleRouteClick(ticket.stops)}
                     className="flex items-center mt-2 text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"

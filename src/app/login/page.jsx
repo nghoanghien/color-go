@@ -188,11 +188,7 @@ const LoginPage = () => {
                 </div>
               </div>
               <div className="mt-6 md:mt-8">
-                <img
-                  src="images.unsplash.com/photo-1544620347-c4fd4a3d5957"
-                  alt="ColorGo"
-                  className="rounded-lg shadow-lg"
-                />
+                 */}
               </div>
             </div>
           </div>
@@ -208,7 +204,7 @@ const LoginPage = () => {
 
             <div className="w-full max-w-md transition-all duration-700">
               <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
-                <div>
+                {/* <div>
                   <input
                     type="email"
                     placeholder="Email"
@@ -218,8 +214,8 @@ const LoginPage = () => {
                       setFormData({ ...formData, email: e.target.value })
                     }
                   />
-                </div>
-                <div className="relative">
+                </div> */}
+                {/* <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="Mật khẩu"
@@ -250,7 +246,7 @@ const LoginPage = () => {
                   <span className="text-gray-600 text-sm md:text-base">Bạn chưa có tài khoản? </span>
                   <a href="#" className="text-blue-600 hover:text-blue-800 text-sm md:text-base font-semibold">Đăng Ký ngay</a>
                 </div>
-                <div className="text-center text-gray-500 text-sm md:text-base">Hoặc đăng nhập với</div>
+                <div className="text-center text-gray-500 text-sm md:text-base">Hoặc đăng nhập với</div> */}
                 <div className="flex flex-col space-y-3 md:space-y-4">
                   <button
                     type="button"

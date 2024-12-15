@@ -102,7 +102,7 @@ const LoyaltyPage = () => {
                   <div className="flex justify-center items-center space-x-4 text-white">
                     <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm hover:bg-white/30 transition-all duration-300">
                       <p className="text-sm">Điểm hiện tại</p>
-                      <p className="text-2xl font-bold">{membership.point}</p>
+                      <p className="text-2xl font-bold">{membership.point?.toFixed(0)}</p>
                       <div className="mt-3">
                         <div className="w-full bg-white/30 h-2 rounded-full overflow-hidden">
                           <div 
@@ -110,7 +110,7 @@ const LoyaltyPage = () => {
                             style={{ width: `${(membership.point / (membership.point + pointsToNextLevel(membership.point))) * 100}%` }}
                           />
                         </div>
-                        <p className="text-sm mt-1">Còn {pointsToNextLevel(membership.point)} điểm để lên hạng tiếp theo</p>
+                        <p className="text-sm mt-1">Còn {pointsToNextLevel(membership.point?.toFixed(0))} điểm để lên hạng tiếp theo</p>
                       </div>
                     </div>
                   </div>
@@ -159,7 +159,7 @@ const LoyaltyPage = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <FaStar className="text-yellow-400" />
-                      <span className="font-bold">{item.point}</span>
+                      <span className="font-bold">{item.point?.toFixed()}</span>
                     </div>
                   </div>
                 ))}

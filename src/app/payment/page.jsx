@@ -28,6 +28,7 @@ const PaymentConfirmationPage = () => {
   const [selectedPayment, setSelectedPayment] = useState("");
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [showInvalidBalance, setShowInvalidBalance] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
 
   const [availableCoupons, setAvailableCoupons] = useState([]);
@@ -45,21 +46,21 @@ const PaymentConfirmationPage = () => {
       name: "Ví ColorPay",
       logo: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d",
     },
-    {
-      id: "momo",
-      name: "Ví MoMo",
-      logo: "https://images.unsplash.com/photo-1614680376408-81e91ffe3db7",
-    },
-    {
-      id: "zalopay",
-      name: "ZaloPay",
-      logo: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41",
-    },
-    {
-      id: "vnpay",
-      name: "VNPay",
-      logo: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff",
-    },
+    // {
+    //   id: "momo",
+    //   name: "Ví MoMo",
+    //   logo: "https://images.unsplash.com/photo-1614680376408-81e91ffe3db7",
+    // },
+    // {
+    //   id: "zalopay",
+    //   name: "ZaloPay",
+    //   logo: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41",
+    // },
+    // {
+    //   id: "vnpay",
+    //   name: "VNPay",
+    //   logo: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff",
+    // },
   ];
 
   const [isLoading, route] = useRouteDetail(searchParams.get("id"));
@@ -128,14 +129,20 @@ const PaymentConfirmationPage = () => {
       contact: searchParams.get('contact'),
       pickup: searchParams.get('pickup'),
       dropoff: searchParams.get('dropoff'),
-      price: invoiceDetails.total,
+      price: invoiceDetails.originalPrice,
       status: 1,
     }
-    await createTicket(user.uid, ticketData);
-    await changeMembershipById(user.uid, "Đặt vé xe khách", Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000));
-    await adjustUserBalance(user.uid, "Thanh toán vé", -parseInt(invoiceDetails.originalPrice, 10));
-
-    router.push("/payment-success?" + searchParams.toString());
+    try {
+      await adjustUserBalance(user.uid, "Thanh toán vé", -parseInt(invoiceDetails.originalPrice, 10));
+      await createTicket(user.uid, ticketData);
+      await changeMembershipById(user.uid, "Đặt vé xe khách", Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000));
+      router.push("/payment-success?" + searchParams.toString());
+    } catch (error) {
+      if (error.message === 'Invalid balance') {
+        setShowInvalidBalance(true);
+        setTimeout(() => setShowInvalidBalance(false), 3000);
+      }
+    }
   };
 
   const handleApplyCoupon = () => {
@@ -260,6 +267,20 @@ const PaymentConfirmationPage = () => {
       </div>
 
       <AnimatePresence>
+        {showInvalidBalance && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
+          >
+            <div className="bg-red-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+              <FaExclamationCircle />
+              <span>Số dư tài khoản không đủ để thanh toán</span>
+            </div>
+          </motion.div>
+        )}
+
         {showError && (
           <motion.div
             initial={{ opacity: 0, y: -50 }}

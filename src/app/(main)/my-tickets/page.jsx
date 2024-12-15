@@ -1,91 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState } from "react";
-import { FaArrowLeft, FaArrowRight, FaExclamationCircle, FaMapMarker, FaTicketAlt, FaTimes, FaMoneyBillWave, FaBus, FaHeart, FaUser, FaTag } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/navigation';
+import LoadingOverlay from "@/components/loading-overlay";
+import { useUserInfomation } from "@/firebase/authenticate";
+import { changeMembershipById } from "@/services/membership";
+import { getDetailRoute } from "@/services/routes";
+import { getTickets, updateTicketStatus } from "@/services/ticket";
+import { adjustUserBalance } from "@/services/wallet";
+import { formatDate, timeString } from "@/utils/time-manipulation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  FaArrowRight,
+  FaExclamationCircle,
+  FaMoneyBillWave,
+  FaTicketAlt,
+  FaTimes,
+} from "react-icons/fa";
 
 const TicketHistoryPage = () => {
-  const initialTickets = [
-    {
-      id: 1,
-      ticketCode: "VE001",
-      status: "success",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      seatNumber: "A12",
-      departureTime: "08:00",
-      departureDay: "Thứ Hai",
-      departureDate: "20/11/2023",
-      passengerInfo: {
-        name: "Nguyễn Văn A",
-        phone: "0123456789",
-        email: "nguyenvana@email.com"
-      },
-      tripInfo: {
-        route: "Hà Nội - Hải Phòng",
-        ticketQuantity: 1,
-        pickupPoint: "Bến xe Mỹ Đình",
-        dropoffPoint: "Bến xe Niệm Nghĩa"
-      },
-      payment: {
-        price: "250.000đ",
-        method: "Thanh toán qua Momo"
-      }
-    },
-    {
-      id: 2,
-      ticketCode: "VE002",
-      status: "cancelled",
-      from: "Hà Nội",
-      to: "Nam Định",
-      seatNumber: "B15",
-      departureTime: "09:30",
-      departureDay: "Thứ Ba",
-      departureDate: "21/11/2023",
-      passengerInfo: {
-        name: "Trần Thị B",
-        phone: "0987654321",
-        email: "tranthib@email.com"
-      },
-      tripInfo: {
-        route: "Hà Nội - Nam Định",
-        ticketQuantity: 1,
-        pickupPoint: "Bến xe Giáp Bát",
-        dropoffPoint: "Bến xe Nam Định"
-      },
-      payment: {
-        price: "200.000đ",
-        method: "Chuyển khoản ngân hàng"
-      }
-    },
-    {
-      id: 3,
-      ticketCode: "VE003",
-      status: "pending",
-      from: "Hà Nội",
-      to: "Hải Dương",
-      seatNumber: "C08",
-      departureTime: "10:45",
-      departureDay: "Thứ Tư",
-      departureDate: "22/11/2023",
-      passengerInfo: {
-        name: "Lê Văn C",
-        phone: "0369874521",
-        email: "levanc@email.com"
-      },
-      tripInfo: {
-        route: "Hà Nội - Hải Dương",
-        ticketQuantity: 1,
-        pickupPoint: "Bến xe Yên Nghĩa",
-        dropoffPoint: "Bến xe Hải Dương"
-      },
-      payment: {
-        price: "180.000đ",
-        method: "Chưa thanh toán"
-      }
-    }
-  ];
+  const [isLoading, user] = useUserInfomation();
+
+  const [tickets, setTickets] = useState();
 
   const [activeTab, setActiveTab] = useState("history");
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -93,14 +29,63 @@ const TicketHistoryPage = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
-  const [ticketsData, setTicketsData] = useState(initialTickets);
+  const [ticketsData, setTicketsData] = useState();
   const [showNotification, setShowNotification] = useState(false);
   const [navActiveTab, setNavActiveTab] = useState("ticket");
   const router = useRouter();
 
-  const handleCancelTicket = (ticketId, e) => {
+  useEffect(() => {
+    (async () => {
+      loadTickets();
+    })();
+  }, [user]);
+
+  async function loadTickets() {
+    if (!user) return;
+
+    let data = await getTickets(user.uid);
+
+    setTicketsData(
+      await Promise.all(
+        data.map(async (d) => {
+          const route = await getDetailRoute(d.routeId);
+          return {
+            ...d,
+            id: d.id,
+            ticketCode: d.id,
+            status: d.status ? "success" : "cancelled",
+            from: route.departureLocation,
+            to: route.arrivalLocation,
+            seatNumber: d.seats.join(", "),
+            originalDepartureTime: route.departureTime,
+            departureTime: timeString(route.departureTime),
+            departureDay: formatDate(route.departureTime),
+            passengerInfo: JSON.parse(d.contact),
+            tripInfo: {
+              route: `${route.departureLocation} - ${route.arrivalLocation}`,
+              ticketQuantity: d.seats.length,
+              pickupPoint: d.pickup,
+              dropoffPoint: d.dropoff,
+            },
+            payment: {
+              price:
+                typeof d.price === "number"
+                  ? new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(d.price)
+                  : d.price,
+              method: "ColorPay",
+            },
+          };
+        })
+      )
+    );
+  }
+
+  const handleCancelTicket = async (ticket, e) => {
     e.stopPropagation();
-    setSelectedTicket(ticketsData.find(t => t.id === ticketId));
+    setSelectedTicket(ticketsData.find((t) => t.id === ticket.id));
     setShowCancelModal(true);
   };
 
@@ -109,18 +94,28 @@ const TicketHistoryPage = () => {
     console.log(`Initiating payment for ticket ${ticketId}`);
   };
 
-  const confirmCancellation = () => {
+  const confirmCancellation = async () => {
     if (!termsAccepted) {
       setError("Vui lòng đồng ý với điều kiện và điều khoản!");
       return;
     }
 
-    setTicketsData(prev => 
-      prev.map(ticket => 
-        ticket.id === selectedTicket.id 
+    setTicketsData((prev) =>
+      prev.map((ticket) =>
+        ticket.id === selectedTicket.id
           ? { ...ticket, status: "cancelled" }
           : ticket
       )
+    );
+
+    const ticket = selectedTicket;
+
+    await updateTicketStatus(user.uid.toString(), ticket.id.toString());
+    await adjustUserBalance(user.uid, "Hủy vé", parseInt(ticket.price));
+    await changeMembershipById(
+      user.uid,
+      "Hủy vé",
+      -parseInt(ticket.price) / 1_000
     );
 
     setShowCancelModal(false);
@@ -172,7 +167,7 @@ const TicketHistoryPage = () => {
   const modalVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 50 }
+    exit: { opacity: 0, y: 50 },
   };
 
   const handleTicketClick = (ticket) => {
@@ -182,9 +177,11 @@ const TicketHistoryPage = () => {
 
   const getUpcomingTickets = () => {
     const currentDate = new Date();
-    return ticketsData.filter(ticket => {
-      const ticketDate = new Date(ticket.departureDate.split("/").reverse().join("-"));
-      const diffTime = Math.abs(ticketDate - currentDate);
+    return ticketsData.filter((ticket) => {
+      const diffTime = Math.abs(
+        new Date(ticket.originalDepartureTime.seconds * 1000).getTime() -
+          currentDate
+      );
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return ticket.status === "success" && diffDays <= 7;
     });
@@ -197,85 +194,111 @@ const TicketHistoryPage = () => {
     </div>
   );
 
-  return (
+  return !ticketsData ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-center bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm mb-6">
-            <span className="text-gray-600 font-semibold text-lg">Vé của tôi</span>
+            <span className="text-gray-600 font-semibold text-lg">
+              Vé của tôi
+            </span>
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-2 flex space-x-2 mb-6">
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 py-3 rounded-lg font-medium transition-all duration-300 ${activeTab === "history" ? "bg-gradient-to-r from-green-500 to-blue-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}
+              className={`flex-1 py-3 rounded-lg font-medium transition-all duration-300 ${
+                activeTab === "history"
+                  ? "bg-gradient-to-r from-green-500 to-blue-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
             >
               Lịch sử vé
             </button>
             <button
               onClick={() => setActiveTab("upcoming")}
-              className={`flex-1 py-3 rounded-lg font-medium transition-all duration-300 ${activeTab === "upcoming" ? "bg-gradient-to-r from-green-500 to-blue-500 text-white" : "text-gray-600 hover:bg-gray-100"}`}
+              className={`flex-1 py-3 rounded-lg font-medium transition-all duration-300 ${
+                activeTab === "upcoming"
+                  ? "bg-gradient-to-r from-green-500 to-blue-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
             >
               Sắp khởi hành
             </button>
           </div>
 
           <div className="space-y-4">
-            {(activeTab === "history" ? ticketsData : getUpcomingTickets()).length === 0 ? (
-              renderEmptyState()
-            ) : (
-              (activeTab === "history" ? ticketsData : getUpcomingTickets()).map((ticket) => (
-                <motion.div
-                  key={ticket.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleTicketClick(ticket)}
-                  className={`${getStatusBgColor(ticket.status)} rounded-2xl p-6 shadow-lg cursor-pointer transition-all duration-300 border border-white/20 relative`}
-                >
-                  {(ticket.status === "success" || ticket.status === "pending") && (
-                    <div className="absolute top-4 right-4 flex gap-2">
-                      {ticket.status === "pending" && (
+            {(activeTab === "history" ? ticketsData : getUpcomingTickets())
+              .length === 0
+              ? renderEmptyState()
+              : (activeTab === "history"
+                  ? ticketsData
+                  : getUpcomingTickets()
+                ).map((ticket) => (
+                  <motion.div
+                    key={ticket.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleTicketClick(ticket)}
+                    className={`${getStatusBgColor(
+                      ticket.status
+                    )} rounded-2xl p-6 shadow-lg cursor-pointer transition-all duration-300 border border-white/20 relative`}
+                  >
+                    {(ticket.status === "success" ||
+                      ticket.status === "pending") && (
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        {ticket.status === "pending" && (
+                          <button
+                            onClick={(e) => handlePayNow(ticket.id, e)}
+                            className="px-3 py-1 bg-green-50 text-green-600 border border-green-500 rounded-lg flex items-center gap-1 hover:bg-green-100 transition-colors"
+                          >
+                            <FaMoneyBillWave /> Thanh toán ngay
+                          </button>
+                        )}
                         <button
-                          onClick={(e) => handlePayNow(ticket.id, e)}
-                          className="px-3 py-1 bg-green-50 text-green-600 border border-green-500 rounded-lg flex items-center gap-1 hover:bg-green-100 transition-colors"
+                          onClick={(e) => handleCancelTicket(ticket, e)}
+                          className="px-3 py-1 bg-red-50 text-red-600 border border-red-500 rounded-lg flex items-center gap-1 hover:bg-red-100 transition-colors"
                         >
-                          <FaMoneyBillWave /> Thanh toán ngay
+                          <FaTimes /> Hủy vé
                         </button>
-                      )}
-                      <button
-                        onClick={(e) => handleCancelTicket(ticket.id, e)}
-                        className="px-3 py-1 bg-red-50 text-red-600 border border-red-500 rounded-lg flex items-center gap-1 hover:bg-red-100 transition-colors"
+                      </div>
+                    )}
+
+                    <div className="mb-4 pb-4 border-b border-dashed border-gray-200">
+                      <div className="text-lg font-bold text-gray-800 mb-2">
+                        Mã vé: {ticket.ticketCode}
+                      </div>
+                      <div
+                        className={`font-medium ${getStatusColor(
+                          ticket.status
+                        )}`}
                       >
-                        <FaTimes /> Hủy vé
-                      </button>
+                        {getStatusText(ticket.status)}
+                      </div>
                     </div>
-                  )}
 
-                  <div className="mb-4 pb-4 border-b border-dashed border-gray-200">
-                    <div className="text-lg font-bold text-gray-800 mb-2">
-                      Mã vé: {ticket.ticketCode}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <span className="font-medium text-gray-700">
+                          {ticket.from}
+                        </span>
+                        <FaArrowRight className="text-blue-500" />
+                        <span className="font-medium text-gray-700">
+                          {ticket.to}
+                        </span>
+                      </div>
+                      <div className="text-gray-600">
+                        Số ghế: {ticket.seatNumber}
+                      </div>
+                      <div className="text-gray-600">
+                        Giờ xuất bến: {ticket.departureTime},{" "}
+                        {ticket.departureDay}, {ticket.departureDate}
+                      </div>
                     </div>
-                    <div className={`font-medium ${getStatusColor(ticket.status)}`}>
-                      {getStatusText(ticket.status)}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <span className="font-medium text-gray-700">{ticket.from}</span>
-                      <FaArrowRight className="text-blue-500" />
-                      <span className="font-medium text-gray-700">{ticket.to}</span>
-                    </div>
-                    <div className="text-gray-600">
-                      Số ghế: {ticket.seatNumber}
-                    </div>
-                    <div className="text-gray-600">
-                      Giờ xuất bến: {ticket.departureTime}, {ticket.departureDay}, {ticket.departureDate}
-                    </div>
-                  </div>
-                </motion.div>
-              ))
-            )}
+                  </motion.div>
+                ))}
           </div>
         </div>
       </div>
@@ -294,42 +317,65 @@ const TicketHistoryPage = () => {
                 Chi tiết vé
               </h3>
 
-              <div className="space-y-6 max-h-[calc(100vh-320px)] overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
+              <div
+                className="space-y-6 max-h-[calc(100vh-320px)] overflow-y-auto pr-2"
+                style={{ scrollbarWidth: "thin" }}
+              >
                 <section className="space-y-4">
-                  <h4 className="font-semibold text-gray-700">Thông tin hành khách</h4>
+                  <h4 className="font-semibold text-gray-700">
+                    Thông tin hành khách
+                  </h4>
                   <div className="space-y-2 text-gray-600">
                     <p>Họ và tên: {selectedTicket.passengerInfo.name}</p>
                     <p>Số điện thoại: {selectedTicket.passengerInfo.phone}</p>
                     <p>Email: {selectedTicket.passengerInfo.email}</p>
                     <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-lg flex items-start">
                       <FaExclamationCircle className="mr-2 mt-1 flex-shrink-0" />
-                      Quý khách vui lòng kiểm tra thêm thư rác/Spam trong trường hợp chưa thấy email thông tin Vé ở Hộp thư đến
+                      Quý khách vui lòng kiểm tra thêm thư rác/Spam trong trường
+                      hợp chưa thấy email thông tin Vé ở Hộp thư đến
                     </p>
                   </div>
                 </section>
 
                 <section className="space-y-4">
-                  <h4 className="font-semibold text-gray-700">Thông tin lượt đi</h4>
+                  <h4 className="font-semibold text-gray-700">
+                    Thông tin lượt đi
+                  </h4>
                   <div className="space-y-2 text-gray-600">
-                    <p>Trạng thái: <span className={getStatusColor(selectedTicket.status)}>{getStatusText(selectedTicket.status)}</span></p>
+                    <p>
+                      Trạng thái:{" "}
+                      <span className={getStatusColor(selectedTicket.status)}>
+                        {getStatusText(selectedTicket.status)}
+                      </span>
+                    </p>
                     <p>Tuyến xe: {selectedTicket.tripInfo.route}</p>
-                    <p>Thời gian khởi hành: {selectedTicket.departureTime}, {selectedTicket.departureDay}, {selectedTicket.departureDate}</p>
+                    <p>
+                      Thời gian khởi hành: {selectedTicket.departureTime},{" "}
+                      {selectedTicket.departureDay},{" "}
+                      {selectedTicket.departureDate}
+                    </p>
                     <p>Số lượng vé: {selectedTicket.tripInfo.ticketQuantity}</p>
                     <p>Vị trí ghế: {selectedTicket.seatNumber}</p>
                     <p>Điểm lên xe: {selectedTicket.tripInfo.pickupPoint}</p>
                     <p>Điểm xuống: {selectedTicket.tripInfo.dropoffPoint}</p>
                     <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-lg flex items-start">
                       <FaExclamationCircle className="mr-2 mt-1 flex-shrink-0" />
-                      Quý khách vui lòng có mặt trước Bến xe/VP BX trước 15 phút so với giờ khởi hành để được kiểm tra thông tin trước khi lên xe
+                      Quý khách vui lòng có mặt trước Bến xe/VP BX trước 15 phút
+                      so với giờ khởi hành để được kiểm tra thông tin trước khi
+                      lên xe
                     </p>
                   </div>
                 </section>
 
                 <section className="space-y-4">
-                  <h4 className="font-semibold text-gray-700">Thông tin thanh toán</h4>
+                  <h4 className="font-semibold text-gray-700">
+                    Thông tin thanh toán
+                  </h4>
                   <div className="space-y-2 text-gray-600">
                     <p>Giá vé: {selectedTicket.payment.price}</p>
-                    <p>Phương thức thanh toán: {selectedTicket.payment.method}</p>
+                    <p>
+                      Phương thức thanh toán: {selectedTicket.payment.method}
+                    </p>
                   </div>
                 </section>
               </div>
@@ -355,8 +401,13 @@ const TicketHistoryPage = () => {
               exit="exit"
               className="bg-white/85 backdrop-blur-md rounded-3xl p-6 w-full max-w-md shadow-xl border border-white/20"
             >
-              <h3 className="text-2xl font-bold mb-6 text-red-600">Xác nhận hủy vé</h3>
-              <p className="text-gray-600 mb-6">Bạn có chắc chắn muốn hủy vé không? Việc hủy vé sẽ không thể hoàn tác.</p>
+              <h3 className="text-2xl font-bold mb-6 text-red-600">
+                Xác nhận hủy vé
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Bạn có chắc chắn muốn hủy vé không? Việc hủy vé sẽ không thể
+                hoàn tác.
+              </p>
 
               <div className="mb-6">
                 <label className="flex items-start gap-2 cursor-pointer">
@@ -367,12 +418,11 @@ const TicketHistoryPage = () => {
                     className="mt-1"
                   />
                   <span className="text-sm text-gray-600">
-                    Tôi đã hiểu và chấp nhận các chính sách hoàn/hủy vé của nhà xe.
+                    Tôi đã hiểu và chấp nhận các chính sách hoàn/hủy vé của nhà
+                    xe.
                   </span>
                 </label>
-                {error && (
-                  <p className="text-red-500 text-sm mt-2">{error}</p>
-                )}
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
 
               <div className="flex gap-4">
@@ -413,11 +463,11 @@ const TicketHistoryPage = () => {
 
       <style jsx global>{`
         * {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;     /* Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
         }
         *::-webkit-scrollbar {
-          display: none;            /* Chrome, Safari and Opera */
+          display: none; /* Chrome, Safari and Opera */
         }
       `}</style>
     </div>

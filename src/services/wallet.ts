@@ -56,6 +56,10 @@ export async function updateUserWallet(userId: any, historyItem: any) {
 
       const newBalance = (userData.wallet?.balance ?? 0) + historyItem.fluctuation;
 
+      if (newBalance < 0) {
+        throw new Error('Invalid balance');
+      }
+
       await updateDoc(userRef, {
         "wallet.balance": newBalance, // Cập nhật balance
         "wallet.history": [...(userData.wallet?.history || []), historyItem], // Thêm vào history

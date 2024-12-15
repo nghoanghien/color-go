@@ -32,11 +32,11 @@ export async function updateMembershipById(userId: any, historyItem: any) {
 
           const updatedMembership = {
               point: currentMembership.point + (historyItem.point || 0), // Cộng điểm
-              history: arrayUnion({
+              history: [...userDoc.data().membership.history, {
                   point: historyItem.point || 0,
                   title: historyItem.title || "",
                   datetime: historyItem.datetime || new Date().toISOString()
-              }) // Thêm history mới vào mảng
+              }] // Thêm history mới vào mảng
           };
 
           await updateDoc(userDocRef, {
@@ -53,7 +53,7 @@ export async function updateMembershipById(userId: any, historyItem: any) {
 }
 
 export function getLevelByPoint(point: any) {
-  if (point >= 0 && point <= 199) {
+  if (point <= 199) {
       return "bronze";
   } else if (point >= 200 && point <= 399) {
       return "silver";
@@ -67,7 +67,7 @@ export function getLevelByPoint(point: any) {
 }
 
 export function pointsToNextLevel(point: any) {
-  if (point >= 0 && point <= 199) {
+  if (point <= 199) {
       return 200 - point; // Điểm cần để lên "silver"
   } else if (point >= 200 && point <= 399) {
       return 400 - point; // Điểm cần để lên "gold"
@@ -86,6 +86,7 @@ export async function changeMembershipById(userId: any, title: string, point: an
       title: title, // Tiêu đề của sự kiện thay đổi
       datetime: new Date().toISOString() // Thời gian hiện tại
   };
+  console.log({historyItem, point})
 
   try {
       await updateMembershipById(userId, historyItem);
