@@ -1,12 +1,13 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaChevronRight, FaCircle, FaCrown, FaGem, FaHeadset, FaLock, FaMedal, FaSignOutAlt, FaWallet } from "react-icons/fa";
 import '../styles/typography.css';
 import { signOut, useUserInfomation } from "@/firebase/authenticate";
 import { useRouter } from "next/navigation";
 import LoadingOverlay from '@/components/loading-overlay'
+import { getLevelByPoint, getMembershipById } from "@/services/membership";
 
 const AccountPage = () => {
   const router = useRouter();
@@ -15,12 +16,22 @@ const AccountPage = () => {
 
   const [membershipLevel, setMembershipLevel] = useState("gold"); // bronze, silver, gold, diamond
 
+  useEffect(() => {
+    if (!user) return;
+
+    (async () => {
+      const data = await getMembershipById(user.uid);
+      const level = getLevelByPoint(data.point);
+      setMembershipLevel(level);
+    })();
+  }, [user]);
+
   const getMembershipInfo = (level) => {
     switch (level) {
       case "bronze":
-        return { icon: FaCircle, color: "text-amber-700", text: "Đồng" };
+        return { icon: FaCrown, color: "text-amber-700", text: "Đồng" };
       case "silver":
-        return { icon: FaMedal, color: "text-gray-400", text: "Bạc" };
+        return { icon: FaCrown, color: "text-gray-400", text: "Bạc" };
       case "gold":
         return { icon: FaCrown, color: "text-yellow-400", text: "Vàng" };
       case "diamond":

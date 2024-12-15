@@ -52,6 +52,21 @@ export async function updateMembershipById(userId: any, historyItem: any) {
   }
 }
 
+export function getLevelByPoint(point: any) {
+  if (point >= 0 && point <= 199) {
+      return "bronze";
+  } else if (point >= 200 && point <= 399) {
+      return "silver";
+  } else if (point >= 400 && point <= 599) {
+      return "gold";
+  } else if (point >= 600 && point <= 799) {
+      return "diamond";
+  } else {
+      return "Invalid point";
+  }
+}
+
+
 
 
 
