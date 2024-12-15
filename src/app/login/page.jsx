@@ -162,11 +162,10 @@ const LoginPage = () => {
             <div className="h-full flex flex-col justify-between">
               <div>
                 <div className="md:hidden mb-4 md:mb-6">
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-center poppins bg-white rounded-xl py-2 px-3 md:py-3 md:px-4 shadow-lg">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 animate-gradient-x">
-                      ColorGo
-                    </span>
-                  </h1>
+                <h1 className="text-3xl md:text-5xl font-extrabold text-center poppins bg-white rounded-xl py-2 px-3 md:py-3 md:px-4 shadow-lg flex justify-center items-center">
+                  <img src="/images/Logo-new.png" alt="logo" className="w-36 h-16" /> 
+                </h1>
+
                 </div>
                 <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 font-dancing-script bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300 animate-text">
                   Cuộc sống là những chuyến đi đầy sắc màu, đặt vé ngay hôm nay!
@@ -198,10 +197,8 @@ const LoginPage = () => {
 
           <div ref={loginRef} className="p-6 md:p-12 flex flex-col justify-center items-center space-y-6 md:space-y-8 bg-gradient-to-br from-emerald-50 to-indigo-50">
             <div className="transform hover:scale-105 transition-transform duration-300 hidden md:block">
-              <h1 className="text-3xl md:text-5xl font-extrabold text-center poppins">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 animate-gradient-x">
-                  ColorGo
-                </span>
+              <h1 className="text-2xl md:text-2xl font-extrabold text-center poppins">
+                  <img src="/images/Logo-new.png" alt="logo" className="w-36 h-auto" />   
               </h1>
             </div>
 
