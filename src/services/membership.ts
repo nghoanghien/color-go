@@ -80,6 +80,22 @@ export function pointsToNextLevel(point: any) {
   }
 }
 
+export async function changeMembershipById(userId: any, title: string, point: any) {
+  const historyItem = {
+      point: point, // Số điểm cần thay đổi
+      title: title, // Tiêu đề của sự kiện thay đổi
+      datetime: new Date().toISOString() // Thời gian hiện tại
+  };
+
+  try {
+      await updateMembershipById(userId, historyItem);
+      console.log("Membership change completed successfully!");
+  } catch (error: any) {
+      console.error("Error changing membership:", error);
+  }
+}
+
+
 
 
 

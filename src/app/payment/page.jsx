@@ -3,8 +3,10 @@
 import LoadingOverlay from "@/components/loading-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
+import { changeMembershipById, getMembershipById } from "@/services/membership";
 import { getPromotionList } from "@/services/promotion";
 import { createTicket } from "@/services/ticket";
+import { adjustUserBalance } from "@/services/wallet";
 import { formatDate } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -98,6 +100,7 @@ const PaymentConfirmationPage = () => {
         serviceFee: formatter.format(0),
         subtotal: formatter.format(totalAmount),
         total: formatter.format(grandTotal),
+        originalPrice: grandTotal,
       };
 
       setInvoiceDetails(invoiceDetails);
@@ -123,9 +126,12 @@ const PaymentConfirmationPage = () => {
       contact: searchParams.get('contact'),
       pickup: searchParams.get('pickup'),
       dropoff: searchParams.get('dropoff'),
+      price: invoiceDetails.total,
       status: 1,
     }
     await createTicket(user.uid, ticketData);
+    await changeMembershipById(user.uid, "Đặt vé xe khách", Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000));
+    await adjustUserBalance(user.uid, "Thanh toán vé", -parseInt(invoiceDetails.originalPrice, 10));
 
     router.push("/payment-success?" + searchParams.toString());
   };

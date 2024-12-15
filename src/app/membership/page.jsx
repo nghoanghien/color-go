@@ -154,12 +154,12 @@ const LoyaltyPage = () => {
                     className="flex items-center justify-between p-4 border-b border-gray-100 last:border-none"
                   >
                     <div>
-                      <p className="font-medium text-gray-800">{item.action}</p>
-                      <p className="text-sm text-gray-500">{new Date(item.date).toLocaleDateString()}</p>
+                      <p className="font-medium text-gray-800">{item.title}</p>
+                      <p className="text-sm text-gray-500">{new Date(item.datetime).toLocaleDateString()}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <FaStar className="text-yellow-400" />
-                      <span className="font-bold">+{item.plusPoint}</span>
+                      <span className="font-bold">{item.point}</span>
                     </div>
                   </div>
                 ))}
