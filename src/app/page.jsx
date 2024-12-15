@@ -240,7 +240,6 @@ const LandingPage = () => {
               {testimonials.map((testimonial, index) => (
                 <div key={testimonial.id} className="bg-white p-4 md:p-6 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)]" data-aos="zoom-in-up" data-aos-delay={index * 100}>
                   <div className="flex items-center mb-4">
-                    <img src={testimonial.image} alt={testimonial.name} className="w-10 h-10 md:w-12 md:h-12 rounded-[13px] mr-4" />
                     <div>
                       <h3 className="text-base md:text-lg font-bold">{testimonial.name}</h3>
                       <div className="flex text-yellow-400">
