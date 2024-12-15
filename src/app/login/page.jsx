@@ -188,7 +188,11 @@ const LoginPage = () => {
                 </div>
               </div>
               <div className="mt-6 md:mt-8">
-                 */}
+                {/* <img
+                  src="images.unsplash.com/photo-1544620347-c4fd4a3d5957"
+                  alt="ColorGo"
+                  className="rounded-lg shadow-lg"
+                /> */}
               </div>
             </div>
           </div>
