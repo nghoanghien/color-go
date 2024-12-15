@@ -132,14 +132,14 @@ const SearchResultsPage = () => {
       sortedTickets.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
     } else if (option === "time-asc") {
       sortedTickets.sort((a, b) => {
-        const timeA = new Date(a.departureTime).getTime();
-        const timeB = new Date(b.departureTime).getTime();
+        const timeA = a.departureTime.seconds;
+        const timeB = b.departureTime.seconds;
         return timeA - timeB;
       });
     } else if (option === "time-desc") {
       sortedTickets.sort((a, b) => {
-        const timeA = new Date(a.departureTime).getTime();
-        const timeB = new Date(b.departureTime).getTime();
+        const timeA = a.departureTime.seconds;
+        const timeB = b.departureTime.seconds;
         return timeB - timeA;
       });
     }
