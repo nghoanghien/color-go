@@ -63,31 +63,31 @@ const LandingPage = () => {
       from: "Hà Nội",
       to: "TP. Hồ Chí Minh",
       price: "1.990.000₫",
-      image: "images.unsplash.com/photo-1513635269975-593fda40c7ce"
+      image: "/images/ho-chi-minh.jpg"
     },
     {
       from: "Đà Nẵng",
       to: "Phú Quốc",
       price: "1.590.000₫",
-      image: "images.unsplash.com/photo-1540959733332-eab4deabeeaf"
+      image: "/images/phu-quoc-2.jpg"
     },
     {
       from: "Nha Trang",
       to: "Đà Lạt",
       price: "990.000₫",
-      image: "images.unsplash.com/photo-1565967511849-76a60a516170"
+      image: "/images/nha-trang.jpg"
     }
   ];
 
   const specialOffers = [
     {
       id: 1,
-      title: "Giảm 30% Chuyến Bay Quốc Tế",
+      title: "Giảm 30% Chuyến Đi Ngày Tết",
       code: "INT30",
       description: "Áp dụng cho tất cả các chuyến bay quốc tế",
       expiry: "31/12/2024",
       discount: "30%",
-      image: "images.unsplash.com/photo-1436491865332-7a61a109cc05"
+      image: "/images/discount1.webp"
     },
     {
       id: 2,
@@ -96,7 +96,7 @@ const LandingPage = () => {
       description: "Giảm 25% cho sinh viên có thẻ học sinh hợp lệ",
       expiry: "30/09/2024",
       discount: "25%",
-      image: "images.unsplash.com/photo-1523050854058-8df90110c9f1"
+      image: "/images/sinh-vien.jpg"
     },
     {
       id: 3,
@@ -105,7 +105,7 @@ const LandingPage = () => {
       description: "Giảm 15% cho đặt vé vào cuối mỗi tuần",
       expiry: "31/12/2024",
       discount: "15%",
-      image: "images.unsplash.com/photo-1488085061387-422e29b40080"
+      image: "/images/weekend2.jpg"
     }
   ];
 
