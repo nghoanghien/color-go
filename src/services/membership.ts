@@ -66,6 +66,20 @@ export function getLevelByPoint(point: any) {
   }
 }
 
+export function pointsToNextLevel(point: any) {
+  if (point >= 0 && point <= 199) {
+      return 200 - point; // Điểm cần để lên "silver"
+  } else if (point >= 200 && point <= 399) {
+      return 400 - point; // Điểm cần để lên "gold"
+  } else if (point >= 400 && point <= 599) {
+      return 600 - point; // Điểm cần để lên "diamond"
+  } else if (point >= 600 && point <= 799) {
+      return 800 - point; // Điểm cần để hoàn thành
+  } else {
+      return "Already at max level or invalid point";
+  }
+}
+
 
 
 
