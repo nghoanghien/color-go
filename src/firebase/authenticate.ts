@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import app from "./config";
 import { useEffect, useState } from "react";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
 provider.addScope("https://www.googleapis.com/auth/userinfo.profile");
@@ -38,6 +38,12 @@ export const signIn = () =>
           history: []
         }
       };
+
+      
+
+      const userDocRef = doc(db, "users", user.uid); // Đường dẫn đến document của người dùng
+      const existingUserDoc = await getDoc(userDocRef); // Lấy dữ liệu từ Firestore
+      if (existingUserDoc.exists()) return user;
 
       await setDoc(doc(db, "users", user.uid), userDoc)
         .catch((error) => {

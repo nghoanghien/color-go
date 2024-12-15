@@ -86,7 +86,6 @@ export async function changeMembershipById(userId: any, title: string, point: an
       title: title, // Tiêu đề của sự kiện thay đổi
       datetime: new Date().toISOString() // Thời gian hiện tại
   };
-  console.log({historyItem, point})
 
   try {
       await updateMembershipById(userId, historyItem);
