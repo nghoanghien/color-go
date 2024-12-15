@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaWallet, FaMoneyBillWave, FaHistory, FaExchangeAlt, FaPlus, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { getUserWallet } from "@/services/wallet";
+import { useUserInfomation } from "@/firebase/authenticate";
 
 
 const MyWalletPage = () => {
@@ -14,6 +16,19 @@ const MyWalletPage = () => {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [bankAccount, setBankAccount] = useState("");
+
+  const [isLoading, user] = useUserInfomation();
+  const [wallet, setWallet] = useState({});
+
+  useEffect(() => {
+    if (!user) return;
+
+    (async () => {
+      const wallet = await getUserWallet(user.uid);
+      setWallet(wallet);
+    })();
+  }, [user]); 
+
 
   const walletData = {
     balance: 2000000,
@@ -86,7 +101,7 @@ const MyWalletPage = () => {
             <div>
               <h2 className="text-sm text-gray-600">Số dư hiện tại</h2>
               <div className="text-3xl font-bold text-gray-800">
-                {formatCurrency(walletData.balance)}
+                {formatCurrency(wallet.balance)}
               </div>
             </div>
           </div>
@@ -111,7 +126,7 @@ const MyWalletPage = () => {
 
         {/* Transactions History */}
         <div className="space-y-4">
-          {walletData.transactions.map((transaction) => (
+          {wallet.history.map((transaction) => (
             <div key={transaction.id} className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex justify-between items-start">
                 <div>
@@ -169,21 +184,6 @@ const MyWalletPage = () => {
                     required
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Số tài khoản ngân hàng
-                  </label>
-                  <input
-                    type="text"
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Nhập số tài khoản"
-                    required
-                  />
-                </div>
-
                 <button
                   type="submit"
                   className="w-full bg-green-500 text-white font-medium py-3 rounded-lg hover:bg-green-600 transition-colors"
@@ -232,20 +232,6 @@ const MyWalletPage = () => {
                     onChange={(e) => setDepositAmount(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Nhập số tiền"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Số tài khoản ngân hàng
-                  </label>
-                  <input
-                    type="text"
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Nhập số tài khoản"
                     required
                   />
                 </div>
