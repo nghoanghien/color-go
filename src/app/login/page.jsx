@@ -275,17 +275,6 @@ const LoginPage = () => {
         </div>
       </div>
 
-      <div 
-        className={`fixed md:hidden transition-all duration-300 ease-in-out transform ${showBookButton ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"} left-4 right-4 bottom-4 z-50`}
-      >
-        <button
-          onClick={scrollToLogin}
-          className="w-full bg-gradient-to-r from-emerald-400 to-blue-500 text-white py-4 px-6 text-lg font-semibold flex items-center justify-center space-x-2 shadow-lg rounded-xl"
-        >
-          <span>Đặt vé ngay</span>
-          <FaChevronDown className="animate-bounce" />
-        </button>
-      </div>
     </div>
   );
 };
