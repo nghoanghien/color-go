@@ -62,3 +62,17 @@ export const getDetailRoute = async (id: string) => {
     throw new Error("Can not find route");
   }
 };
+
+export const getPromotions = async () => {
+    try {
+        const querySnapshot = await getDocs(collection(db, "promotions"));
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Error fetching promotions:", error);
+        return [];
+    }
+  };
+  

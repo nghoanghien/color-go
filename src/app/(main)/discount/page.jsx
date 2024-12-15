@@ -3,8 +3,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaCalendarAlt, FaPercent, FaTag, FaTimes } from "react-icons/fa";
+import { getPromotions } from "@/services/routes";
+import { useRouter } from 'next/navigation';
+
 
 const OfferModal = ({ isOpen, onClose, offerDetails }) => {
+  const router = useRouter();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -53,13 +57,13 @@ const OfferModal = ({ isOpen, onClose, offerDetails }) => {
                   <FaTag className="mr-2 text-blue-500" />
                   <span>
                     Đơn hàng tối thiểu:{" "}
-                    {offerDetails.minOrder || "Không giới hạn"}
+                    {offerDetails.minApply ? offerDetails.minApply.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "Không giới hạn"}đ
                   </span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <FaCalendarAlt className="mr-2 text-blue-500" />
                   <span>
-                    Có hiu lực đến: {offerDetails.expiry || "Không thời hạn"}
+                    Có hiệu lực đến: {offerDetails.valid ? new Date(offerDetails.valid.seconds * 1000).toLocaleDateString('vi-VN') : "Không thời hạn"}
                   </span>
                 </div>
               </div>
@@ -74,7 +78,7 @@ const OfferModal = ({ isOpen, onClose, offerDetails }) => {
               )}
 
               {/* Action Button */}
-              <button className="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-green-500 hover:to-blue-600 transition-colors">
+              <button onClick={() => router.push("/booking")} className="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-green-500 hover:to-blue-600 transition-colors">
                 Sử dụng ngay
               </button>
             </div>
@@ -89,6 +93,7 @@ const OffersPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [myVouchers, setMyVouchers] = useState([]);
 
   const carouselImages = [
     "images.unsplash.com/photo-1607082348824-0a96f2a4b9da",
@@ -99,29 +104,6 @@ const OffersPage = () => {
     "images.unsplash.com/photo-1494783367193-149034c05e8f",
     "images.unsplash.com/photo-1682685797332-e678a04f8a64",
     "images.unsplash.com/photo-1682687219640-b3f11f4b7234",
-  ];
-
-  const myVouchers = [
-    {
-      id: 1,
-      icon: FaPercent,
-      title: "Giảm giá 20%",
-      discount: "20%",
-      maxDiscount: "100.000đ",
-      minOrder: "500.000đ",
-      expiry: "31/12/2023",
-      description: "Áp dụng cho tất cả các đơn hàng",
-    },
-    {
-      id: 2,
-      icon: FaTag,
-      title: "Giảm giá cố định",
-      discount: "50.000đ",
-      maxDiscount: "50.000đ",
-      minOrder: "300.000đ",
-      expiry: "25/12/2023",
-      description: "Áp dụng cho tất cả các đơn hàng",
-    },
   ];
 
   const memberVouchers = [
@@ -189,6 +171,25 @@ const OffersPage = () => {
   };
 
   useEffect(() => {
+    const fetchPromotions = async () => {
+      const promotions = await getPromotions();
+      console.log("Fetched Promotions:", promotions);
+
+      if (Array.isArray(promotions)) {
+        setMyVouchers(promotions);
+        promotions.forEach((voucher) => {
+          console.log("Voucher properties:", Object.keys(voucher));
+        });
+      } else {
+        console.log("Dữ liệu không hợp lệ:", promotions);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
+
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prevSlide) =>
         prevSlide === carouselImages.length - 1 ? 0 : prevSlide + 1
@@ -226,32 +227,43 @@ const OffersPage = () => {
         <div className="p-4">
           <h2 className="text-xl font-bold mb-4">Quà của tôi</h2>
           <div className="space-y-4">
-            {myVouchers.map((voucher) => (
-              <div
-                key={voucher.id}
-                className="bg-white rounded-lg p-4 shadow-md cursor-pointer transform transition hover:scale-[1.02]"
-                onClick={() => handleOpenModal(voucher)}
-              >
-                <div className="flex items-start">
-                  <div className="bg-blue-100 p-3 rounded-lg">
-                    <voucher.icon className="text-blue-500 text-xl" />
+            {myVouchers.length > 0 ? (
+              myVouchers.map((voucher) => (
+                <div
+                  key={voucher.id}
+                  className="bg-white rounded-lg p-4 shadow-md cursor-pointer transform transition hover:scale-[1.02]"
+                  onClick={() => handleOpenModal(voucher)}
+                >
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-lg">
+                      {voucher.icon ? (
+                        <voucher.icon className="text-blue-500 text-xl" />
+                      ) : (
+                        <FaTag className="text-blue-500 text-xl" />
+                      )}
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h3 className="font-bold text-lg text-blue-600">
+                        {voucher.title}
+                      </h3>
+                      <p className="text-gray-600">
+                        Mã giảm giá: {voucher.code}
+                      </p>
+                      <p className="text-gray-600">
+                        Tối đa: {voucher.max ? voucher.max.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "Không giới hạn"}đ
+                      </p>
+                      <p className="text-gray-500">
+                        Đơn tối thiểu: {voucher.minApply ? voucher.minApply.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "Không yêu cầu"}đ
+                      </p>
+                      <p className="text-gray-500">HSD: {voucher.valid ? new Date(voucher.valid.seconds * 1000).toLocaleDateString('vi-VN') : "Không thời hạn"}</p>
+                    </div>
+                    <button className="text-blue-500 text-sm">Điều kiện</button>
                   </div>
-                  <div className="ml-4 flex-1">
-                    <h3 className="font-bold text-lg text-blue-600">
-                      Giảm {voucher.discount}
-                    </h3>
-                    <p className="text-gray-600">
-                      Tối đa {voucher.maxDiscount}
-                    </p>
-                    <p className="text-gray-500">
-                      Đơn tối thiểu {voucher.minOrder}
-                    </p>
-                    <p className="text-gray-500">HSD: {voucher.expiry}</p>
-                  </div>
-                  <button className="text-blue-500 text-sm">Điều kiện</button>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500">Bạn chưa có voucher nào.</p>
+            )}
           </div>
         </div>
 
