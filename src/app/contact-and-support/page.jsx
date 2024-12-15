@@ -136,7 +136,7 @@ const SupportPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
-                <a href="#" className="inline-block bg-blue-500 text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition-colors duration-300 text-sm">
+                <a onClick={() => router.push("/in-development")} className="inline-block bg-blue-500 text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition-colors duration-300 text-sm">
                   Truy cập Fanpage
                 </a>
               </div>

@@ -60,7 +60,7 @@ const AccountPage = () => {
       title: "Bảo mật",
       description: "Cài đặt mật khẩu và bảo mật tài khoản",
       onClick: () => {
-        router.push("/forgot-password");
+        router.push("/in-development");
       }
     },
     {
