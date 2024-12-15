@@ -33,19 +33,19 @@ const BookingPage = () => {
   const hotDestinations = [
     {
       id: 1,
-      image: "images.unsplash.com/photo-1506461883276-594a12b11cf3",
+      image: "/images/da-lat.jpg",
       title: "Đà Lạt",
       price: "200.000đ"
     },
     {
       id: 2,
-      image: "images.unsplash.com/photo-1528127269322-539801943592",
+      image: "/images/nha-trang.jpg",
       title: "Nha Trang",
       price: "180.000đ"
     },
     {
       id: 3,
-      image: "images.unsplash.com/photo-1552733407-5d5c46c3bb3b",
+      image: "/images/vung-tau.jpg",
       title: "Vũng Tàu",
       price: "150.000đ"
     }
