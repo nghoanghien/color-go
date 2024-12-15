@@ -44,7 +44,7 @@ const PaymentConfirmationPage = () => {
     {
       id: "color-pay",
       name: "Ví ColorPay",
-      logo: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d",
+      logo: "/images/colorPay.jpg",
     },
     // {
     //   id: "momo",
