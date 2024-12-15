@@ -261,7 +261,7 @@ const FavoriteTicketsPage = () => {
               <div className="space-y-6 relative">
                 {selectedRoute.map((stop, index) => (
                   <div key={index} className="flex items-start space-x-4">
-                    <div className="w-24 text-sm text-gray-600 pt-1">{timeString(stop.datetime)}</div>
+                    <div className="w-10 text-sm text-gray-600 pt-1">{timeString(stop.datetime)}</div>
                     
                     <div className="relative flex flex-col items-center -my-2">
                       <FaMapMarker className="text-blue-500 z-10 bg-white" />
