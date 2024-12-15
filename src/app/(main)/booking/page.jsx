@@ -54,13 +54,13 @@ const BookingPage = () => {
   const promotions = [
     {
       id: 1,
-      image: "images.unsplash.com/photo-1580828343064-fde4fc206bc6",
+      image: "/images/promotion1.jpg",
       title: "Giảm 30%",
       description: "Cho chuyến đi đầu tiên"
     },
     {
       id: 2,
-      image: "images.unsplash.com/photo-1488646953014-85cb44e25828",
+      image: "/images/promotion2.jpg",
       title: "Giảm 50%",
       description: "Cho nhóm trên 5 người"
     }
