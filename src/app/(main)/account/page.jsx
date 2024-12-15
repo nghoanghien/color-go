@@ -14,7 +14,7 @@ const AccountPage = () => {
 
   const [isLoading, user] = useUserInfomation();
 
-  const [membershipLevel, setMembershipLevel] = useState("gold"); // bronze, silver, gold, diamond
+  const [membershipLevel, setMembershipLevel] = useState("bronze"); // bronze, silver, gold, diamond
 
   useEffect(() => {
     if (!user) return;
