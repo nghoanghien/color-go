@@ -139,7 +139,6 @@ const LoginPage = () => {
     { icon: <FaMapMarkedAlt />, text: "Nhiều tuyến đường" },
     { icon: <FaUserShield />, text: "An toàn tối đa" },
     { icon: <FaClock />, text: "Đúng giờ" },
-    { icon: <FaCompass />, text: "Định vị thời gian thực" },
   ];
 
   const mobileScrollStyle = {
@@ -263,7 +262,7 @@ const LoginPage = () => {
                   <button
                     type="button"
                     className="w-full py-3 md:py-4 text-sm md:text-base bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-blue-700 transform transition-all hover:scale-105"
-                    onClick={() => setMascotMood("excited")}
+                    onClick={() => router.push("/in-development")}
                   >
                     <FaFacebook />
                     <span>Đăng nhập với Facebook</span>
