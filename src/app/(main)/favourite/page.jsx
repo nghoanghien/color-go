@@ -66,13 +66,13 @@ const FavoriteTicketsPage = () => {
     setShowConfirmModal(false);
     showNotification(
       "Đã xóa khỏi danh sách yêu thích",
-      () => handleUndo(ticketToRemove)
+      () => handleUndo(structuredClone(favorites), ticketToRemove)
     );
   };
 
-  const handleUndo = (ticketId) => {
+  const handleUndo = (oldFavourites, ticketId) => {
     addTicketToFavorites(user.uid, ticketId);
-    setFavorites([...favorites, ticketId]);
+    setFavorites(oldFavourites);
 
     //setRemovedTickets(removedTickets.filter(t => t.id !== ticketId));
     showNotification("Đã khôi phục vé");
