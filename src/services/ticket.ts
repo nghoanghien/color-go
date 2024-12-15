@@ -1,5 +1,5 @@
 import { db } from "@/firebase/store";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 
 export async function createTicket(userId: string, ticket: any) {
   const routeId = ticket.routeId;
@@ -20,4 +20,28 @@ async function addSeatToRoute(routeId: string, seats: string[]) {
   await updateDoc(docRef, {
     bookedSeats: arrayUnion(...seats),
   });
+}
+
+export async function getTicketsFromIds(ticketIds: any) {
+  try {
+
+      const tickets = [];
+
+      for (const ticketId of ticketIds) {
+          // Tham chiếu đến từng document trong collection `tickets`
+          const ticketDocRef = doc(db, "routes", ticketId.toString());
+          const ticketDoc = await getDoc(ticketDocRef);
+
+          if (ticketDoc.exists()) {
+              tickets.push({ id: ticketId, ...ticketDoc.data() });
+          } else {
+              console.warn(`Ticket with ID "${ticketId}" does not exist.`);
+          }
+      }
+
+      return tickets;
+  } catch (error: any) {
+      console.error("Error fetching tickets:", error.message);
+      throw error;
+  }
 }

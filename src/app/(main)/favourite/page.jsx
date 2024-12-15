@@ -1,62 +1,17 @@
 'use client';
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBus, FaExclamationCircle, FaHeart, FaMapMarker, FaMapMarkerAlt } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
+import { useUserInfomation } from "@/firebase/authenticate";
+import { addTicketToFavorites, getFavoriteTickets, removeTicketFromFavorites } from "@/services/user";
+import { getTicketsFromIds } from "@/services/ticket";
+import LoadingOverlay from "@/components/loading-overlay";
+import { timeString } from "@/utils/time-manipulation";
 
 const FavoriteTicketsPage = () => {
   const router = useRouter();
-  const [tickets, setTickets] = useState([
-    {
-      id: 1,
-      departureTime: "08:00",
-      arrivalTime: "12:00",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      busCompany: "Hoàng Long",
-      price: "250.000",
-      seatsAvailable: 15,
-      route: [
-        { time: "08:00", location: "Bến xe Mỹ Đình - Hà Nội" },
-        { time: "09:30", location: "Trạm dừng Hưng Yên" },
-        { time: "10:45", location: "Trạm dừng Hải Dương" },
-        { time: "12:00", location: "Bến xe Niệm Nghĩa - Hải Phòng" }
-      ]
-    },
-    {
-      id: 2,
-      departureTime: "09:30",
-      arrivalTime: "13:30",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      busCompany: "Phương Trang",
-      price: "280.000",
-      seatsAvailable: 8,
-      route: [
-        { time: "09:30", location: "Bến xe Giáp Bát - Hà Nội" },
-        { time: "11:00", location: "Trạm dừng Hưng Yên" },
-        { time: "12:15", location: "Trạm dừng Hải Dương" },
-        { time: "13:30", location: "Bến xe Cầu Rào - Hải Phòng" }
-      ]
-    },
-    {
-      id: 3,
-      departureTime: "10:45",
-      arrivalTime: "14:45",
-      from: "Hà Nội",
-      to: "Hải Phòng",
-      busCompany: "Thành Bưởi",
-      price: "260.000",
-      seatsAvailable: 12,
-      route: [
-        { time: "10:45", location: "Bến xe Nước Ngầm - Hà Nội" },
-        { time: "12:15", location: "Trạm dừng Bắc Ninh" },
-        { time: "13:30", location: "Trạm dừng Hải Dương" },
-        { time: "14:45", location: "Bến xe Lạc Long - Hải Phòng" }
-      ]
-    }
-  ]);
 
   const [favorites, setFavorites] = useState([1, 2]);
   const [notification, setNotification] = useState({ show: false, message: "", action: null });
@@ -66,7 +21,27 @@ const FavoriteTicketsPage = () => {
   const [ticketToRemove, setTicketToRemove] = useState(null);
   const [removedTickets, setRemovedTickets] = useState([]);
 
-  const filteredTickets = tickets.filter(ticket => favorites.includes(ticket.id));
+  const [tickets, setTickets] = useState([]);
+  const [isLoading, user] = useUserInfomation();
+
+
+  useEffect(() => {
+    if (!user) return;
+
+    (async () => {
+      const data = await getFavoriteTickets(user.uid);
+      setFavorites(data);
+      console.log(data);
+    })();
+  }, [user]);
+
+  useEffect(() => {
+    (async () => {
+      const routesData = await getTicketsFromIds(favorites);
+      console.log(routesData);
+      setTickets(routesData);
+    })();
+  }, [favorites]);
 
   const handleRouteClick = (route) => {
     setSelectedRoute(route);
@@ -86,8 +61,7 @@ const FavoriteTicketsPage = () => {
   };
 
   const confirmRemove = () => {
-    const removedTicket = tickets.find(t => t.id === ticketToRemove);
-    setRemovedTickets([...removedTickets, removedTicket]);
+    removeTicketFromFavorites(user.uid, ticketToRemove);
     setFavorites(favorites.filter(id => id !== ticketToRemove));
     setShowConfirmModal(false);
     showNotification(
@@ -97,8 +71,10 @@ const FavoriteTicketsPage = () => {
   };
 
   const handleUndo = (ticketId) => {
+    addTicketToFavorites(user.uid, ticketId);
     setFavorites([...favorites, ticketId]);
-    setRemovedTickets(removedTickets.filter(t => t.id !== ticketId));
+
+    //setRemovedTickets(removedTickets.filter(t => t.id !== ticketId));
     showNotification("Đã khôi phục vé");
   };
 
@@ -112,7 +88,9 @@ const FavoriteTicketsPage = () => {
     router.push("/choose");
   }
 
-  return (
+  return isLoading ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <AnimatePresence>
         {notification.show && (
@@ -141,7 +119,7 @@ const FavoriteTicketsPage = () => {
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-center bg-white/30 backdrop-blur-sm rounded-full px-6 py-3 shadow-sm">
             <div className="text-gray-600 font-semibold text-lg">
-              Vé yêu thích ({filteredTickets.length})
+              Vé yêu thích ({tickets.length})
             </div>
           </div>
         </div>
@@ -149,7 +127,7 @@ const FavoriteTicketsPage = () => {
 
       <div className="max-w-2xl mx-auto mt-4 px-4 space-y-4">
         <AnimatePresence>
-          {filteredTickets.map((ticket) => (
+          {tickets.map((ticket) => (
             <motion.div
               key={ticket.id}
               initial={{ opacity: 0, scale: 0.8 }}
@@ -162,22 +140,27 @@ const FavoriteTicketsPage = () => {
               <div className="flex justify-between items-center mb-4 relative z-10">
                 <div className="flex flex-col w-full">
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="text-xl font-bold text-gray-800">{ticket.departureTime}</div>
+                    <div className="text-xl font-bold text-gray-800">{timeString(ticket.departureTime)}</div>
                     <div className="flex-1 flex items-center justify-center relative">
                       <div className="border-t-2 border-dashed border-gray-300 w-full absolute"></div>
                       <div className="transform rotate-0 bg-white px-2 z-10">
                         <FaBus className="text-gray-500 text-xl" />
                       </div>
                     </div>
-                    <div className="text-xl font-bold text-gray-800">{ticket.arrivalTime}</div>
+                    <div className="text-xl font-bold text-gray-800">{timeString(ticket.arrivalTime)}</div>
                   </div>
                   <div className="flex justify-between items-center text-sm text-gray-500">
-                    <span>{ticket.from}</span>
-                    <span>{ticket.to}</span>
+                    <span>{ticket.departureLocation}</span>
+                    <span>{ticket.arrivalLocation}</span>
                   </div>
                 </div>
                 <div className="text-right ml-4">
-                  <p className="text-2xl font-bold text-blue-500">{ticket.price}đ</p>
+                  <p className="text-2xl font-bold text-blue-500">
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(ticket.price)}
+                  </p>
                   <div className="flex justify-between items-center mt-0">
                     <button
                       onClick={() => handleClickTicket(ticket.id)}
@@ -203,7 +186,7 @@ const FavoriteTicketsPage = () => {
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800">{ticket.busCompany}</h2>
                   <button 
-                    onClick={() => handleRouteClick(ticket.route)}
+                    onClick={() => handleRouteClick(ticket.stops)}
                     className="flex items-center mt-2 text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"
                   >
                     <FaMapMarkerAlt className="mr-2 text-blue-500" />
@@ -212,7 +195,7 @@ const FavoriteTicketsPage = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <div className="mt-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg border border-blue-100">
-                    {ticket.seatsAvailable} chỗ trống
+                    {ticket.totalSeat} chỗ trống
                   </div>
                 </div>
               </div>
@@ -220,7 +203,7 @@ const FavoriteTicketsPage = () => {
           ))}
         </AnimatePresence>
 
-        {filteredTickets.length === 0 && (
+        {tickets.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -277,7 +260,7 @@ const FavoriteTicketsPage = () => {
               <div className="space-y-6 relative">
                 {selectedRoute.map((stop, index) => (
                   <div key={index} className="flex items-start space-x-4">
-                    <div className="w-24 text-sm text-gray-600 pt-1">{stop.time}</div>
+                    <div className="w-24 text-sm text-gray-600 pt-1">{timeString(stop.datetime)}</div>
                     
                     <div className="relative flex flex-col items-center -my-2">
                       <FaMapMarker className="text-blue-500 z-10 bg-white" />
@@ -287,7 +270,7 @@ const FavoriteTicketsPage = () => {
                     </div>
                     
                     <div className="flex-1">
-                      <p className="text-gray-800 font-medium">{stop.location}</p>
+                      <p className="text-gray-800 font-medium">{stop.stop}</p>
                     </div>
                   </div>
                 ))}

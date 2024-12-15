@@ -16,6 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getRouteList } from "@/services/routes";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user";
+import { getFavoriteTickets } from "@/services/user";
 import LoadingOverlay from "@/components/loading-overlay";
 
 const SearchResultsPage = () => {
