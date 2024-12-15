@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FaCalendarAlt, FaPercent, FaTag, FaTimes } from "react-icons/fa";
 import { getPromotions } from "@/services/routes";
 import { useRouter } from 'next/navigation';
+import LoadingOverlay from "@/components/loading-overlay";
 
 
 const OfferModal = ({ isOpen, onClose, offerDetails }) => {
@@ -93,7 +94,7 @@ const OffersPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
-  const [myVouchers, setMyVouchers] = useState([]);
+  const [myVouchers, setMyVouchers] = useState();
 
   const carouselImages = [
     "images.unsplash.com/photo-1607082348824-0a96f2a4b9da",
@@ -198,7 +199,7 @@ const OffersPage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  return (
+  return !myVouchers ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
       <div className=" mx-auto max-w-4xl">
         {/* Header */}
