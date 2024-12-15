@@ -68,6 +68,12 @@ const MyWalletPage = () => {
     e.preventDefault();
     // Handle withdrawal logic here
     adjustUserBalance(user.uid, "Rút tiền", -parseInt(withdrawAmount, 10));
+    
+    const title = "Rút tiền thành công!";
+    const message = "Số tiền đã được chuyển thành công vào tài khoản của bạn. Vui lòng kiểm tra tài khoản ngân hàng.";
+    const amount = parseInt(withdrawAmount, 10);
+
+    router.push(`/wallet-success?title=${title}&message=${message}&amount=${amount}`);
 
     setShowWithdrawModal(false);
     setWithdrawAmount("");
