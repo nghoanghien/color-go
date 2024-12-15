@@ -68,7 +68,7 @@ const MyWalletPage = () => {
     e.preventDefault();
     // Handle withdrawal logic here
     adjustUserBalance(user.uid, "Rút tiền", -parseInt(withdrawAmount, 10));
-    
+
     const title = "Rút tiền thành công!";
     const message = "Số tiền đã được chuyển thành công vào tài khoản của bạn. Vui lòng kiểm tra tài khoản ngân hàng.";
     const amount = parseInt(withdrawAmount, 10);
@@ -84,6 +84,12 @@ const MyWalletPage = () => {
     e.preventDefault();
     // Handle deposit logic 
     adjustUserBalance(user.uid, "Nạp tiền", parseInt(depositAmount, 10));
+
+    const title = "Nạp tiền thành công!";
+    const message = "Số tiền đã được chuyển thành công vào ví ColorPay của bạn. Vui lòng kiểm tra số dư trong ví.";
+    const amount = parseInt(depositAmount, 10);
+
+    router.push(`/wallet-success?title=${title}&message=${message}&amount=${amount}`);
 
     setShowDepositModal(false);
     setDepositAmount("");
