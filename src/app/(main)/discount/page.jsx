@@ -97,14 +97,11 @@ const OffersPage = () => {
   const [myVouchers, setMyVouchers] = useState();
 
   const carouselImages = [
-    "images.unsplash.com/photo-1607082348824-0a96f2a4b9da",
-    "images.unsplash.com/photo-1626947346165-4c2288dadc2a",
-    "images.unsplash.com/photo-1472851294608-062f824d29cc",
-    "images.unsplash.com/photo-1540555700478-4be289fbecef",
-    "images.unsplash.com/photo-1626947346165-4c2288dadc2a",
-    "images.unsplash.com/photo-1494783367193-149034c05e8f",
-    "images.unsplash.com/photo-1682685797332-e678a04f8a64",
-    "images.unsplash.com/photo-1682687219640-b3f11f4b7234",
+    "/images/discount1.webp",
+    "/images/discount2.jpg",
+    "/images/discount3.jpg",
+    "/images/discount4.jpg",
+    "/images/discount5.jpg",
   ];
 
   const memberVouchers = [
@@ -214,7 +211,7 @@ const OffersPage = () => {
           {carouselImages.map((image, index) => (
             <motion.img
               key={index}
-              src={`https://${image}`}
+              src={image}
               alt={`Slide ${index}`}
               className="absolute w-full h-full object-cover rounded-xl mx-auto max-w-[95%] left-0 right-0"
               initial={{ opacity: 0 }}
