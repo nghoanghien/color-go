@@ -131,7 +131,7 @@ const OffersPage = () => {
   const promotions = [
     {
       id: 1,
-      image: "images.unsplash.com/photo-1540555700478-4be289fbecef",
+      image: "/images/christmas.jpg",
       title: "Khuyến mãi tháng 12",
       discount: "25%",
       description: "Ưu đãi đặc biệt dành cho tháng 12",
@@ -139,7 +139,7 @@ const OffersPage = () => {
     },
     {
       id: 2,
-      image: "images.unsplash.com/photo-1472851294608-062f824d29cc",
+      image: "/images/end-year.jpg",
       title: "Ưu đãi cuối năm",
       discount: "30%",
       description: "Ưu đãi đặc biệt dịp cuối năm",
@@ -147,7 +147,7 @@ const OffersPage = () => {
     },
     {
       id: 3,
-      image: "images.unsplash.com/photo-1626947346165-4c2288dadc2a",
+      image: "/images/tet.jpg",
       title: "Khuyến mãi Tết",
       discount: "40%",
       description: "Ưu đãi đặc biệt dịp Tết",
@@ -155,7 +155,7 @@ const OffersPage = () => {
     },
     {
       id: 4,
-      image: "images.unsplash.com/photo-1607082348824-0a96f2a4b9da",
+      image: "/images/special.jpg",
       title: "Ưu đãi đặc biệt",
       discount: "35%",
       description: "Ưu đãi đặc biệt có giới hạn",
@@ -296,7 +296,7 @@ const OffersPage = () => {
                 onClick={() => handleOpenModal(promo)}
               >
                 <img
-                  src={`https://${promo.image}`}
+                  src={promo.image}
                   alt={promo.title}
                   className="w-full h-32 object-cover"
                 />
