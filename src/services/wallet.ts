@@ -72,3 +72,33 @@ export async function updateUserWallet(userId: any, historyItem: any) {
   }
 }
 
+export async function adjustUserBalance(id: string, title: string, amount: number): Promise<void> {
+  if (!id) {
+    throw new Error("User ID is required.");
+  }
+
+  if (!title || typeof title !== "string") {
+    throw new Error("Title must be a non-empty string.");
+  }
+
+  if (typeof amount !== "number") {
+    throw new Error("Amount must be a number.");
+  }
+
+  // Tạo một object historyItem
+  const historyItem = {
+    title,
+    datetime: new Date().toISOString(), // Lấy thời gian hiện tại theo định dạng ISO
+    fluctuation: amount, // Giá trị thay đổi
+  };
+
+  try {
+    // Sử dụng hàm updateUserWallet để cập nhật
+    const result = await updateUserWallet(id, historyItem);
+    console.log("Wallet updated:", result);
+  } catch (error) {
+    console.error("Failed to adjust user balance:", error);
+    throw error;
+  }
+}
+

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaWallet, FaMoneyBillWave, FaHistory, FaExchangeAlt, FaPlus, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { getUserWallet } from "@/services/wallet";
+import { adjustUserBalance, getUserWallet } from "@/services/wallet";
 import { useUserInfomation } from "@/firebase/authenticate";
 
 
@@ -18,7 +18,7 @@ const MyWalletPage = () => {
   const [bankAccount, setBankAccount] = useState("");
 
   const [isLoading, user] = useUserInfomation();
-  const [wallet, setWallet] = useState({});
+  const [wallet, setWallet] = useState({point: 20, history: []});
 
   useEffect(() => {
     if (!user) return;
@@ -67,6 +67,8 @@ const MyWalletPage = () => {
   const handleWithdraw = (e) => {
     e.preventDefault();
     // Handle withdrawal logic here
+    adjustUserBalance(user.uid, "Rút tiền", -parseInt(withdrawAmount, 10));
+
     setShowWithdrawModal(false);
     setWithdrawAmount("");
     setBankAccount("");
@@ -74,7 +76,9 @@ const MyWalletPage = () => {
 
   const handleDeposit = (e) => {
     e.preventDefault();
-    // Handle deposit logic here
+    // Handle deposit logic 
+    adjustUserBalance(user.uid, "Nạp tiền", parseInt(depositAmount, 10));
+
     setShowDepositModal(false);
     setDepositAmount("");
     setBankAccount("");
@@ -130,14 +134,14 @@ const MyWalletPage = () => {
             <div key={transaction.id} className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-medium text-gray-800">{transaction.type}</h3>
-                  <p className="text-xs text-gray-400">{transaction.date}</p>
+                  <h3 className="font-medium text-gray-800">{transaction.title}</h3>
+                  <p className="text-xs text-gray-400">{transaction.datetime}</p>
                   <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full mt-1 inline-block">
-                    {transaction.status}
+                    Thành công
                   </span>
                 </div>
-                <span className={`font-semibold ${transaction.amount.startsWith("+") ? "text-green-500" : "text-red-500"}`}>
-                  {formatCurrency(parseInt(transaction.amount))}
+                <span className={`font-semibold ${transaction.fluctuation > 0 ? "text-green-500" : "text-red-500"}`}>
+                  {formatCurrency(parseInt(transaction.fluctuation))}
                 </span>
               </div>
             </div>
