@@ -142,7 +142,7 @@ const MyWalletPage = () => {
 
         {/* Transactions History */}
         <div className="space-y-4">
-          {wallet.history.map((transaction) => (
+          {wallet.history.slice().reverse().map((transaction) => (
             <div key={transaction.id} className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex justify-between items-start">
                 <div>
