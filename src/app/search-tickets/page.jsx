@@ -47,10 +47,11 @@ const SearchResultsPage = () => {
     (async () => {
       const data = await getRouteList(from, to, selectedDate);
       setTickets(data);
+      setOriginalTickets(data);
     })();
   }, [selectedDate]);
 
-  const [originalTickets] = useState([]);
+  const [originalTickets, setOriginalTickets] = useState([]);
 
   const [tickets, setTickets] = useState(originalTickets);
 
@@ -510,7 +511,7 @@ const SearchResultsPage = () => {
                 <div>
                   <h4 className="font-medium mb-4 text-gray-700">Nhà xe</h4>
                   <div className="space-y-3">
-                    {["Hoàng Long", "Phương Trang", "Thành Bưởi"].map(
+                    {Array.from(new Set(originalTickets.map(d => d.name)).values()).map(
                       (company) => (
                         <label
                           key={company}
@@ -546,7 +547,7 @@ const SearchResultsPage = () => {
                       type="range"
                       min="0"
                       max="1000000"
-                      step="50000"
+                      step="10000"
                       value={priceRange.max}
                       onChange={(e) =>
                         setPriceRange({ ...priceRange, max: e.target.value })
