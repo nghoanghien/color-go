@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { adjustUserBalance, getUserWallet } from "@/services/wallet";
 import { useUserInfomation } from "@/firebase/authenticate";
+import LoadingOverlay from "@/components/loading-overlay";
 
 
 const MyWalletPage = () => {
@@ -18,7 +19,7 @@ const MyWalletPage = () => {
   const [bankAccount, setBankAccount] = useState("");
 
   const [isLoading, user] = useUserInfomation();
-  const [wallet, setWallet] = useState({point: 20, history: []});
+  const [wallet, setWallet] = useState();
 
   useEffect(() => {
     if (!user) return;
@@ -96,7 +97,7 @@ const MyWalletPage = () => {
     setBankAccount("");
   };
 
-  return (
+  return !wallet ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-green-50 pb-32">
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">

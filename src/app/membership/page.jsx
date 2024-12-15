@@ -37,8 +37,8 @@ const LoyaltyPage = () => {
   };
 
   const [isLoading, user] = useUserInfomation();
-  const [membershipLevel, setMembershipLevel] = useState("bronze"); // bronze, silver, gold, diamond
-  const [membership, setMembership] = useState({});
+  const [membershipLevel, setMembershipLevel] = useState(); // bronze, silver, gold, diamond
+  const [membership, setMembership] = useState();
 
   useEffect(() => {
     if (!user) return;
@@ -61,16 +61,14 @@ const LoyaltyPage = () => {
         return { icon: FaCrown, color: "text-yellow-400", text: "Vàng" };
       case "diamond":
         return { icon: FaGem, color: "text-blue-400", text: "Kim cương" };
-      default:
-        return { icon: FaCircle, color: "text-amber-700", text: "Đồng" };
     }
   };
 
   const membershipInfo = getMembershipInfo(membershipLevel);
-  const MembershipIcon = membershipInfo.icon;
+  const MembershipIcon = membershipInfo?.icon;
 
 
-  return isLoading ? (
+  return (isLoading || !membership || !membershipLevel) ? (
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">

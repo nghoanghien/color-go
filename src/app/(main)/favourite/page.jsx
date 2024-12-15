@@ -13,7 +13,7 @@ import { timeString } from "@/utils/time-manipulation";
 const FavoriteTicketsPage = () => {
   const router = useRouter();
 
-  const [favorites, setFavorites] = useState([1, 2]);
+  const [favorites, setFavorites] = useState();
   const [notification, setNotification] = useState({ show: false, message: "", action: null });
   const [showRouteModal, setShowRouteModal] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
@@ -36,6 +36,7 @@ const FavoriteTicketsPage = () => {
   }, [user]);
 
   useEffect(() => {
+    if (!favorites) return;
     (async () => {
       const routesData = await getTicketsFromIds(favorites);
       console.log(routesData);
@@ -88,7 +89,7 @@ const FavoriteTicketsPage = () => {
     router.push(`/choose?id=${id}`);
   }
 
-  return isLoading ? (
+  return (isLoading || !favorites) ? (
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">

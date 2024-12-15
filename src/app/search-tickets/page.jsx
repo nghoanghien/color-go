@@ -51,7 +51,7 @@ const SearchResultsPage = () => {
     })();
   }, [selectedDate]);
 
-  const [originalTickets, setOriginalTickets] = useState([]);
+  const [originalTickets, setOriginalTickets] = useState();
 
   const [tickets, setTickets] = useState(originalTickets);
 
@@ -196,6 +196,7 @@ const SearchResultsPage = () => {
   };
 
   useEffect(() => {
+    if (!selectedDateRef.current) return;
     selectedDateRef.current.scrollIntoView({
       behavior: "smooth",
       block: "center",
@@ -203,7 +204,7 @@ const SearchResultsPage = () => {
     });
   }, []);
 
-  return (
+  return !tickets ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       {/* Phần thông báo cho nút trái tim yêu thích */}
       <AnimatePresence>
