@@ -6,7 +6,7 @@ import { getDetailRoute } from "@/services/routes";
 import { formatDate, timeString } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { BsClockFill } from "react-icons/bs";
 import { FaArrowLeft, FaBus, FaExclamationCircle } from "react-icons/fa";
 
@@ -366,4 +366,8 @@ const SeatSelectionPage = () => {
   );
 };
 
-export default SeatSelectionPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <SeatSelectionPage />
+  </Suspense>
+};

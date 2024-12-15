@@ -1,9 +1,10 @@
 'use client';
 
-import React from "react";
-import { FaCheckCircle, FaArrowLeft } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
+import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 
+import LoadingOverlay from "@/components/loading-overlay";
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const WithdrawSuccessPage = () => {
@@ -62,4 +63,8 @@ const WithdrawSuccessPage = () => {
   );
 };
 
-export default WithdrawSuccessPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <WithdrawSuccessPage />
+  </Suspense>
+};

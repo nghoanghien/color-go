@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { FaArrowLeft, FaBus } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -173,4 +173,8 @@ const PaymentSuccessPage = () => {
   );
 };
 
-export default PaymentSuccessPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <PaymentSuccessPage />
+  </Suspense>
+};

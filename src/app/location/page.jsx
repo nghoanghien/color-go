@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
-import { FaArrowLeft, FaMapMarkerAlt } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRouter, useSearchParams } from 'next/navigation';
 import LoadingOverlay from "@/components/loading-overlay";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { timeString } from "@/utils/time-manipulation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from "react";
+import { FaArrowLeft, FaMapMarkerAlt } from "react-icons/fa";
 
 
 const PickupDropoffPage = () => {
@@ -160,4 +160,8 @@ const PickupDropoffPage = () => {
   );
 };
 
-export default PickupDropoffPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <PickupDropoffPage />
+  </Suspense>
+};

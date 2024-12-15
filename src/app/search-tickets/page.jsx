@@ -1,23 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import LoadingOverlay from "@/components/loading-overlay";
+import { useUserInfomation } from "@/firebase/authenticate";
+import { getRouteList } from "@/services/routes";
+import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 import {
   FaArrowLeft,
   FaBus,
   FaExclamationCircle,
-  FaMapMarkerAlt,
   FaFilter,
-  FaSort,
   FaHeart,
   FaMapMarker,
+  FaMapMarkerAlt,
+  FaSort,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
-import { getRouteList } from "@/services/routes";
-import { useUserInfomation } from "@/firebase/authenticate";
-import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user";
-import { getFavoriteTickets } from "@/services/user";
-import LoadingOverlay from "@/components/loading-overlay";
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
@@ -606,4 +605,8 @@ const SearchResultsPage = () => {
   );
 };
 
-export default SearchResultsPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <SearchResultsPage />
+  </Suspense>
+};

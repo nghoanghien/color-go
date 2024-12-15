@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import LoadingOverlay from "@/components/loading-overlay";
+import { useRouteDetail } from "@/hooks/useRouteDetail";
+import { formatDate, timeString } from "@/utils/time-manipulation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import {
   FaArrowLeft,
-  FaPen,
   FaBus,
-  FaMapMarker,
   FaExclamationCircle,
-  FaTimes,
+  FaPen,
+  FaTimes
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useRouteDetail } from "@/hooks/useRouteDetail";
-import LoadingOverlay from "@/components/loading-overlay";
-import { formatDate, timeString } from "@/utils/time-manipulation";
 
 const TripInfoPage = () => {
   const router = useRouter();
@@ -422,4 +421,8 @@ const TripInfoPage = () => {
   );
 };
 
-export default TripInfoPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <TripInfoPage />
+  </Suspense>
+};

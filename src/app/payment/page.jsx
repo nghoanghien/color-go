@@ -3,14 +3,15 @@
 import LoadingOverlay from "@/components/loading-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
-import { changeMembershipById, getMembershipById } from "@/services/membership";
+import { changeMembershipById } from "@/services/membership";
 import { getPromotionList } from "@/services/promotion";
 import { createTicket } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
+import { generateRandomId } from "@/utils/getRandom";
 import { formatDate } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaExclamationCircle,
@@ -121,6 +122,7 @@ const PaymentConfirmationPage = () => {
     }
 
     const ticketData = {
+      id: generateRandomId(8),
       routeId: searchParams.get('id'),
       seats: searchParams.get('seats').split(','),
       contact: searchParams.get('contact'),
@@ -364,4 +366,8 @@ const PaymentConfirmationPage = () => {
   );
 };
 
-export default PaymentConfirmationPage;
+export default () => {
+  return <Suspense fallback={<LoadingOverlay isLoading />}>
+    <PaymentConfirmationPage />
+  </Suspense>
+};
