@@ -1,5 +1,3 @@
-'use client';
-
 "use client";
 
 import React, { useState } from "react";
@@ -279,7 +277,7 @@ const AdminTransport = () => {
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
-            initial={{ opacity: 0.3 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
@@ -290,7 +288,7 @@ const AdminTransport = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", duration: 0.3 }}
-              className="bg-white/75 backdrop-blur-md rounded-2xl p-8 w-full max-w-md shadow-2xl border-t-4 border-blue-500"
+              className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border-t-4 border-blue-500"
             >
               <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                 {editingTransport ? "Chỉnh sửa nhà xe" : "Thêm nhà xe mới"}
@@ -300,7 +298,7 @@ const AdminTransport = () => {
                   <label className="block text-gray-700 font-medium">Tên nhà xe</label>
                   <input
                     type="text"
-                    className={`w-full p-3 border rounded-lg transition-all duration-300 ${editingTransport ? "bg-gray-50" : ""} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    className={`w-full p-3 border rounded-lg transition-all duration-300 ${editingTransport ? "bg-gray-100" : ""} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={newTransport.name}
                     onChange={(e) => setNewTransport({ ...newTransport, name: e.target.value })}
                     disabled={editingTransport}
