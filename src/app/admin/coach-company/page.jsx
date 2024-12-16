@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { FiUploadCloud } from "react-icons/fi";
 import { FaFilePdf, FaFileDownload, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDropzone } from "react-dropzone";
 
 const AdminTransport = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -39,6 +41,16 @@ const AdminTransport = () => {
     type: "",
     seats: "",
     amenities: ""
+  });
+
+  const onDrop = useCallback((acceptedFiles) => {
+    // Handle file upload logic here
+   // setUploadProgress(100); // Simulate upload completion
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false
   });
 
   const showNotification = (message, type) => {
@@ -187,6 +199,20 @@ const AdminTransport = () => {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Quản lý nhà xe</h1>
             <div className="flex space-x-4">
+            <motion.button
+              {...getRootProps()} // Thêm props cho drag-and-drop
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              className={`px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-400 text-white rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 font-medium ${
+                          isDragActive ? "border border-blue-500 bg-blue-50" : ""
+              }`}
+            >
+              <input {...getInputProps()} hidden /> {/* Ẩn input */}
+              <FiUploadCloud className="inline-block w-5 h-5 mr-2 text-white" />
+              Tải file
+            </motion.button>
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -194,13 +220,13 @@ const AdminTransport = () => {
                 className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFileDownload />
-                <span>Xuất dữ liệu</span>
+                <span>Xuất Excel</span>
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 
-                className="bg-gradient-to-r from-red-700 to-red-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+                className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFilePdf />
                 <span>Xuất PDF</span>
@@ -357,6 +383,7 @@ const AdminTransport = () => {
                   />
                 </div>
                 <div className="flex justify-end space-x-4 mt-8">
+
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
