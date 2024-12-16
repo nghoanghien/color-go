@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaFilePdf, FaFileDownload, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 const AdminTransport = () => {
@@ -186,7 +186,26 @@ const AdminTransport = () => {
         >
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Quản lý nhà xe</h1>
-            <motion.button
+            <div className="flex space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                // onClick={handleExport}
+                className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+              >
+                <FaFileDownload />
+                <span>Xuất dữ liệu</span>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                
+                className="bg-gradient-to-r from-red-700 to-red-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+              >
+                <FaFilePdf />
+                <span>Xuất PDF</span>
+              </motion.button>
+              <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleAdd}
@@ -195,6 +214,8 @@ const AdminTransport = () => {
               <FaPlus />
               <span>Thêm nhà xe</span>
             </motion.button>
+            </div>
+            
           </div>
 
           {/* Search Bar */}
