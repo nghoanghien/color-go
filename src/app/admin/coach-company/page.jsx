@@ -64,7 +64,7 @@ const AdminTransport = () => {
     { id: "home", label: "Trang chủ", icon: <FaHome /> },
     { id: "transport", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
-    { id: "invoices", label: "Hóa Đơn", icon: <FaFileInvoice /> },
+    { id: "promtions", label: "Ưu Đãi", icon: <FaFileInvoice /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
