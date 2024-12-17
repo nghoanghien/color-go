@@ -26,13 +26,18 @@ const SignIn = () => {
     <div 
       className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url("https://images.unsplash.com/photo-1497864149936-d3163f0c0f4b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80")`
+        backgroundImage: `url('/images/bk3.jpg')`,
+        backgroundSize: '100% 100%',  /* Hình ảnh sẽ co giãn để vừa với chiều rộng và chiều cao phần tử */
+        backgroundPosition: 'center',  /* Đặt hình ảnh ở giữa phần tử */
+        backgroundRepeat: 'no-repeat',  /* Không lặp lại hình ảnh */
+        height: '100vh',  /* Đảm bảo chiều cao của phần tử bằng chiều cao màn hình */
+        width: '100%'  
       }}
     >
-      <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl w-full max-w-md">
+      <div className="bg-white/90 backdrop-blur-sm p-14 rounded-xl shadow-2xl w-full max-w-4xl">
 
 
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Xác thực Quản trị viên</h2>
+        <h2 className="text-3xl font-bold text-center mb-8 text-green-800">Xác thực Quản trị viên</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">
@@ -65,7 +70,7 @@ const SignIn = () => {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-semibold shadow-lg hover:opacity-90 transition-opacity focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full py-3 px-4 text-xl bg-gradient-to-r from-green-500 to-green-300 text-white rounded-lg font-semibold shadow-lg hover:opacity-90 transition-opacity focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Xác thực
           </button>
