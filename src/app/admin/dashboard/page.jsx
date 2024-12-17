@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
-import { FaHome, FaBus, FaRoute, FaFileInvoice, FaChartBar, FaSignOutAlt, FaUsers, FaCar, FaChevronLeft, FaTicketAlt } from "react-icons/fa";
+import { FaHome, FaBus, FaRoute, FaFileInvoice, FaChartBar, FaSignOutAlt, FaUsers, FaCar, FaChevronLeft, FaTicketAlt, FaGift, FaUserCircle } from "react-icons/fa";
 import { Line, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from "chart.js";
 
@@ -15,8 +15,9 @@ const AdminDashboard = () => {
     { id: "home", label: "Trang chủ", icon: <FaHome /> },
     { id: "transport", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
-    { id: "promotions", label: "Ưu Đãi", icon: <FaFileInvoice /> },
+    { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
+    { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 

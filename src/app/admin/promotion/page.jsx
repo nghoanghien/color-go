@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 
-import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt } from "react-icons/fa";
+import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
@@ -69,8 +69,9 @@ const AdminPromotions = () => {
     { id: "home", label: "Trang chủ", icon: <FaHome /> },
     { id: "transport", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
-    { id: "promotions", label: "Ưu đãi", icon: <FaFileInvoice /> },
+    { id: "promotions", label: "Ưu đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
+    { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
