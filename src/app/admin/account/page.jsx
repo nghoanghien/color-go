@@ -4,7 +4,12 @@ import React, { useState } from "react";
 import { FaHome, FaBus, FaRoute, FaGift, FaUsers, FaUserCircle, FaSignOutAlt, FaChevronLeft, FaEdit, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { useRouter } from "next/navigation";
+
+
 const AdminAccount = () => {
+  const router = useRouter();
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("account");
   const [isEditing, setIsEditing] = useState(false);
@@ -22,10 +27,10 @@ const AdminAccount = () => {
   const [editedData, setEditedData] = useState(adminData);
 
   const sidebarItems = [
-    { id: "home", label: "Trang chủ", icon: <FaHome /> },
-    { id: "transport", label: "Nhà xe", icon: <FaBus /> },
+    { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
+    { id: "coach-company", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
-    { id: "promotions", label: "Ưu đãi", icon: <FaGift /> },
+    { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
@@ -47,6 +52,16 @@ const AdminAccount = () => {
     setEditedData(adminData);
     setIsEditing(false);
   };
+
+  const handleNavigate = (tab) => {
+    setActiveTab(tab);
+    if (tab !== "logout") {
+      router.replace(`/admin/${tab}`);
+    }
+    else {
+      router.replace("/admin/admin-login");
+    }
+  }
 
   return (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
@@ -96,7 +111,7 @@ const AdminAccount = () => {
             key={item.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all ${activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"}`}
           >
             <span className="text-xl">{item.icon}</span>
