@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaGlobe, FaEnvelope, FaLock } from "react-icons/fa";
-
+import { motion } from 'framer-motion';  // Thêm import framer-motion
 
 const SignIn = () => {
   const router = useRouter();
@@ -28,7 +28,7 @@ const SignIn = () => {
 
   const handleVerify = () => {
     router.push("/admin/dashboard");
-  }
+  };
 
   return (
     <div 
@@ -42,9 +42,12 @@ const SignIn = () => {
         width: '100%'  
       }}
     >
-      <div className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl w-full max-w-2xl">
-
-
+      <motion.div
+        className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl w-full max-w-2xl"
+        initial={{ opacity: 0 }}   // Hiệu ứng bắt đầu từ opacity 0
+        animate={{ opacity: 1 }}   // Sau khi render, opacity sẽ là 1
+        transition={{ duration: 1 }} // Thời gian hiệu ứng là 1 giây
+      >
         <h2 className="text-3xl font-bold text-center mb-8 text-green-800">Xác thực Quản trị viên</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -84,7 +87,7 @@ const SignIn = () => {
             Xác thực
           </button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
