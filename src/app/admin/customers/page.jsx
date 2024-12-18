@@ -1,15 +1,18 @@
 'use client';
 
-"use client";
-
 import React, { useState, useCallback } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaFileDownload, FaSort, FaSortAmountDown, FaSortAmountUp, FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaUserCircle, FaGift } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
+import { useRouter } from "next/navigation";
+
+
 
 const AdminCustomers = () => {
+  const router = useRouter();
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("customers");
   const [searchTerm, setSearchTerm] = useState("");
@@ -77,8 +80,8 @@ const AdminCustomers = () => {
   };
 
   const sidebarItems = [
-    { id: "home", label: "Trang chủ", icon: <FaHome /> },
-    { id: "transport", label: "Nhà xe", icon: <FaBus /> },
+    { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
+    { id: "coach-company", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
     { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
@@ -142,6 +145,16 @@ const AdminCustomers = () => {
       setSortOrder("asc");
     }
   };
+
+  const handleNavigate = (tab) => {
+    setActiveTab(tab);
+    if (tab !== "logout") {
+      router.replace(`/admin/${tab}`);
+    }
+    else {
+      router.replace("/admin/admin-login");
+    }
+  }
 
   const sortedCustomers = [...customersData]
     .sort((a, b) => {
@@ -209,7 +222,7 @@ const AdminCustomers = () => {
             key={item.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all ${activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"}`}
           >
             <span className="text-xl">{item.icon}</span>
