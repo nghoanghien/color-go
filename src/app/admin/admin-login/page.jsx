@@ -1,9 +1,13 @@
 'use client';
 
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaGlobe, FaEnvelope, FaLock } from "react-icons/fa";
 
+
 const SignIn = () => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,6 +25,10 @@ const SignIn = () => {
     e.preventDefault();
     console.log("Form submitted:", formData);
   };
+
+  const handleVerify = () => {
+    router.push("/admin/dashboard");
+  }
 
   return (
     <div 
@@ -71,6 +79,7 @@ const SignIn = () => {
           <button
             type="submit"
             className="w-full py-3 px-4 text-xl bg-gradient-to-r from-green-500 to-green-300 text-white rounded-lg font-semibold shadow-lg hover:opacity-90 transition-opacity focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={handleVerify}
           >
             Xác thực
           </button>
