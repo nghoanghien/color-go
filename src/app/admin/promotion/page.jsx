@@ -209,7 +209,7 @@ const AdminPromotions = () => {
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         animate={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className={`bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative`}
+        className={`bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative sticky top-0 left-0 h-screen`}
       >
         <div className="mb-8 text-center relative">
           <motion.h2

@@ -145,12 +145,12 @@ const AdminTransport = () => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         animate={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className={`bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative`}
+        className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative top-0 left-0 h-screen"
+        style={{ position: "sticky" }}
       >
         <div className="mb-8 text-center relative">
           <motion.h2
@@ -167,27 +167,28 @@ const AdminTransport = () => {
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 rounded-full p-1 shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            <motion.div
-              animate={{ rotate: isSidebarCollapsed ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div animate={{ rotate: isSidebarCollapsed ? 180 : 0 }} transition={{ duration: 0.3 }}>
               <FaChevronLeft />
             </motion.div>
           </motion.button>
         </div>
+
         {sidebarItems.map((item) => (
           <motion.button
             key={item.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all ${activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"}`}
+            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all ${
+              activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"
+            }`}
           >
             <span className="text-xl">{item.icon}</span>
             {!isSidebarCollapsed && <span>{item.label}</span>}
           </motion.button>
         ))}
       </motion.div>
+
 
       {/* Main Content */}
       <div className="flex-1 p-8">
