@@ -5,15 +5,19 @@ import { FaHome, FaBus, FaRoute, FaFileInvoice, FaChartBar, FaSignOutAlt, FaUser
 import { Line, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from "chart.js";
 
+import { useRouter } from "next/navigation";
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("home");
+  const router = useRouter();
+
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const sidebarItems = [
-    { id: "home", label: "Trang chủ", icon: <FaHome /> },
-    { id: "transport", label: "Nhà xe", icon: <FaBus /> },
+    { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
+    { id: "coach-company", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
     { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
@@ -71,6 +75,16 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleNavigate = (tab) => {
+    setActiveTab(tab);
+    if (tab !== "logout") {
+      router.replace(`/admin/${tab}`);
+    }
+    else {
+      router.replace("/admin/admin-login");
+    }
+  }
+
   return (
     <div className="min-h-screen w-full flex bg-gray-50">
       {/* Sidebar */}
@@ -87,7 +101,7 @@ const AdminDashboard = () => {
         {sidebarItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-3'} px-4 py-3 rounded-lg transition-all ${activeTab === item.id ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10'}`}
           >
             <span className="text-xl">{item.icon}</span>
