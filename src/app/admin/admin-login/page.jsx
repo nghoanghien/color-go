@@ -26,7 +26,7 @@ const SignIn = () => {
     <div 
       className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url('/images/bk3.jpg')`,
+        backgroundImage: `url('/images/bk2.jpg')`,
         backgroundSize: '100% 100%',  /* Hình ảnh sẽ co giãn để vừa với chiều rộng và chiều cao phần tử */
         backgroundPosition: 'center',  /* Đặt hình ảnh ở giữa phần tử */
         backgroundRepeat: 'no-repeat',  /* Không lặp lại hình ảnh */
@@ -34,7 +34,7 @@ const SignIn = () => {
         width: '100%'  
       }}
     >
-      <div className="bg-white/90 backdrop-blur-sm p-14 rounded-xl shadow-2xl w-full max-w-4xl">
+      <div className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl w-full max-w-2xl">
 
 
         <h2 className="text-3xl font-bold text-center mb-8 text-green-800">Xác thực Quản trị viên</h2>
