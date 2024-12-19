@@ -1,18 +1,23 @@
 'use client';
 
+
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaGlobe, FaEnvelope, FaLock } from "react-icons/fa";
 import { motion } from 'framer-motion';  // Thêm import framer-motion
+import { fetchAdminData } from '../../../services/admin'; // Giữ nguyên import này
+
 
 const SignIn = () => {
   const router = useRouter();
+
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     language: "English"
   });
+
 
   const handleChange = (e) => {
     setFormData({
@@ -21,17 +26,38 @@ const SignIn = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    const adminList = await fetchAdminData(); // Lấy dữ liệu admin từ Firestore
+    let isValidUser = false;
+
+
+    // Kiểm tra email và password
+    adminList.forEach((adminData) => {
+      if (adminData.email === formData.email && adminData.password === formData.password) {
+        isValidUser = true; // Nếu tìm thấy người dùng hợp lệ
+      }
+    });
+
+
+    if (isValidUser) {
+      console.log("Đăng nhập thành công:", formData);
+      handleVerify(); // Chuyển hướng nếu thông tin hợp lệ
+    } else {
+      console.error("Không đúng email hoặc mật khẩu"); // Thông báo lỗi
+      alert("Không đúng email hoặc mật khẩu"); // Hiển thị thông báo cho người dùng
+    }
   };
+
 
   const handleVerify = () => {
     router.push("/admin/dashboard");
   };
 
+
   return (
-    <div 
+    <div
       className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url('/images/bk2.jpg')`,
@@ -50,6 +76,7 @@ const SignIn = () => {
       >
         <h2 className="text-3xl font-bold text-center mb-8 text-green-800">Xác thực Quản trị viên</h2>
 
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">
             <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
@@ -65,6 +92,7 @@ const SignIn = () => {
             />
           </div>
 
+
           <div className="relative">
             <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             <input
@@ -79,10 +107,10 @@ const SignIn = () => {
             />
           </div>
 
+
           <button
             type="submit"
             className="w-full py-3 px-4 text-xl bg-gradient-to-r from-green-500 to-green-300 text-white rounded-lg font-semibold shadow-lg hover:opacity-90 transition-opacity focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            onClick={handleVerify}
           >
             Xác thực
           </button>
@@ -92,4 +120,8 @@ const SignIn = () => {
   );
 };
 
+
 export default SignIn;
+
+
+
