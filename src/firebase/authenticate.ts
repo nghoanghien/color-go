@@ -27,6 +27,7 @@ export const signIn = () =>
       const userDoc = {
         name: user.displayName || "",
         id: user.uid,
+        email: user.email,
         favoriteTickets: [],
         tickets: [],
         membership: {
