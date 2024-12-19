@@ -82,14 +82,14 @@ export const getPromotions = async () => {
 export async function removeBookedSeats(routeId: any, seatsToRemove: any) {
   try {
     const routeRef = doc(db, "routes", routeId);
-
     // Xóa từng ghế trong mảng seatsToRemove khỏi bookedSeats
-    const updates = seatsToRemove.map((seat: any) =>
+    const updates = seatsToRemove.map((seat: any) => {
       updateDoc(routeRef, {
         bookedSeats: arrayRemove(seat),
       })
-    );
+    });
 
+    console.log("Done")
     // Đợi tất cả các promises hoàn thành
     await Promise.all(updates);
 

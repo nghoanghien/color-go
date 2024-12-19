@@ -8,9 +8,12 @@ import { useDropzone } from "react-dropzone";
 
 import { useRouter } from "next/navigation";
 import { getUsers } from "@/services/user";
-import { getDetailRoute } from "@/services/routes";
+import { getDetailRoute, removeBookedSeats } from "@/services/routes";
 import { formatDate, formatTimestampToCustom, timeString } from "@/utils/time-manipulation";
 import LoadingOverlay from "@/components/loading-overlay";
+import { updateTicketStatus } from "@/services/ticket";
+import { adjustUserBalance } from "@/services/wallet";
+import { changeMembershipById } from "@/services/membership";
 
 
 
@@ -44,12 +47,13 @@ const AdminCustomers = () => {
             const passengerInfo = JSON.parse(ticket.contact);
             return {
               id: ticket.id,
+              routeId: ticket.routeId,
               customerName: passengerInfo.name,
               phone: passengerInfo.phone,
               pickupPoint: ticket.pickup,
               dropoffPoint: ticket.dropoff,
               departureTime: route.departureTime,
-              seatNumber: ticket.seats.join(", "),
+              seatNumber: ticket.seats.join(","),
               price: ticket.price,
             };
           })
@@ -109,13 +113,22 @@ const AdminCustomers = () => {
     }
   };
 
-  const handleDeleteTicket = (customerId, ticketId) => {
+  const handleDeleteTicket = async (customerId, ticket) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa vé này?")) {
+      await updateTicketStatus(customerId, ticket.id);
+      await adjustUserBalance(customerId, "Hủy vé (hệ thống)", parseInt(ticket.price));
+      await changeMembershipById(
+        customerId,
+        "Hủy vé (hệ thống)",
+        -parseInt(ticket.price) / 1_000
+      );
+      await removeBookedSeats(ticket.routeId, ticket.seatNumber.split(","));
+
       setCustomersData(customersData.map(customer => {
         if (customer.id === customerId) {
           return {
             ...customer,
-            tickets: customer.tickets.filter(ticket => ticket.id !== ticketId)
+            tickets: customer.tickets.filter(ticket2 => ticket2.id !== ticket.id)
           };
         }
         return customer;
@@ -391,7 +404,7 @@ const AdminCustomers = () => {
                                         <motion.button
                                           whileHover={{ scale: 1.2 }}
                                           whileTap={{ scale: 0.9 }}
-                                          onClick={() => handleDeleteTicket(customer.id, ticket.id)}
+                                          onClick={() => handleDeleteTicket(customer.id, ticket)}
                                           className="text-red-500 hover:text-red-700"
                                         >
                                           <FaTrash size={16} />
