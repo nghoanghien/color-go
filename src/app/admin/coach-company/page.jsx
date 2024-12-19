@@ -1,44 +1,31 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+
+import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { FaFilePdf, FaFileDownload, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaGift, FaUserCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
+
 import { useRouter } from "next/navigation";
+import { fetchCoachCompanies } from '../../../services/coachCompany';
+import LoadingOverlay from "@/components/loading-overlay";
+
+
+
+
 
 
 const AdminTransport = () => {
   const router = useRouter();
 
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("coach-company");
   const [searchTerm, setSearchTerm] = useState("");
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
-  const [transportData, setTransportData] = useState([
-    {
-      id: 1,
-      name: "Phương Trang",
-      type: "Giường nằm",
-      seats: 40,
-      amenities: "WiFi, TV, Điều hòa, Nước uống"
-    },
-    {
-      id: 2,
-      name: "Thành Bưởi",
-      type: "Ghế ngồi",
-      seats: 29,
-      amenities: "WiFi, Điều hòa"
-    },
-    {
-      id: 3,
-      name: "Trung Nguyên",
-      type: "Limousine",
-      seats: 22,
-      amenities: "WiFi, TV, Điều hòa, Nước uống, Snack"
-    }
-  ]);
+  const [transportData, setTransportData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransport, setEditingTransport] = useState(null);
   const [newTransport, setNewTransport] = useState({
@@ -48,15 +35,18 @@ const AdminTransport = () => {
     amenities: ""
   });
 
+
   const onDrop = useCallback((acceptedFiles) => {
     // Handle file upload logic here
    // setUploadProgress(100); // Simulate upload completion
   }, []);
 
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
   });
+
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -64,6 +54,7 @@ const AdminTransport = () => {
       setNotification({ show: false, message: "", type: "" });
     }, 5000);
   };
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -75,13 +66,20 @@ const AdminTransport = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
+
+ 
+ 
+
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
+
   const filteredTransport = transportData.filter(transport =>
     transport.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
 
   const handleDelete = (id) => {
     try {
@@ -94,11 +92,13 @@ const AdminTransport = () => {
     }
   };
 
+
   const handleEdit = (transport) => {
     setEditingTransport(transport);
     setNewTransport(transport);
     setIsModalOpen(true);
   };
+
 
   const handleAdd = () => {
     setEditingTransport(null);
@@ -110,6 +110,7 @@ const AdminTransport = () => {
     });
     setIsModalOpen(true);
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -129,6 +130,7 @@ const AdminTransport = () => {
     }
   };
 
+
   const handleNavigate = (tab) => {
     setActiveTab(tab);
     if (tab !== "logout") {
@@ -139,7 +141,24 @@ const AdminTransport = () => {
     }
   }
 
-  return (
+
+  const fetchTransportData = async () => {
+    try {
+      const fetchedData = await fetchCoachCompanies();
+      console.log("Dữ liệu lấy được từ fetchCoachCompanies:", fetchedData);
+      setTransportData(fetchedData);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu:", error.message);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchTransportData();
+  }, []);
+
+
+  return !transportData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
       <AnimatePresence>
@@ -159,6 +178,7 @@ const AdminTransport = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
@@ -188,6 +208,7 @@ const AdminTransport = () => {
           </motion.button>
         </div>
 
+
         {sidebarItems.map((item) => (
           <motion.button
             key={item.id}
@@ -203,6 +224,8 @@ const AdminTransport = () => {
           </motion.button>
         ))}
       </motion.div>
+
+
 
 
       {/* Main Content */}
@@ -230,6 +253,7 @@ const AdminTransport = () => {
               Tải file
             </motion.button>
 
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -242,7 +266,7 @@ const AdminTransport = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                
+               
                 className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFilePdf />
@@ -258,8 +282,9 @@ const AdminTransport = () => {
               <span>Thêm nhà xe</span>
             </motion.button>
             </div>
-            
+           
           </div>
+
 
           {/* Search Bar */}
           <motion.div
@@ -277,6 +302,7 @@ const AdminTransport = () => {
               onChange={handleSearch}
             />
           </motion.div>
+
 
           {/* Transport Table */}
           <motion.div
@@ -306,8 +332,8 @@ const AdminTransport = () => {
                     >
                       <td className="px-6 py-4">{transport.name}</td>
                       <td className="px-6 py-4">{transport.type}</td>
-                      <td className="px-6 py-4">{transport.seats}</td>
-                      <td className="px-6 py-4">{transport.amenities}</td>
+                      <td className="px-6 py-4">{transport.numberSeat}</td>
+                      <td className="px-6 py-4">{transport.facility}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button
@@ -336,6 +362,7 @@ const AdminTransport = () => {
           </motion.div>
         </motion.div>
       </div>
+
 
       {/* Enhanced Modal */}
       <AnimatePresence>
@@ -401,6 +428,7 @@ const AdminTransport = () => {
                 </div>
                 <div className="flex justify-end space-x-4 mt-8">
 
+
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -427,5 +455,6 @@ const AdminTransport = () => {
     </div>
   );
 };
+
 
 export default AdminTransport;

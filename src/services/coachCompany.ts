@@ -12,3 +12,10 @@ export async function getCoachDetail(name: string) {
 
   return data.at(0);
 }
+
+export const fetchCoachCompanies = async () => {
+  const coachCollection = collection(db, 'coachCompanies');
+  const coachSnapshot = await getDocs(coachCollection);
+  const coachList = coachSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return coachList;
+};
