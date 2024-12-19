@@ -263,8 +263,8 @@ const AdminAccount = () => {
                       <input
                         type="radio"
                         name="gender"
-                        value="female"
-                        checked={editedData.gender === "female"}
+                        value="Nữ"
+                        checked={editedData.gender === "Nữ"}
                         onChange={(e) => setEditedData({ ...editedData, sex: e.target.value })}
                         disabled={!isEditing}
                         className="w-4 h-4 text-blue-500 focus:ring-blue-500"
