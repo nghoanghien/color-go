@@ -66,4 +66,22 @@ export async function removeTicketFromFavorites(userId: any, ticketId: any) {
   }
 }
 
-
+export const getUsers = async () => {
+    try {
+      // Truy vấn tất cả các document trong collection 'users'
+      const usersCollection = collection(db, "users");
+      const querySnapshot = await getDocs(usersCollection);
+  
+      // Map qua các document để lấy dữ liệu và ID
+      const users = querySnapshot.docs.map((doc) => ({
+        id: doc.id, // ID của document
+        ...doc.data(), // Dữ liệu của document
+      }));
+  
+      return users;
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách người dùng:", error);
+      return [];
+    }
+  };
+  

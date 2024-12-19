@@ -1,12 +1,16 @@
 'use client';
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaFileDownload, FaSort, FaSortAmountDown, FaSortAmountUp, FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaUserCircle, FaGift } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
 import { useRouter } from "next/navigation";
+import { getUsers } from "@/services/user";
+import { getDetailRoute } from "@/services/routes";
+import { formatDate, formatTimestampToCustom, timeString } from "@/utils/time-manipulation";
+import LoadingOverlay from "@/components/loading-overlay";
 
 
 
@@ -21,56 +25,51 @@ const AdminCustomers = () => {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const [customersData, setCustomersData] = useState([
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      email: "nguyenvana@gmail.com",
-      points: 150,
-      balance: 2000000,
-      tickets: [
-        {
-          id: 1,
-          customerName: "Nguyễn Văn A",
-          phone: "0123456789",
-          pickupPoint: "Bến xe miền Đông",
-          dropoffPoint: "Bến xe Đà Lạt",
-          departureTime: "2024-02-20 08:00",
-          seatNumber: "A01",
-          price: 250000
-        },
-        {
-          id: 2,
-          customerName: "Nguyễn Văn A",
-          phone: "0123456789",
-          pickupPoint: "Bến xe Đà Lạt",
-          dropoffPoint: "Bến xe miền Đông",
-          departureTime: "2024-02-25 15:30",
-          seatNumber: "B03",
-          price: 250000
-        }
-      ]
-    },
-    {
-      id: 2,
-      name: "Trần Thị B",
-      email: "tranthib@gmail.com",
-      points: 80,
-      balance: 1500000,
-      tickets: [
-        {
-          id: 3,
-          customerName: "Trần Thị B",
-          phone: "0987654321",
-          pickupPoint: "Bến xe miền Tây",
-          dropoffPoint: "Bến xe Cần Thơ",
-          departureTime: "2024-02-22 10:00",
-          seatNumber: "C02",
-          price: 180000
-        }
-      ]
-    }
-  ]);
+  const [customersData, setCustomersData] = useState();
+
+  useEffect(() => {
+    (async () => {
+      loadUsers();
+    })();
+  }, []); 
+
+  async function loadUsers() {
+    let data = await getUsers();
+    
+    const userData = await Promise.all(
+      data.map(async (user) => {
+        const tickets = await Promise.all(
+          user.tickets.filter((ticket) => ticket.status == 1).map(async (ticket) => {
+            const route = await getDetailRoute(ticket.routeId);
+            const passengerInfo = JSON.parse(ticket.contact);
+            return {
+              id: ticket.id,
+              customerName: passengerInfo.name,
+              phone: passengerInfo.phone,
+              pickupPoint: ticket.pickup,
+              dropoffPoint: ticket.dropoff,
+              departureTime: route.departureTime,
+              seatNumber: ticket.seats.join(", "),
+              price: ticket.price,
+            };
+          })
+        );
+    
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          points: user.membership.point,
+          balance: user.wallet.balance,
+          tickets: tickets,
+        };
+      })
+    );
+
+    console.log(userData);
+    
+    setCustomersData(userData);
+  }
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -156,7 +155,9 @@ const AdminCustomers = () => {
     }
   }
 
-  const sortedCustomers = [...customersData]
+  let sortedCustomers = {};
+  if (customersData) {
+    sortedCustomers = [...customersData]
     .sort((a, b) => {
       if (!sortBy) return 0;
       const multiplier = sortOrder === "asc" ? 1 : -1;
@@ -165,8 +166,9 @@ const AdminCustomers = () => {
     .filter(customer =>
       customer.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-  return (
+  }
+  
+  return (!customersData) ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
       <AnimatePresence>
@@ -242,20 +244,6 @@ const AdminCustomers = () => {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Quản lý khách hàng</h1>
             <div className="flex space-x-4">
-              <motion.button
-                {...getRootProps()} // Thêm props cho drag-and-drop
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                className={`px-6 py-2 bg-gradient-to-r from-gray-500 to-gray-400 text-white rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 font-medium ${
-                            isDragActive ? "border border-blue-500 bg-blue-50" : ""
-                }`}
-              >
-                <input {...getInputProps()} hidden /> {/* Ẩn input */}
-                <FiUploadCloud className="inline-block w-5 h-5 mr-2 text-white" />
-                Tải file
-              </motion.button>
-
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -347,7 +335,7 @@ const AdminCustomers = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">{customer.email}</td>
-                      <td className="px-6 py-4">{customer.points}</td>
+                      <td className="px-6 py-4">{Math.round(customer.points)}</td>
                       <td className="px-6 py-4">{customer.balance.toLocaleString("vi-VN")} VNĐ</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
@@ -395,7 +383,7 @@ const AdminCustomers = () => {
                                     <td className="px-4 py-2">{ticket.phone}</td>
                                     <td className="px-4 py-2">{ticket.pickupPoint}</td>
                                     <td className="px-4 py-2">{ticket.dropoffPoint}</td>
-                                    <td className="px-4 py-2">{ticket.departureTime}</td>
+                                    <td className="px-4 py-2">{timeString(ticket.departureTime) + ", " + formatDate(ticket.departureTime)}</td>
                                     <td className="px-4 py-2">{ticket.seatNumber}</td>
                                     <td className="px-4 py-2">{ticket.price.toLocaleString("vi-VN")} VNĐ</td>
                                     <td className="px-4 py-2">
