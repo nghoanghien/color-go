@@ -1,30 +1,35 @@
 'use client';
 
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { FaHome, FaBus, FaRoute, FaGift, FaUsers, FaUserCircle, FaSignOutAlt, FaChevronLeft, FaEdit, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
+
 import { useRouter } from "next/navigation";
+import { fetchAdminData } from '../../../services/admin';
+
+
+import LoadingOverlay from "@/components/loading-overlay";
+
+
 
 
 const AdminAccount = () => {
   const router = useRouter();
+
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("account");
   const [isEditing, setIsEditing] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
 
-  const [adminData, setAdminData] = useState({
-    name: "Nguyễn Văn A",
-    phone: "0123456789",
-    address: "123 Đường ABC, Quận XYZ, TP.HCM",
-    email: "admin@example.com",
-    birthDate: "1990-01-01",
-    gender: "male"
-  });
+
+  const [adminData, setAdminData] = useState();
+
 
   const [editedData, setEditedData] = useState(adminData);
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -36,10 +41,12 @@ const AdminAccount = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
+
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
     setTimeout(() => setNotification({ show: false, message: "", type: "" }), 3000);
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,10 +55,12 @@ const AdminAccount = () => {
     showNotification("Cập nhật thông tin thành công!", "success");
   };
 
+
   const handleCancel = () => {
     setEditedData(adminData);
     setIsEditing(false);
   };
+
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
@@ -63,7 +72,25 @@ const AdminAccount = () => {
     }
   }
 
-  return (
+
+  useEffect(() => {
+    const getAdminData = async () => {
+      const data = await fetchAdminData();
+      if (data.length > 0) {
+        setAdminData(data[0]);
+        setEditedData({
+          ...data[0],
+          birth: data[0].birth ? data[0].birth.toDate().toISOString().split('T')[0] : '',
+        });
+      }
+    };
+
+
+    getAdminData();
+  }, []);
+
+
+  return !adminData ? <LoadingOverlay isLoading /> :(
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       <AnimatePresence>
         {notification.show && (
@@ -78,6 +105,7 @@ const AdminAccount = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
@@ -106,6 +134,7 @@ const AdminAccount = () => {
           </motion.button>
         </div>
 
+
         {sidebarItems.map((item) => (
           <motion.button
             key={item.id}
@@ -119,6 +148,7 @@ const AdminAccount = () => {
           </motion.button>
         ))}
       </motion.div>
+
 
       <div className="flex-1 p-8">
         <motion.div
@@ -142,6 +172,7 @@ const AdminAccount = () => {
             )}
           </div>
 
+
           <motion.div
             layout
             className="bg-white rounded-2xl shadow-xl p-8"
@@ -160,6 +191,7 @@ const AdminAccount = () => {
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-gray-700 mb-2">Số điện thoại</label>
                   <input
@@ -171,6 +203,7 @@ const AdminAccount = () => {
                     required
                   />
                 </div>
+
 
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 mb-2">Địa chỉ</label>
@@ -184,6 +217,7 @@ const AdminAccount = () => {
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-gray-700 mb-2">Email</label>
                   <input
@@ -194,17 +228,23 @@ const AdminAccount = () => {
                   />
                 </div>
 
+
                 <div>
                   <label className="block text-gray-700 mb-2">Ngày sinh</label>
                   <input
                     type="date"
                     className={`w-full p-3 rounded-lg border ${isEditing ? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" : "border-gray-200 bg-gray-50"}`}
-                    value={editedData.birthDate}
-                    onChange={(e) => setEditedData({ ...editedData, birthDate: e.target.value })}
+                    value={editedData.birth || ''}
+                    onChange={(e) => {
+                      const newBirthDate = new Date(e.target.value).getTime();
+                      console.log("New Birth Date (timestamp):", newBirthDate);
+                      setEditedData({ ...editedData, birth: newBirthDate });
+                    }}
                     disabled={!isEditing}
                     required
                   />
                 </div>
+
 
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 mb-2">Giới tính</label>
@@ -213,9 +253,9 @@ const AdminAccount = () => {
                       <input
                         type="radio"
                         name="gender"
-                        value="male"
-                        checked={editedData.gender === "male"}
-                        onChange={(e) => setEditedData({ ...editedData, gender: e.target.value })}
+                        value="Nam"
+                        checked={editedData.sex === "Nam"}
+                        onChange={(e) => setEditedData({ ...editedData, sex: e.target.value })}
                         disabled={!isEditing}
                         className="w-4 h-4 text-blue-500 focus:ring-blue-500"
                       />
@@ -227,7 +267,7 @@ const AdminAccount = () => {
                         name="gender"
                         value="female"
                         checked={editedData.gender === "female"}
-                        onChange={(e) => setEditedData({ ...editedData, gender: e.target.value })}
+                        onChange={(e) => setEditedData({ ...editedData, sex: e.target.value })}
                         disabled={!isEditing}
                         className="w-4 h-4 text-blue-500 focus:ring-blue-500"
                       />
@@ -236,6 +276,7 @@ const AdminAccount = () => {
                   </div>
                 </div>
               </div>
+
 
               {isEditing && (
                 <div className="flex justify-end space-x-4 mt-6">
@@ -265,5 +306,6 @@ const AdminAccount = () => {
     </div>
   );
 };
+
 
 export default AdminAccount;
