@@ -13,8 +13,6 @@ import { fetchAdminData, updateAdminInfo } from '../../../services/admin';
 import LoadingOverlay from "@/components/loading-overlay";
 
 
-
-
 const AdminAccount = () => {
   const router = useRouter();
 
@@ -80,10 +78,8 @@ const AdminAccount = () => {
       const data = await fetchAdminData();
       if (data.length > 0) {
         setAdminData(data[0]);
-        setEditedData({
-          ...data[0],
-          birth: data[0].birth ? data[0].birth.toDate().toISOString().split('T')[0] : '',
-        });
+        setEditedData(data[0]);
+        //console.log("edit: ", editedData);
       }
     };
 
@@ -92,7 +88,7 @@ const AdminAccount = () => {
   }, []);
 
 
-  return !adminData ? <LoadingOverlay isLoading /> :(
+  return (!adminData) ? <LoadingOverlay isLoading /> :(
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       <AnimatePresence>
         {notification.show && (
