@@ -132,6 +132,7 @@ const AdminTransport = () => {
       setIsModalOpen(false);
     } catch (error) {
       showNotification(`Thao tác thất bại: ${error.message}`, "error");
+      setIsModalOpen(false);
     }
   };
 

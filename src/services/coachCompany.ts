@@ -51,7 +51,16 @@ export async function updateCoachCompany(info: any) {
 
 export async function addCoachCompany(info: any) {
   try {
-    // Thêm document vào collection 'coachCompanies'
+    // Tạo truy vấn để kiểm tra nếu document với name đã tồn tại
+    const q = query(collection(db, 'coachCompanies'), where('name', '==', info.name));
+    const querySnapshot = await getDocs(q);
+    
+    // Nếu tìm thấy document trùng lặp, thông báo lỗi
+    if (!querySnapshot.empty) {
+      throw new Error(`Nhà xe với tên "${info.name}" đã tồn tại.`);
+      return;
+    }
+    // Nếu không tìm thấy trùng lặp, thêm document mới
     const docRef = await addDoc(collection(db, 'coachCompanies'), {
       facility: info.facility,
       name: info.name,
@@ -61,8 +70,10 @@ export async function addCoachCompany(info: any) {
 
     console.log('Document successfully added with ID: ', docRef.id);
   } catch (error) {
-    console.error('Error adding document: ', error);
+    // Re-throw lỗi để xử lý bên ngoài
+    throw error;
   }
 }
+
 
 
