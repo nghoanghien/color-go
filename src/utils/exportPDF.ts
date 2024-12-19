@@ -24,7 +24,8 @@ export const exportToExcel = (data: any[], fileName: string, sheetName: string, 
 export const exportToPDF = (
   data: any[],
   fileName: string,
-  fieldsToExclude: string[]
+  fieldsToExclude: string[],
+  title: string 
 ) => {
     const doc = new jsPDF();
   
@@ -68,9 +69,9 @@ export const exportToPDF = (
         },
       });
     
-      // Thêm tiêu đề
-      doc.text("Danh sách nhà xe", 14, 15);
-    
+      doc.text(`${title}`, 14, 15);
+   
       // Lưu PDF
-      doc.save("DanhSachNhaXe.pdf");
+      doc.save(`${fileName}.pdf`);
+
 };

@@ -37,6 +37,7 @@ const AdminTransport = () => {
   });
   const [fileName, setFileName] = useState("DanhSachNhaXe");
   const [sheetName, setSheetName] = useState("Nhà Xe");
+  const [title, setTitle] = useState("Danh sách nhà xe");
   const [fieldsToExclude, setFieldsToExclude] = useState("termConditions,id");
 
 
@@ -168,7 +169,7 @@ const AdminTransport = () => {
 
   const handleExportToPDF = () => {
     const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-    exportToPDF(transportData, fileName, fieldsArray);
+    exportToPDF(transportData, fileName, fieldsArray, title);
    
   };
   return !transportData ? <LoadingOverlay isLoading /> : (
