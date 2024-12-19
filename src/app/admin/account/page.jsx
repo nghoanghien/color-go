@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 
 import { useRouter } from "next/navigation";
-import { fetchAdminData } from '../../../services/admin';
+import { fetchAdminData, updateAdminInfo } from '../../../services/admin';
 
 
 import LoadingOverlay from "@/components/loading-overlay";
@@ -48,8 +48,10 @@ const AdminAccount = () => {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await updateAdminInfo(editedData);
+
     setAdminData(editedData);
     setIsEditing(false);
     showNotification("Cập nhật thông tin thành công!", "success");
