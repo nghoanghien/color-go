@@ -1,5 +1,5 @@
 import { db } from "@/firebase/store";
-import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 export async function getFavoriteTickets(userId: any) {
   try {
@@ -83,5 +83,19 @@ export const getUsers = async () => {
       console.error("Lỗi khi lấy danh sách người dùng:", error);
       return [];
     }
-  };
+};
+
+export async function deleteUserById(userId: any) {
+    try {
+      // Tạo tham chiếu đến document trong collection users
+      const userDocRef = doc(db, 'users', userId);
+  
+      // Xóa document
+      await deleteDoc(userDocRef);
+      console.log('Document successfully deleted!');
+    } catch (error) {
+      console.error('Error deleting document: ', error);
+    }
+  }
+  
   

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
 import { useRouter } from "next/navigation";
-import { getUsers } from "@/services/user";
+import { deleteUserById, getUsers } from "@/services/user";
 import { getDetailRoute, removeBookedSeats } from "@/services/routes";
 import { formatDate, formatTimestampToCustom, timeString } from "@/utils/time-manipulation";
 import LoadingOverlay from "@/components/loading-overlay";
@@ -106,8 +106,10 @@ const AdminCustomers = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleDeleteCustomer = (id) => {
+  const handleDeleteCustomer = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
+      await deleteUserById(id);
+
       setCustomersData(customersData.filter(customer => customer.id !== id));
       showNotification("Xóa khách hàng thành công!", "success");
     }
