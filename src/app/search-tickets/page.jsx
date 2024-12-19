@@ -360,7 +360,7 @@ const SearchResultsPage = () => {
               </div>
               <div className="flex flex-col items-end w-fit flex-shrink-0">
                 <div className="mt-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg border border-blue-100">
-                  {ticket.totalSeat} chỗ trống
+                  {ticket.totalSeat - ticket.bookedSeats.length} chỗ trống
                 </div>
               </div>
             </div>
