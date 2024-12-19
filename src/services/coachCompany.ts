@@ -1,5 +1,5 @@
 import { db } from "@/firebase/store";
-import { collection, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 export async function getCoachDetail(name: string) {
   const q = query(
@@ -48,4 +48,21 @@ export async function updateCoachCompany(info: any) {
     console.error('Error updating document: ', error);
   }
 }
+
+export async function addCoachCompany(info: any) {
+  try {
+    // Thêm document vào collection 'coachCompanies'
+    const docRef = await addDoc(collection(db, 'coachCompanies'), {
+      facility: info.facility,
+      name: info.name,
+      numberSeat: info.numberSeat,
+      type: info.type
+    });
+
+    console.log('Document successfully added with ID: ', docRef.id);
+  } catch (error) {
+    console.error('Error adding document: ', error);
+  }
+}
+
 

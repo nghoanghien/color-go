@@ -9,7 +9,7 @@ import { useDropzone } from "react-dropzone";
 
 
 import { useRouter } from "next/navigation";
-import { fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
+import { addCoachCompany, fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
 
@@ -125,7 +125,7 @@ const AdminTransport = () => {
         ));
         showNotification("Cập nhật nhà xe thành công!", "success");
       } else {
-        console.log(newTransport);
+        await addCoachCompany(newTransport);
         setTransportData([...transportData, { ...newTransport, id: transportData.length + 1 }]);
         showNotification("Thêm nhà xe mới thành công!", "success");
       }
