@@ -9,7 +9,7 @@ import { useDropzone } from "react-dropzone";
 
 
 import { useRouter } from "next/navigation";
-import { addCoachCompany, fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
+import { addCoachCompany, deleteCoachCompanyById, fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
 
@@ -84,9 +84,11 @@ const AdminTransport = () => {
   
 
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa nhà xe này?")) {
+        await deleteCoachCompanyById(id);
+
         setTransportData(transportData.filter(transport => transport.id !== id));
         showNotification("Xóa nhà xe thành công!", "success");
       }
@@ -125,8 +127,8 @@ const AdminTransport = () => {
         ));
         showNotification("Cập nhật nhà xe thành công!", "success");
       } else {
-        await addCoachCompany(newTransport);
-        setTransportData([...transportData, { ...newTransport, id: transportData.length + 1 }]);
+        const newId = await addCoachCompany(newTransport);
+        setTransportData([...transportData, { ...newTransport, id: newId }]);
         showNotification("Thêm nhà xe mới thành công!", "success");
       }
       setIsModalOpen(false);
