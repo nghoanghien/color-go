@@ -26,7 +26,7 @@ const AdminTransport = () => {
   const [activeTab, setActiveTab] = useState("coach-company");
   const [searchTerm, setSearchTerm] = useState("");
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
-  const [transportData, setTransportData] = useState([]);
+  const [transportData, setTransportData] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransport, setEditingTransport] = useState(null);
   const [newTransport, setNewTransport] = useState({
@@ -70,19 +70,17 @@ const AdminTransport = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
-
- 
- 
-
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-
-  const filteredTransport = transportData.filter(transport =>
-    transport.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  let filteredTransport = [];
+  if (transportData) {
+    filteredTransport = transportData.filter(transport =>
+      transport.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+  
 
 
   const handleDelete = (id) => {
