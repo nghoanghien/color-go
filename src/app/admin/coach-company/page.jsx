@@ -11,6 +11,7 @@ import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
 import { fetchCoachCompanies } from '../../../services/coachCompany';
 import LoadingOverlay from "@/components/loading-overlay";
+import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
 
 
 
@@ -31,9 +32,12 @@ const AdminTransport = () => {
   const [newTransport, setNewTransport] = useState({
     name: "",
     type: "",
-    seats: "",
-    amenities: ""
+    numberSeat: "",
+    facility: ""
   });
+  const [fileName, setFileName] = useState("DanhSachNhaXe");
+  const [sheetName, setSheetName] = useState("Nhà Xe");
+  const [fieldsToExclude, setFieldsToExclude] = useState("termConditions,id");
 
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -105,8 +109,8 @@ const AdminTransport = () => {
     setNewTransport({
       name: "",
       type: "",
-      seats: "",
-      amenities: ""
+      numberSeat: "",
+      facility: ""
     });
     setIsModalOpen(true);
   };
@@ -158,6 +162,17 @@ const AdminTransport = () => {
   }, []);
 
 
+  const handleExportToExcel = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    exportToExcel(transportData, fileName, sheetName, fieldsArray);
+  };
+
+
+  const handleExportToPDF = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    exportToPDF(transportData, fileName, fieldsArray);
+   
+  };
   return !transportData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
@@ -257,7 +272,7 @@ const AdminTransport = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                // onClick={handleExport}
+                onClick={handleExportToExcel}
                 className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFileDownload />
@@ -266,7 +281,7 @@ const AdminTransport = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-               
+                onClick={handleExportToPDF}
                 className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFilePdf />
@@ -411,8 +426,8 @@ const AdminTransport = () => {
                   <input
                     type="number"
                     className="w-full p-3 border rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={newTransport.seats}
-                    onChange={(e) => setNewTransport({ ...newTransport, seats: e.target.value })}
+                    value={newTransport.numberSeat}
+                    onChange={(e) => setNewTransport({ ...newTransport, numberSeat: e.target.value })}
                     required
                   />
                 </div>
@@ -421,8 +436,8 @@ const AdminTransport = () => {
                   <input
                     type="text"
                     className="w-full p-3 border rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={newTransport.amenities}
-                    onChange={(e) => setNewTransport({ ...newTransport, amenities: e.target.value })}
+                    value={newTransport.facility}
+                    onChange={(e) => setNewTransport({ ...newTransport, facility: e.target.value })}
                     required
                   />
                 </div>
