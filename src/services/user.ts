@@ -90,11 +90,28 @@ export async function deleteUserById(userId: any) {
       // Tạo tham chiếu đến document trong collection users
       const userDocRef = doc(db, 'users', userId);
   
+      // Lấy dữ liệu user từ Firestore
+      const userSnapshot = await getDoc(userDocRef);
+  
+      if (!userSnapshot.exists()) {
+        throw new Error('User not found');
+      }
+  
+      const userData = userSnapshot.data();
+  
+      // Kiểm tra nếu user có tickets với status == 1
+      const activeTicket = userData.tickets?.find((ticket: any) => ticket.status === 1);
+  
+      if (activeTicket) {
+        throw new Error(`Khách hàng tên ${userData.name} vẫn còn vé chưa đến ngày đi.`);
+      }
+  
       // Xóa document
       await deleteDoc(userDocRef);
       console.log('Document successfully deleted!');
     } catch (error) {
       console.error('Error deleting document: ', error);
+      throw error; // Re-throw error để xử lý bên ngoài (nếu cần)
     }
   }
   
