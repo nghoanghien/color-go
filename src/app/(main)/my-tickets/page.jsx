@@ -3,7 +3,7 @@
 import LoadingOverlay from "@/components/loading-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { changeMembershipById } from "@/services/membership";
-import { getDetailRoute } from "@/services/routes";
+import { getDetailRoute, removeBookedSeats } from "@/services/routes";
 import { getTickets, updateTicketStatus } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { formatDate, timeString } from "@/utils/time-manipulation";
@@ -117,6 +117,7 @@ const TicketHistoryPage = () => {
       "Hủy vé",
       -parseInt(ticket.price) / 1_000
     );
+    await removeBookedSeats(ticket.routeId, ticket.seats);
 
     setShowCancelModal(false);
     setTermsAccepted(false);

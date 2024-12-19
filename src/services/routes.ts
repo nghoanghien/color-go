@@ -1,11 +1,13 @@
 import { db } from "../firebase/store";
 import {
+  arrayRemove,
   collection,
   doc,
   getDoc,
   getDocs,
   query,
   Timestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -74,5 +76,28 @@ export const getPromotions = async () => {
         console.error("Error fetching promotions:", error);
         return [];
     }
-  };
+};
+
+// Hàm xóa hoàn lại ghế khi thực hiện hủy vé
+export async function removeBookedSeats(routeId: any, seatsToRemove: any) {
+  try {
+    const routeRef = doc(db, "routes", routeId);
+
+    // Xóa từng ghế trong mảng seatsToRemove khỏi bookedSeats
+    const updates = seatsToRemove.map((seat: any) =>
+      updateDoc(routeRef, {
+        bookedSeats: arrayRemove(seat),
+      })
+    );
+
+    // Đợi tất cả các promises hoàn thành
+    await Promise.all(updates);
+
+    console.log(`Successfully removed seats: ${seatsToRemove.join(", ")}`);
+  } catch (error: any) {
+    console.error("Error removing seats: ", error);
+  }
+}
+
+
   
