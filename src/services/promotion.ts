@@ -1,4 +1,4 @@
-import { addDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/store";
 import { collection, query, where } from "firebase/firestore";
 
@@ -52,4 +52,17 @@ export async function addPromotion(promotion: any) {
   }
 }
 
+export async function deletePromotion(promotionId: any) {
+  try {
+    // Tạo tham chiếu đến document cần xóa trong collection promotions
+    const promotionDocRef = doc(db, 'promotions', promotionId);
+
+    // Xóa document
+    await deleteDoc(promotionDocRef);
+    console.log('Promotion successfully deleted!');
+  } catch (error) {
+    console.error('Error deleting promotion: ', error);
+    throw error;
+  }
+}
 

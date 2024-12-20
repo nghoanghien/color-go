@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
 import { useRouter } from "next/navigation";
-import { addPromotion, fetchPromotion, updatePromotion } from "@/services/promotion";
+import { addPromotion, deletePromotion, fetchPromotion, updatePromotion } from "@/services/promotion";
 
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
@@ -121,8 +121,10 @@ const AdminPromotions = () => {
     return result;
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này?")) {
+      await deletePromotion(id);
+
       setPromotionsData(prev => prev.filter(promo => promo.id !== id));
       showNotification("Xóa ưu đãi thành công!", "success");
     }
