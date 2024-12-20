@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
 
 const AdminTickets = () => {
+  const router = useRouter();
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("tickets");
   const [searchTransport, setSearchTransport] = useState("");
@@ -57,6 +60,16 @@ const AdminTickets = () => {
     "Đà Nẵng",
     "Nha Trang"
   ];
+
+  const handleNavigate = (tab) => {
+    setActiveTab(tab);
+    if (tab !== "logout") {
+      router.replace(`/admin/${tab}`);
+    }
+    else {
+      router.replace("/admin/admin-login");
+    }
+  }
 
   const CustomDateInput = React.forwardRef(({ value, onClick, placeholder }, ref) => (
     <div className="relative cursor-pointer" onClick={onClick}>
@@ -120,11 +133,13 @@ const AdminTickets = () => {
   });
 
   const sidebarItems = [
-    { id: "home", label: "Trang chủ", icon: <FaHome /> },
-    { id: "transport", label: "Nhà xe", icon: <FaBus /> },
+    { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
+    { id: "coach-company", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
-    { id: "tickets", label: "Vé xe", icon: <FaFileInvoice /> },
+    { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
+    { id: "tickets", label: "Vé xe", icon: <FaTicketAlt /> },
+    { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
@@ -181,7 +196,7 @@ const AdminTickets = () => {
             key={item.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg ${activeTab === item.id ? "bg-white/20" : "hover:bg-white/10"}`}
           >
             <span className="text-xl">{item.icon}</span>
