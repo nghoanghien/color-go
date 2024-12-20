@@ -21,6 +21,7 @@ const AdminDashboard = () => {
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
     { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
+    { id: "tickets", label: "Vé xe", icon: <FaTicketAlt /> },
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];

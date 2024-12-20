@@ -1,42 +1,20 @@
 'use client';
 
-
-
-
 import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 
-
-
-
-import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle } from "react-icons/fa";
+import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
-
-
-
 
 import { useRouter } from "next/navigation";
 import { fetchPromotion } from "@/services/promotion";
 
-
-
-
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
 
-
-
-
-
-
-
-
 const AdminPromotions = () => {
   const router = useRouter();
-
-
-
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("promotions");
@@ -49,13 +27,7 @@ const AdminPromotions = () => {
     sortDate: null
   });
 
-
-
-
   const [promotionsData, setPromotionsData] = useState();
-
-
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPromotion, setEditingPromotion] = useState(null);
@@ -69,15 +41,13 @@ const AdminPromotions = () => {
     type: "percentage"
   });
 
-
-
-
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
     { id: "coach-company", label: "Nhà xe", icon: <FaBus /> },
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
     { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
+    { id: "tickets", label: "Vé xe", icon: <FaTicketAlt /> },
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];

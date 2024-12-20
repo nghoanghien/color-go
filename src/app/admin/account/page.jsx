@@ -2,7 +2,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import { FaHome, FaBus, FaRoute, FaGift, FaUsers, FaUserCircle, FaSignOutAlt, FaChevronLeft, FaEdit, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaHome, FaBus, FaRoute, FaGift, FaUsers, FaUserCircle, FaSignOutAlt, FaChevronLeft, FaEdit, FaCheckCircle, FaTimesCircle, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 
@@ -35,6 +35,7 @@ const AdminAccount = () => {
     { id: "routes", label: "Chuyến xe", icon: <FaRoute /> },
     { id: "promotions", label: "Ưu Đãi", icon: <FaGift /> },
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
+    { id: "tickets", label: "Vé xe", icon: <FaTicketAlt /> },
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
