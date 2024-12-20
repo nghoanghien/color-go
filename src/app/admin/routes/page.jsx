@@ -21,6 +21,8 @@ const AdminRoutes = () => {
   const [sortBy, setSortBy] = useState({ field: null, order: "asc" });
   const [filterDeparture, setFilterDeparture] = useState("");
   const [filterArrival, setFilterArrival] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   
   const [routesData, setRoutesData] = useState([
     {
@@ -201,7 +203,9 @@ const AdminRoutes = () => {
     .filter(route =>
       route.transportName.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (!filterDeparture || route.departure === filterDeparture) &&
-      (!filterArrival || route.arrival === filterArrival)
+      (!filterArrival || route.arrival === filterArrival) &&
+      (!startDate || new Date(route.departureTime) >= startDate) &&
+      (!endDate || new Date(route.departureTime) <= endDate)
     )
     .sort((a, b) => {
       if (!sortBy.field) return 0;
@@ -224,6 +228,7 @@ const AdminRoutes = () => {
 
   return (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
+      {/* Rest of the component remains the same until the filters section */}
       {/* Notification */}
       <AnimatePresence>
         {notification.show && (
@@ -357,7 +362,7 @@ const AdminRoutes = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
               <select
                 value={filterDeparture}
                 onChange={(e) => setFilterDeparture(e.target.value)}
@@ -379,6 +384,33 @@ const AdminRoutes = () => {
                   <option key={location} value={location}>{location}</option>
                 ))}
               </select>
+
+              <div className="flex items-center space-x-2">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  placeholderText="Từ ngày (khởi hành)"
+                  className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 w-full"
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  placeholderText="Đến ngày (khởi hành)"
+                  className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 w-full"
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
 
               <button
                 onClick={() => handleSort("price")}
@@ -402,6 +434,7 @@ const AdminRoutes = () => {
             </div>
           </div>
 
+          {/* Rest of your original code remains exactly the same */}
           {/* Routes Table */}
           <motion.div
             layout
