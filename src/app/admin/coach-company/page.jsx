@@ -432,6 +432,7 @@ const AdminTransport = () => {
                     className="w-full p-3 border rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value={newTransport.numberSeat}
                     onChange={(e) => setNewTransport({ ...newTransport, numberSeat: e.target.value })}
+                    disabled={editingTransport}
                     required
                   />
                 </div>
