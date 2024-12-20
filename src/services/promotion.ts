@@ -1,4 +1,4 @@
-import { getDocs } from "firebase/firestore";
+import { doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/store";
 import { collection, query, where } from "firebase/firestore";
 
@@ -18,3 +18,21 @@ export const fetchPromotion = async () => {
   const promotionList = promotionSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   return promotionList;
 };
+
+export async function updatePromotion(promotion: any) {
+  try {
+    // Tạo tham chiếu đến document cần cập nhật trong collection promotions
+    const promotionDocRef = doc(db, 'promotions', promotion.id);
+
+    // Xóa id trước khi cập nhật vì Firestore không cần lưu id trong document
+    const { id, ...promotionData } = promotion;
+
+    // Cập nhật document với dữ liệu mới
+    await updateDoc(promotionDocRef, promotionData);
+    console.log('Promotion successfully updated!');
+  } catch (error: any) {
+    console.error('Error updating promotion: ', error);
+    throw error;
+  }
+}
+

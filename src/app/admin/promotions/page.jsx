@@ -8,10 +8,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
 import { useRouter } from "next/navigation";
-import { fetchPromotion } from "@/services/promotion";
+import { fetchPromotion, updatePromotion } from "@/services/promotion";
 
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
+import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal } from "@/utils/time-manipulation";
 
 const AdminPromotions = () => {
   const router = useRouter();
@@ -147,10 +148,12 @@ const AdminPromotions = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingPromotion) {
+        await updatePromotion(newPromotion);
+
         setPromotionsData(prev =>
           prev.map(promo =>
             promo.id === editingPromotion.id ? { ...newPromotion, id: promo.id } : promo
@@ -341,9 +344,6 @@ const AdminPromotions = () => {
               />
             </div>
 
-
-
-
             <div className="flex flex-wrap gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -354,9 +354,6 @@ const AdminPromotions = () => {
                 <FaPercentage />
                 <span>Giảm theo %</span>
               </motion.button>
-
-
-
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -523,18 +520,18 @@ const AdminPromotions = () => {
                     onChange={(e) => setNewPromotion({ ...newPromotion, type: e.target.value })}
                     required
                   >
-                    <option value="percentage">Phần trăm (%)</option>
-                    <option value="amount">Số tiền cố định</option>
-                  </select>
+                    <option value="1">Phần trăm (%)</option>
+                    <option value="0">Số tiền cố định</option>
+                  </select> 
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2">Giá trị giảm</label>
                   <input
-                    type="text"
+                    type="number"
                     className="w-full p-2 border rounded-lg"
                     value={newPromotion.value}
                     onChange={(e) => setNewPromotion({ ...newPromotion, value: e.target.value })}
-                    placeholder={newPromotion.type === "percentage" ? "Ví dụ: 20%" : "Ví dụ: 50000"}
+                    placeholder={newPromotion.type === "percentage" ? "Ví dụ: 20%" : "Ví dụ: 50000đ"}
                     required
                   />
                 </div>
@@ -543,8 +540,8 @@ const AdminPromotions = () => {
                   <input
                     type="datetime-local"
                     className="w-full p-2 border rounded-lg"
-                    value={newPromotion.expiry}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, expiry: e.target.value })}
+                    value={convertTimestampToDatetimeLocal(newPromotion.valid)}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, valid: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
                     required
                   />
                 </div>
