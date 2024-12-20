@@ -56,39 +56,24 @@ const AdminPromotions = () => {
   const [title, setTitle] = useState("Danh sách mã giảm giá");
   const [fieldsToExclude, setFieldsToExclude] = useState("id, valid");
 
-
-
-
   const onDrop = useCallback((acceptedFiles) => {
     // Handle file upload logic here
    // setUploadProgress(100); // Simulate upload completion
   }, []);
-
-
-
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
   });
 
-
-
-
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
     setTimeout(() => setNotification({ show: false, message: "", type: "" }), 3000);
   };
 
-
-
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
-
-
-
 
   const handleFilterToggle = (filterType) => {
     if (filterType === "percentage" || filterType === "amount") {
@@ -107,9 +92,6 @@ const AdminPromotions = () => {
       }));
     }
   };
-
-
-
 
   const filteredAndSortedPromotions = () => {
     let result = [...promotionsData];
@@ -138,9 +120,6 @@ const AdminPromotions = () => {
     return result;
   };
 
-
-
-
   const handleDelete = (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này?")) {
       setPromotionsData(prev => prev.filter(promo => promo.id !== id));
@@ -148,17 +127,11 @@ const AdminPromotions = () => {
     }
   };
 
-
-
-
   const handleEdit = (promotion) => {
     setEditingPromotion(promotion);
     setNewPromotion(promotion);
     setIsModalOpen(true);
   };
-
-
-
 
   const handleAdd = () => {
     setEditingPromotion(null);
@@ -173,9 +146,6 @@ const AdminPromotions = () => {
     });
     setIsModalOpen(true);
   };
-
-
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -398,9 +368,6 @@ const AdminPromotions = () => {
                 <span>Giảm theo tiền</span>
               </motion.button>
 
-
-
-
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -410,9 +377,6 @@ const AdminPromotions = () => {
                 {filters.sortValue === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
                 <span>Giá trị giảm</span>
               </motion.button>
-
-
-
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -425,9 +389,6 @@ const AdminPromotions = () => {
               </motion.button>
             </div>
           </div>
-
-
-
 
           <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <table className="w-full">
@@ -503,53 +464,58 @@ const AdminPromotions = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl"
+              className="bg-white rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
             >
               <h2 className="text-2xl font-bold mb-6">
                 {editingPromotion ? "Chỉnh sửa ưu đãi" : "Thêm ưu đãi mới"}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-gray-700 mb-2">Mã ưu đãi</label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded-lg"
-                    value={newPromotion.code}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, code: e.target.value })}
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 mb-2">Mã ưu đãi</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded-lg bg-gray-100"
+                      value={newPromotion.code}
+                      onChange={(e) => setNewPromotion({ ...newPromotion, code: e.target.value })}
+                      required
+                      disabled={editingPromotion}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Nội dung</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded-lg"
+                      value={newPromotion.title}
+                      onChange={(e) => setNewPromotion({ ...newPromotion, title: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">Nội dung</label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded-lg"
-                    value={newPromotion.title}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, title: e.target.value })}
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 mb-2">Đơn tối thiểu (đ)</label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border rounded-lg"
+                      value={newPromotion.minApply}
+                      onChange={(e) => setNewPromotion({ ...newPromotion, minApply: Number(e.target.value) })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Giảm tối đa (đ)</label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border rounded-lg"
+                      value={newPromotion.max}
+                      onChange={(e) => setNewPromotion({ ...newPromotion, max: Number(e.target.value) })}
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">Đơn tối thiểu (đ)</label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded-lg"
-                    value={newPromotion.minApply}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, minApply: Number(e.target.value) })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">Giảm tối đa (đ)</label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded-lg"
-                    value={newPromotion.max}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, max: Number(e.target.value) })}
-                    required
-                  />
-                </div>
-                <div>
+                <div className="mb-4">
                   <label className="block text-gray-700 mb-2">Loại giảm giá</label>
                   <select
                     className="w-full p-2 border rounded-lg"
@@ -592,7 +558,7 @@ const AdminPromotions = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium"
                   >
                     {editingPromotion ? "Cập nhật" : "Thêm"}
                   </button>
@@ -602,6 +568,7 @@ const AdminPromotions = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
     </div>
   );
 };
