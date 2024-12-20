@@ -1,5 +1,5 @@
 import { db } from "@/firebase/store";
-import { arrayUnion, doc, getDoc, updateDoc, } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc, } from "firebase/firestore";
 
 export async function createTicket(userId: string, ticket: any) {
   const routeId = ticket.routeId;
@@ -106,5 +106,40 @@ export async function getTickets(userId: any) {
   } catch (error: any) {
       console.error("Error fetching favorite tickets:", error.message);
       throw error;
+  }
+}
+
+export async function getAllTicketsWithUserId() {
+  try {
+    // Tạo tham chiếu đến collection users
+    const usersCollectionRef = collection(db, 'users');
+
+    // Lấy tất cả document trong collection users
+    const usersSnapshot = await getDocs(usersCollectionRef);
+
+    const ticketsWithUserIds: any[] = [];
+
+    // Duyệt qua tất cả các document
+    usersSnapshot.forEach(userDoc => {
+      const userData = userDoc.data();
+      const userId = userDoc.id;
+
+      // Kiểm tra nếu user có tickets
+      if (userData.tickets && Array.isArray(userData.tickets)) {
+        // Thêm id của user vào mỗi ticket
+        const ticketsWithId = userData.tickets.map(ticket => ({
+          ...ticket,
+          userId
+        }));
+
+        // Nối vào mảng kết quả
+        ticketsWithUserIds.push(...ticketsWithId);
+      }
+    });
+
+    return ticketsWithUserIds;
+  } catch (error) {
+    console.error('Error fetching tickets: ', error);
+    throw error;
   }
 }

@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import { FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaHome, FaBus, FaRoute, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
+import { getAllTicketsWithUserId } from "@/services/ticket";
+import { getDetailRoute } from "@/services/routes";
+import { formatDate } from "@/utils/time-manipulation";
+import LoadingOverlay from "@/components/loading-overlay";
 
 const AdminTickets = () => {
   const router = useRouter();
@@ -21,36 +25,7 @@ const AdminTickets = () => {
   const [selectedDeparture, setSelectedDeparture] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("");
 
-  const [ticketsData, setTicketsData] = useState([
-    {
-      id: 1,
-      transportName: "Phương Trang",
-      departure: "Hồ Chí Minh",
-      destination: "Đà Lạt",
-      date: "2024-02-15",
-      seatNumber: "A01",
-      customerName: "Nguyễn Văn A",
-      email: "nguyenvana@email.com",
-      phone: "0123456789",
-      pickupPoint: "Bến xe miền Đông",
-      dropoffPoint: "Bến xe Đà Lạt",
-      price: "350000"
-    },
-    {
-      id: 2,
-      transportName: "Thành Bưởi",
-      departure: "Hà Nội",
-      destination: "Sapa",
-      date: "2024-02-16",
-      seatNumber: "B03",
-      customerName: "Trần Thị B",
-      email: "tranthib@email.com",
-      phone: "0987654321",
-      pickupPoint: "Bến xe Mỹ Đình",
-      dropoffPoint: "Bến xe Sapa",
-      price: "400000"
-    }
-  ]);
+  const [ticketsData, setTicketsData] = useState();
 
   const locations = [
     "Hồ Chí Minh",
@@ -60,6 +35,43 @@ const AdminTickets = () => {
     "Đà Nẵng",
     "Nha Trang"
   ];
+
+  useEffect(() => {
+    (async () => {
+      loadTickets();
+    })();
+  }, []); 
+
+  async function loadTickets() {
+    let data = await getAllTicketsWithUserId();
+
+    const ticketData = await Promise.all(
+      data
+        .filter((ticket) => ticket.status == 1)
+        .map(async (ticket) => {
+          const route = await getDetailRoute(ticket.routeId);
+          const passengerInfo = JSON.parse(ticket.contact);
+          return {
+            id: ticket.userId,
+            routeId: ticket.routeId,
+            transportName: route.name,
+            departure: route.departureLocation,
+            destination: route.arrivalLocation,
+            date: route.departureTime,
+            seatNumber: ticket.seats.join(","),
+            customerName: passengerInfo.name,
+            email: passengerInfo.email,
+            phone: passengerInfo.phone,
+            pickupPoint: ticket.pickup,
+            dropoffPoint: ticket.dropoff,
+            departureTime: route.departureTime,
+            price: ticket.price,
+          };
+        })
+    );
+
+    setTicketsData(ticketData);
+  }
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
@@ -121,16 +133,20 @@ const AdminTickets = () => {
     }
   };
 
-  const filteredTickets = ticketsData.filter(ticket => {
-    const matchesTransport = ticket.transportName.toLowerCase().includes(searchTransport.toLowerCase());
-    const matchesCustomer = ticket.customerName.toLowerCase().includes(searchCustomer.toLowerCase());
-    const matchesDeparture = !selectedDeparture || ticket.departure === selectedDeparture;
-    const matchesDestination = !selectedDestination || ticket.destination === selectedDestination;
-    const ticketDate = new Date(ticket.date);
-    const matchesDateRange = (!startDate || ticketDate >= startDate) && (!endDate || ticketDate <= endDate);
-
-    return matchesTransport && matchesCustomer && matchesDeparture && matchesDestination && matchesDateRange;
-  });
+  let filteredTickets;
+  if (ticketsData) {
+    filteredTickets = ticketsData.filter(ticket => {
+      const matchesTransport = ticket.transportName.toLowerCase().includes(searchTransport.toLowerCase());
+      const matchesCustomer = ticket.customerName.toLowerCase().includes(searchCustomer.toLowerCase());
+      const matchesDeparture = !selectedDeparture || ticket.departure === selectedDeparture;
+      const matchesDestination = !selectedDestination || ticket.destination === selectedDestination;
+      const ticketDate = new Date(ticket.date.seconds * 1000);
+      const matchesDateRange = (!startDate || ticketDate >= startDate) && (!endDate || ticketDate <= endDate);
+  
+      return matchesTransport && matchesCustomer && matchesDeparture && matchesDestination && matchesDateRange;
+    });
+  }
+    
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -143,7 +159,7 @@ const AdminTickets = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
-  return (
+  return (!ticketsData) ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
       <AnimatePresence>
@@ -305,7 +321,7 @@ const AdminTickets = () => {
                       <td className="px-6 py-4">{ticket.transportName}</td>
                       <td className="px-6 py-4">{ticket.departure}</td>
                       <td className="px-6 py-4">{ticket.destination}</td>
-                      <td className="px-6 py-4">{new Date(ticket.date).toLocaleDateString("vi-VN")}</td>
+                      <td className="px-6 py-4">{formatDate(ticket.date)}</td>
                       <td className="px-6 py-4">{ticket.seatNumber}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
