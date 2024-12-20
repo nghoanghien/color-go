@@ -1,16 +1,42 @@
-'use client'; 
+'use client';
 
-import React, { useState, useCallback } from "react";
+
+
+
+import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
+
+
+
 
 import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
+
+
+
 import { useRouter } from "next/navigation";
+import { fetchPromotion } from "@/services/promotion";
+
+
+
+
+import LoadingOverlay from "@/components/loading-overlay";
+import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
+
+
+
+
+
+
+
 
 const AdminPromotions = () => {
   const router = useRouter();
+
+
+
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("promotions");
@@ -23,50 +49,28 @@ const AdminPromotions = () => {
     sortDate: null
   });
 
-  const [promotionsData, setPromotionsData] = useState([
-    {
-      id: 1,
-      code: "SUMMER2023",
-      description: "Giảm giá mùa hè",
-      minOrder: 500000,
-      maxDiscount: 200000,
-      expiry: "2024-07-31 23:59:59",
-      value: "20%",
-      type: "percentage"
-    },
-    {
-      id: 2,
-      code: "NEWYEAR50K",
-      description: "Ưu đãi năm mới",
-      minOrder: 200000,
-      maxDiscount: 50000,
-      expiry: "2024-02-29 23:59:59",
-      value: "50000",
-      type: "amount"
-    },
-    {
-      id: 3,
-      code: "TET2024",
-      description: "Khuyến mãi tết",
-      minOrder: 1000000,
-      maxDiscount: 500000,
-      expiry: "2024-02-15 23:59:59",
-      value: "30%",
-      type: "percentage"
-    }
-  ]);
+
+
+
+  const [promotionsData, setPromotionsData] = useState();
+
+
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPromotion, setEditingPromotion] = useState(null);
   const [newPromotion, setNewPromotion] = useState({
     code: "",
-    description: "",
-    minOrder: "",
-    maxDiscount: "",
+    title: "",
+    minApply: "",
+    max: "",
     expiry: "",
     value: "",
     type: "percentage"
   });
+
+
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -77,25 +81,44 @@ const AdminPromotions = () => {
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
+  const [fileName, setFileName] = useState("DanhSanhMaGiamGia");
+  const [sheetName, setSheetName] = useState("Mã giảm giá");
+  const [title, setTitle] = useState("Danh sách mã giảm giá");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id, valid");
+
+
+
 
   const onDrop = useCallback((acceptedFiles) => {
     // Handle file upload logic here
    // setUploadProgress(100); // Simulate upload completion
   }, []);
 
+
+
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
   });
+
+
+
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
     setTimeout(() => setNotification({ show: false, message: "", type: "" }), 3000);
   };
 
+
+
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+
+
+
 
   const handleFilterToggle = (filterType) => {
     if (filterType === "percentage" || filterType === "amount") {
@@ -115,15 +138,18 @@ const AdminPromotions = () => {
     }
   };
 
+
+
+
   const filteredAndSortedPromotions = () => {
     let result = [...promotionsData];
     result = result.filter(promo =>
       promo.code.toLowerCase().includes(searchTerm.toLowerCase())
     );
     if (filters.percentage && !filters.amount) {
-      result = result.filter(promo => promo.type === "percentage");
+      result = result.filter(promo => promo.type === 1);
     } else if (!filters.percentage && filters.amount) {
-      result = result.filter(promo => promo.type === "amount");
+      result = result.filter(promo => promo.type === 0);
     }
     if (filters.sortValue) {
       result.sort((a, b) => {
@@ -142,6 +168,9 @@ const AdminPromotions = () => {
     return result;
   };
 
+
+
+
   const handleDelete = (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này?")) {
       setPromotionsData(prev => prev.filter(promo => promo.id !== id));
@@ -149,25 +178,34 @@ const AdminPromotions = () => {
     }
   };
 
+
+
+
   const handleEdit = (promotion) => {
     setEditingPromotion(promotion);
     setNewPromotion(promotion);
     setIsModalOpen(true);
   };
 
+
+
+
   const handleAdd = () => {
     setEditingPromotion(null);
     setNewPromotion({
       code: "",
-      description: "",
-      minOrder: "",
-      maxDiscount: "",
+      title: "",
+      minApply: "",
+      max: "",
       expiry: "",
       value: "",
       type: "percentage"
     });
     setIsModalOpen(true);
   };
+
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -202,7 +240,32 @@ const AdminPromotions = () => {
     }
   }
 
-  return (
+  const fetchPromotionsData = async () => {
+    try {
+      const fetchedPromotion = await fetchPromotion();
+      console.log("Dữ liệu lấy được từ fetchCoachCompanies:", fetchedPromotion);
+      setPromotionsData(fetchedPromotion);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromotionsData();
+  }, []);
+
+  const handleExportToExcel = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    exportToExcel(promotionsData, fileName, sheetName, fieldsArray);
+  };
+
+  const handleExportToPDF = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    exportToPDF(promotionsData, fileName, fieldsArray, title);
+   
+  };
+
+  return !promotionsData ? <LoadingOverlay isLoading /> :  (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       <AnimatePresence>
         {notification.show && (
@@ -217,6 +280,9 @@ const AdminPromotions = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+
+
 
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
@@ -258,6 +324,9 @@ const AdminPromotions = () => {
         ))}
       </motion.div>
 
+
+
+
       <div className="flex-1 p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -282,10 +351,13 @@ const AdminPromotions = () => {
                 Tải file
               </motion.button>
 
+
+
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                // onClick={handleExport}
+                onClick={handleExportToExcel}
                 className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFileDownload />
@@ -294,7 +366,7 @@ const AdminPromotions = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                
+                onClick={handleExportToPDF}
                 className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFilePdf />
@@ -312,6 +384,9 @@ const AdminPromotions = () => {
             </div>
           </div>
 
+
+
+
           <div className="mb-6 space-y-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -326,6 +401,9 @@ const AdminPromotions = () => {
               />
             </div>
 
+
+
+
             <div className="flex flex-wrap gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -337,6 +415,9 @@ const AdminPromotions = () => {
                 <span>Giảm theo %</span>
               </motion.button>
 
+
+
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -347,6 +428,9 @@ const AdminPromotions = () => {
                 <span>Giảm theo tiền</span>
               </motion.button>
 
+
+
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -356,6 +440,9 @@ const AdminPromotions = () => {
                 {filters.sortValue === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
                 <span>Giá trị giảm</span>
               </motion.button>
+
+
+
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -368,6 +455,9 @@ const AdminPromotions = () => {
               </motion.button>
             </div>
           </div>
+
+
+
 
           <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <table className="w-full">
@@ -394,11 +484,11 @@ const AdminPromotions = () => {
                       className="border-b border-gray-200 hover:bg-gray-50"
                     >
                       <td className="px-6 py-4">{promotion.code}</td>
-                      <td className="px-6 py-4">{promotion.description}</td>
-                      <td className="px-6 py-4">{promotion.minOrder.toLocaleString()}đ</td>
-                      <td className="px-6 py-4">{promotion.maxDiscount.toLocaleString()}đ</td>
-                      <td className="px-6 py-4">{promotion.value}</td>
-                      <td className="px-6 py-4">{new Date(promotion.expiry).toLocaleString()}</td>
+                      <td className="px-6 py-4">{promotion.title}</td>
+                      <td className="px-6 py-4">{promotion.minApply.toLocaleString()}đ</td>
+                      <td className="px-6 py-4">{promotion.max.toLocaleString()}đ</td>
+                      <td className="px-6 py-4">{promotion.value}{promotion.type === 1 ? "%" : "đ"}</td>
+                      <td className="px-6 py-4">{new Date(promotion.valid.seconds * 1000).toLocaleDateString('vi-VN')}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button
@@ -427,6 +517,9 @@ const AdminPromotions = () => {
           </motion.div>
         </motion.div>
       </div>
+
+
+
 
       <AnimatePresence>
         {isModalOpen && (
@@ -461,8 +554,8 @@ const AdminPromotions = () => {
                   <input
                     type="text"
                     className="w-full p-2 border rounded-lg"
-                    value={newPromotion.description}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, description: e.target.value })}
+                    value={newPromotion.title}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, title: e.target.value })}
                     required
                   />
                 </div>
@@ -471,8 +564,8 @@ const AdminPromotions = () => {
                   <input
                     type="number"
                     className="w-full p-2 border rounded-lg"
-                    value={newPromotion.minOrder}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, minOrder: Number(e.target.value) })}
+                    value={newPromotion.minApply}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, minApply: Number(e.target.value) })}
                     required
                   />
                 </div>
@@ -481,8 +574,8 @@ const AdminPromotions = () => {
                   <input
                     type="number"
                     className="w-full p-2 border rounded-lg"
-                    value={newPromotion.maxDiscount}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, maxDiscount: Number(e.target.value) })}
+                    value={newPromotion.max}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, max: Number(e.target.value) })}
                     required
                   />
                 </div>
@@ -542,5 +635,8 @@ const AdminPromotions = () => {
     </div>
   );
 };
+
+
+
 
 export default AdminPromotions;

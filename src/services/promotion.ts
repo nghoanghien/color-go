@@ -11,3 +11,10 @@ export async function getPromotionList() {
 
   return data;
 }
+
+export const fetchPromotion = async () => {
+  const promotionCollection = collection(db, 'promotions');
+  const promotionSnapshot = await getDocs(promotionCollection);
+  const promotionList = promotionSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return promotionList;
+};
