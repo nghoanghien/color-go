@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
-import { getAllTicketsWithUserId } from "@/services/ticket";
-import { getDetailRoute } from "@/services/routes";
+import { getAllTicketsWithUserId, updateTicketStatus } from "@/services/ticket";
+import { getDetailRoute, removeBookedSeats } from "@/services/routes";
 import { formatDate } from "@/utils/time-manipulation";
 import LoadingOverlay from "@/components/loading-overlay";
+import { adjustUserBalance } from "@/services/wallet";
+import { changeMembershipById } from "@/services/membership";
 
 const AdminTickets = () => {
   const router = useRouter();
@@ -60,7 +62,8 @@ const AdminTickets = () => {
           });
   
           return {
-            id: ticket.userId,
+            id: ticket.id,
+            userId: ticket.userId,
             routeId: ticket.routeId,
             transportName: route.name,
             departure: route.departureLocation,
@@ -135,9 +138,18 @@ const AdminTickets = () => {
     }, 3000);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (ticket) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa vé xe này?")) {
-      setTicketsData(ticketsData.filter(ticket => ticket.id !== id));
+      await updateTicketStatus(ticket.userId, ticket.id);
+      await adjustUserBalance(ticket.userId, "Hủy vé (hệ thống)", parseInt(ticket.price));
+      await changeMembershipById(
+        ticket.userId,
+        "Hủy vé (hệ thống)",
+        -parseInt(ticket.price) / 1_000
+      );
+      await removeBookedSeats(ticket.routeId, ticket.seatNumber.split(","));
+
+      setTicketsData(ticketsData.filter(ticket2 => ticket2.id !== ticket.id));
       showNotification("Xóa vé xe thành công!", "success");
     }
   };
@@ -361,7 +373,7 @@ const AdminTickets = () => {
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDelete(ticket.id);
+                              handleDelete(ticket);
                             }}
                             className="text-red-500 hover:text-red-700"
                           >
