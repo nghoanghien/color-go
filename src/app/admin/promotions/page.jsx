@@ -475,7 +475,7 @@ const AdminPromotions = () => {
                     <label className="block text-gray-700 mb-2">Mã ưu đãi</label>
                     <input
                       type="text"
-                      className="w-full p-2 border rounded-lg bg-gray-100"
+                      className={`w-full p-2 border rounded-lg ${editingPromotion ? "bg-gray-100" : ""}`}
                       value={newPromotion.code}
                       onChange={(e) => setNewPromotion({ ...newPromotion, code: e.target.value })}
                       required
