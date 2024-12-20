@@ -268,12 +268,12 @@ const AdminTickets = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white">
                 <tr>
+                  <th className="px-6 py-4 text-left">Tên khách hàng</th>
                   <th className="px-6 py-4 text-left">Nhà xe</th>
                   <th className="px-6 py-4 text-left">Điểm đi</th>
                   <th className="px-6 py-4 text-left">Điểm đến</th>
                   <th className="px-6 py-4 text-left">Ngày đi</th>
                   <th className="px-6 py-4 text-left">Số ghế</th>
-                  <th className="px-6 py-4 text-left">Tên khách hàng</th>
                   <th className="px-6 py-4 text-center">Thao tác</th>
                 </tr>
               </thead>
@@ -286,12 +286,12 @@ const AdminTickets = () => {
                       className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
                       onClick={() => setExpandedRow(expandedRow === ticket.id ? null : ticket.id)}
                     >
+                      <td className="px-6 py-4">{ticket.customerName}</td>
                       <td className="px-6 py-4">{ticket.transportName}</td>
                       <td className="px-6 py-4">{ticket.departure}</td>
                       <td className="px-6 py-4">{ticket.destination}</td>
                       <td className="px-6 py-4">{new Date(ticket.date).toLocaleDateString("vi-VN")}</td>
                       <td className="px-6 py-4">{ticket.seatNumber}</td>
-                      <td className="px-6 py-4">{ticket.customerName}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button
