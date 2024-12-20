@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
 import { useRouter } from "next/navigation";
-import { fetchPromotion, updatePromotion } from "@/services/promotion";
+import { addPromotion, fetchPromotion, updatePromotion } from "@/services/promotion";
 
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
@@ -136,14 +136,16 @@ const AdminPromotions = () => {
 
   const handleAdd = () => {
     setEditingPromotion(null);
+    const now = new Date();
+    now.toISOString();
     setNewPromotion({
       code: "",
       title: "",
       minApply: "",
       max: "",
-      expiry: "",
+      valid: convertDatetimeLocalToFirestoreTimestamp(now),
       value: "",
-      type: "percentage"
+      type: 1
     });
     setIsModalOpen(true);
   };
@@ -161,9 +163,11 @@ const AdminPromotions = () => {
         );
         showNotification("Cập nhật ưu đãi thành công!", "success");
       } else {
+        const newId = await addPromotion(newPromotion);
+
         setPromotionsData(prev => [
           ...prev,
-          { ...newPromotion, id: prev.length + 1 }
+          { ...newPromotion, id: newId }
         ]);
         showNotification("Thêm ưu đãi mới thành công!", "success");
       }
@@ -517,7 +521,7 @@ const AdminPromotions = () => {
                   <select
                     className="w-full p-2 border rounded-lg"
                     value={newPromotion.type}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, type: e.target.value })}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, type: parseInt(e.target.value, 10) })}
                     required
                   >
                     <option value="1">Phần trăm (%)</option>

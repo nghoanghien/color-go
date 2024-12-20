@@ -1,4 +1,4 @@
-import { doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/store";
 import { collection, query, where } from "firebase/firestore";
 
@@ -35,4 +35,21 @@ export async function updatePromotion(promotion: any) {
     throw error;
   }
 }
+
+export async function addPromotion(promotion: any) {
+  try {
+    // Tạo tham chiếu đến collection promotions
+    const promotionsCollectionRef = collection(db, 'promotions');
+
+    // Thêm document mới vào collection
+    const docRef = await addDoc(promotionsCollectionRef, promotion);
+
+    console.log('Promotion successfully added with ID: ', docRef.id);
+    return docRef.id;
+  } catch (error: any) {
+    console.error('Error adding promotion: ', error);
+    throw error;
+  }
+}
+
 
