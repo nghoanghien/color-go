@@ -27,15 +27,9 @@ const AdminTickets = () => {
 
   const [ticketsData, setTicketsData] = useState();
 
-  const locations = [
-    "Hồ Chí Minh",
-    "Hà Nội",
-    "Đà Lạt",
-    "Sapa",
-    "Đà Nẵng",
-    "Nha Trang"
-  ];
-
+  const [departureLocations, setDepartureLocations] = useState([]);
+  const [arrivalLocations, setArrivalLocations] = useState([]);
+  
   useEffect(() => {
     (async () => {
       loadTickets();
@@ -51,6 +45,20 @@ const AdminTickets = () => {
         .map(async (ticket) => {
           const route = await getDetailRoute(ticket.routeId);
           const passengerInfo = JSON.parse(ticket.contact);
+          setDepartureLocations(prevLocations => {
+            if (!prevLocations.includes(route.departureLocation)) {
+              return [...prevLocations, route.departureLocation]; // Tạo mảng mới với địa điểm mới
+            }
+            return prevLocations;
+          });
+  
+          setArrivalLocations(prevLocations => {
+            if (!prevLocations.includes(route.arrivalLocation)) {
+              return [...prevLocations, route.arrivalLocation]; // Tạo mảng mới với địa điểm mới
+            }
+            return prevLocations;
+          });
+  
           return {
             id: ticket.userId,
             routeId: ticket.routeId,
@@ -71,6 +79,7 @@ const AdminTickets = () => {
     );
 
     setTicketsData(ticketData);
+    console.log(arrivalLocations);
   }
 
   const handleNavigate = (tab) => {
@@ -159,7 +168,9 @@ const AdminTickets = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
-  return (!ticketsData) ? <LoadingOverlay isLoading /> : (
+  return (!ticketsData) ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
       <AnimatePresence>
@@ -168,7 +179,11 @@ const AdminTickets = () => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 20 }}
             exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-0 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
+            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${
+              notification.type === "success"
+                ? "bg-gradient-to-r from-green-500 to-green-400"
+                : "bg-gradient-to-r from-red-500 to-red-400"
+            } text-white`}
           >
             {notification.type === "success" ? (
               <FaCheckCircle className="text-xl" />
@@ -185,13 +200,16 @@ const AdminTickets = () => {
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         animate={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         transition={{ duration: 0.3 }}
-        className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative"
+        className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative top-0 left-0 h-screen"
+        style={{ position: "sticky" }}
       >
         <div className="mb-8 text-center relative">
           <motion.h2
             initial={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             animate={{ opacity: isSidebarCollapsed ? 0 : 1 }}
-            className={`text-2xl font-bold ${isSidebarCollapsed ? "hidden" : "block"}`}
+            className={`text-2xl font-bold ${
+              isSidebarCollapsed ? "hidden" : "block"
+            }`}
           >
             Quản trị viên
           </motion.h2>
@@ -213,7 +231,11 @@ const AdminTickets = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleNavigate(item.id)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg ${activeTab === item.id ? "bg-white/20" : "hover:bg-white/10"}`}
+            className={`w-full flex items-center ${
+              isSidebarCollapsed ? "justify-center" : "space-x-3"
+            } px-4 py-3 rounded-lg ${
+              activeTab === item.id ? "bg-white/20" : "hover:bg-white/10"
+            }`}
           >
             <span className="text-xl">{item.icon}</span>
             {!isSidebarCollapsed && <span>{item.label}</span>}
@@ -228,7 +250,9 @@ const AdminTickets = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-7xl mx-auto"
         >
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">Quản lý vé xe</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">
+            Quản lý vé xe
+          </h1>
 
           {/* Search and Filter Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -284,18 +308,21 @@ const AdminTickets = () => {
               value={selectedDeparture}
               onChange={(e) => setSelectedDeparture(e.target.value)}
               placeholder="Chọn điểm đi"
-              options={locations}
+              options={departureLocations}
             />
             <CustomSelect
               value={selectedDestination}
               onChange={(e) => setSelectedDestination(e.target.value)}
               placeholder="Chọn điểm đến"
-              options={locations}
+              options={arrivalLocations}
             />
           </div>
 
           {/* Tickets Table */}
-          <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <motion.div
+            layout
+            className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          >
             <table className="w-full">
               <thead className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white">
                 <tr>
@@ -315,7 +342,11 @@ const AdminTickets = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
-                      onClick={() => setExpandedRow(expandedRow === ticket.id ? null : ticket.id)}
+                      onClick={() =>
+                        setExpandedRow(
+                          expandedRow === ticket.id ? null : ticket.id
+                        )
+                      }
                     >
                       <td className="px-6 py-4">{ticket.customerName}</td>
                       <td className="px-6 py-4">{ticket.transportName}</td>
@@ -337,10 +368,16 @@ const AdminTickets = () => {
                             <FaTrash size={20} />
                           </motion.button>
                           <motion.div
-                            animate={{ rotate: expandedRow === ticket.id ? 180 : 0 }}
+                            animate={{
+                              rotate: expandedRow === ticket.id ? 180 : 0,
+                            }}
                             className="text-blue-500"
                           >
-                            {expandedRow === ticket.id ? <FaAngleUp /> : <FaAngleDown />}
+                            {expandedRow === ticket.id ? (
+                              <FaAngleUp />
+                            ) : (
+                              <FaAngleDown />
+                            )}
                           </motion.div>
                         </div>
                       </td>
@@ -360,7 +397,9 @@ const AdminTickets = () => {
                                 <p>{ticket.email}</p>
                               </div>
                               <div>
-                                <span className="font-medium">Số điện thoại:</span>
+                                <span className="font-medium">
+                                  Số điện thoại:
+                                </span>
                                 <p>{ticket.phone}</p>
                               </div>
                               <div>
@@ -373,10 +412,12 @@ const AdminTickets = () => {
                               </div>
                               <div>
                                 <span className="font-medium">Giá tiền:</span>
-                                <p>{new Intl.NumberFormat("vi-VN", {
-                                  style: "currency",
-                                  currency: "VND"
-                                }).format(ticket.price)}</p>
+                                <p>
+                                  {new Intl.NumberFormat("vi-VN", {
+                                    style: "currency",
+                                    currency: "VND",
+                                  }).format(ticket.price)}
+                                </p>
                               </div>
                             </div>
                           </td>
