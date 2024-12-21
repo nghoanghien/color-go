@@ -217,8 +217,6 @@ const filteredAndSortedRoutes = useMemo(() => {
 
   return routesData
     .filter(route => {
-      console.log("Startdate", startDate);
-      console.log("Enddate", endDate);
       return (
         route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (!filterDeparture || route.departureLocation === filterDeparture) &&
