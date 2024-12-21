@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import LoadingOverlay from "@/components/loading-overlay";
-import { addRoute, deleteRoute, fetchRoute } from "@/services/routes";
+import { addRoute, deleteRoute, fetchRoute, updateRoute } from "@/services/routes";
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { fetchCoachCompanies } from "@/services/coachCompany";
@@ -187,6 +187,8 @@ const AdminRoutes = () => {
     e.preventDefault();
     try {
       if (editingRoute) {
+        await updateRoute(newRoute);
+
         setRoutesData(routesData.map(route =>
           route.id === editingRoute.id ? { ...newRoute, id: route.id } : route
         ));

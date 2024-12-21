@@ -152,7 +152,7 @@ export async function addRoute(route: any) {
     // Kiểm tra các điểm dừng
     for (const stop of stops) {
       if (stop.datetime < departureTime || stop.datetime > arrivalTime) {
-        throw new Error(`Giờ đến của điểm dừng "${stop.stop}" phải nằm trong hành trình của chuyến xe.`);
+        throw new Error(`Giờ đến"${stop.stop}" phải trong hành trình của chuyến.`);
       }
     }
 
@@ -177,3 +177,51 @@ export async function addRoute(route: any) {
   }
 }
   
+export async function updateRoute(route: any) {
+  try {
+    const { id, arrivalTime, departureTime, stops } = route;
+
+    // Tạo tham chiếu đến document cần cập nhật trong collection routes
+    const routeDocRef = doc(db, 'routes', id);
+
+    // Lấy document để kiểm tra dữ liệu
+    const routeDoc = await getDoc(routeDocRef);
+
+    if (!routeDoc.exists()) {
+      throw new Error('Route not found');
+    }
+
+    const routeData = routeDoc.data();
+
+    // Kiểm tra nếu mảng bookedSeats không rỗng
+    if (routeData.bookedSeats && routeData.bookedSeats.length > 0) {
+      throw new Error('Chuyến xe này đã có người đặt vé');
+    }
+
+    if (route.departureLocation === route.arrivalLocation) {
+      throw new Error('Điểm khởi hành và điểm đến phải khác nhau.');
+    }
+
+    // Kiểm tra giờ đến và giờ khởi hành
+    if (arrivalTime <= departureTime) {
+      throw new Error('Giờ đến phải lớn hơn giờ khởi hành.');
+    }
+
+    // Kiểm tra các điểm dừng
+    for (const stop of stops) {
+      if (stop.datetime < departureTime || stop.datetime > arrivalTime) {
+        throw new Error(`Giờ đến "${stop.stop}" phải trong hành trình của chuyến.`);
+      }
+    }
+
+    // Xóa id trước khi cập nhật vì Firestore không cần lưu id trong document
+    const { id: routeId, ...routeDataToUpdate } = route;
+
+    // Cập nhật document với dữ liệu mới
+    await updateDoc(routeDocRef, routeDataToUpdate);
+    console.log('Route successfully updated!');
+  } catch (error) {
+    console.error('Error updating route: ', error);
+    throw error;
+  }
+}
