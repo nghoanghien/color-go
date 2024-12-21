@@ -95,6 +95,12 @@ export async function changeMembershipById(userId: any, title: string, point: an
   }
 }
 
+export const fetchCustomer = async () => {
+    const customerCollection = collection(db, 'users');
+    const customerSnapshot = await getDocs(customerCollection);
+    const customerList = customerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return customerList;
+  };
 
 
 
