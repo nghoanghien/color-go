@@ -1,6 +1,8 @@
 "use client";
 
 
+
+
 import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { FaFilePdf, FaFileDownload, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaGift, FaUserCircle, FaTicketAlt } from "react-icons/fa";
@@ -8,10 +10,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
 
+
+
 import { useRouter } from "next/navigation";
 import { addCoachCompany, deleteCoachCompanyById, fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
 import LoadingOverlay from "@/components/loading-overlay";
-import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
+import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
+
+
+
+
+
+
 
 
 
@@ -20,6 +30,8 @@ import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
 
 const AdminTransport = () => {
   const router = useRouter();
+
+
 
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -39,6 +51,14 @@ const AdminTransport = () => {
   const [sheetName, setSheetName] = useState("Nhà Xe");
   const [title, setTitle] = useState("Danh sách nhà xe");
   const [fieldsToExclude, setFieldsToExclude] = useState("termConditions,id");
+  const [desiredColumnOrder, setDesiredColumnOrder] = useState([
+    "name",
+    "type",
+    "numberSeat",
+    "facility",
+  ])
+
+
 
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -47,10 +67,14 @@ const AdminTransport = () => {
   }, []);
 
 
+
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
   });
+
+
 
 
   const showNotification = (message, type) => {
@@ -59,6 +83,8 @@ const AdminTransport = () => {
       setNotification({ show: false, message: "", type: "" });
     }, 5000);
   };
+
+
 
 
   const sidebarItems = [
@@ -72,9 +98,11 @@ const AdminTransport = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+
 
   let filteredTransport = [];
   if (transportData) {
@@ -82,13 +110,16 @@ const AdminTransport = () => {
       transport.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
-  
+ 
+
+
 
 
   const handleDelete = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa nhà xe này?")) {
         await deleteCoachCompanyById(id);
+
 
         setTransportData(transportData.filter(transport => transport.id !== id));
         showNotification("Xóa nhà xe thành công!", "success");
@@ -99,11 +130,15 @@ const AdminTransport = () => {
   };
 
 
+
+
   const handleEdit = (transport) => {
     setEditingTransport(transport);
     setNewTransport(transport);
     setIsModalOpen(true);
   };
+
+
 
 
   const handleAdd = () => {
@@ -116,6 +151,8 @@ const AdminTransport = () => {
     });
     setIsModalOpen(true);
   };
+
+
 
 
   const handleSubmit = async (e) => {
@@ -140,6 +177,8 @@ const AdminTransport = () => {
   };
 
 
+
+
   const handleNavigate = (tab) => {
     setActiveTab(tab);
     if (tab !== "logout") {
@@ -149,6 +188,8 @@ const AdminTransport = () => {
       router.replace("/admin/admin-login");
     }
   }
+
+
 
 
   const fetchTransportData = async () => {
@@ -162,22 +203,31 @@ const AdminTransport = () => {
   };
 
 
+
+
   useEffect(() => {
     fetchTransportData();
   }, []);
 
 
+
+
   const handleExportToExcel = () => {
     const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-    exportToExcel(transportData, fileName, sheetName, fieldsArray);
+    const dataToExport = formatDataForExport(filteredTransport, desiredColumnOrder);
+    exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
   };
+
+
 
 
   const handleExportToPDF = () => {
     const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-    exportToPDF(transportData, fileName, fieldsArray, title);
-   
+    const dataToExport = formatDataForExport(filteredTransport, desiredColumnOrder);
+    exportToPDF(dataToExport, fileName, fieldsArray, title);
   };
+
+
   return !transportData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
@@ -198,6 +248,8 @@ const AdminTransport = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+
 
 
       <motion.div
@@ -229,6 +281,8 @@ const AdminTransport = () => {
         </div>
 
 
+
+
         {sidebarItems.map((item) => (
           <motion.button
             key={item.id}
@@ -244,6 +298,10 @@ const AdminTransport = () => {
           </motion.button>
         ))}
       </motion.div>
+
+
+
+
 
 
 
@@ -272,6 +330,8 @@ const AdminTransport = () => {
               <FiUploadCloud className="inline-block w-5 h-5 mr-2 text-white" />
               Tải file
             </motion.button>
+
+
 
 
               <motion.button
@@ -306,6 +366,8 @@ const AdminTransport = () => {
           </div>
 
 
+
+
           {/* Search Bar */}
           <motion.div
             whileFocus={{ scale: 1.02 }}
@@ -322,6 +384,8 @@ const AdminTransport = () => {
               onChange={handleSearch}
             />
           </motion.div>
+
+
 
 
           {/* Transport Table */}
@@ -382,6 +446,8 @@ const AdminTransport = () => {
           </motion.div>
         </motion.div>
       </div>
+
+
 
 
       {/* Enhanced Modal */}
@@ -450,6 +516,8 @@ const AdminTransport = () => {
                 <div className="flex justify-end space-x-4 mt-8">
 
 
+
+
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -476,6 +544,8 @@ const AdminTransport = () => {
     </div>
   );
 };
+
+
 
 
 export default AdminTransport;
