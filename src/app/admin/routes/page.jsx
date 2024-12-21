@@ -13,7 +13,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import LoadingOverlay from "@/components/loading-overlay";
 import { fetchRoute } from "@/services/routes";
-import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal } from "@/utils/time-manipulation";
+import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 
 
@@ -489,7 +489,6 @@ const filteredAndSortedRoutes = useMemo(() => {
           </div>
 
 
-          {/* Rest of your original code remains exactly the same */}
           {/* Routes Table */}
           <motion.div
             layout
@@ -519,8 +518,8 @@ const filteredAndSortedRoutes = useMemo(() => {
                       <td className="px-6 py-4">{route.name}</td>
                       <td className="px-6 py-4">{route.departureLocation}</td>
                       <td className="px-6 py-4">{route.arrivalLocation}</td>
-                      <td className="px-6 py-4">{new Date(route.departureTime.seconds * 1000).toLocaleDateString('vi-VN')}</td>
-                      <td className="px-6 py-4">{new Date(route.arrivalTime.seconds * 1000).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-6 py-4">{timeString(route.departureTime) + ", " + formatDate(route.departureTime)}</td>
+                      <td className="px-6 py-4">{timeString(route.arrivalTime) + ", " + formatDate(route.arrivalTime)}</td>
                       <td className="px-6 py-4 text-right">{route.price.toLocaleString()}đ</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
