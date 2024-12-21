@@ -15,6 +15,7 @@ import LoadingOverlay from "@/components/loading-overlay";
 import { addRoute, deleteRoute, fetchRoute } from "@/services/routes";
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
+import { fetchCoachCompanies } from "@/services/coachCompany";
 
 
 const AdminRoutes = () => {
@@ -60,6 +61,8 @@ const AdminRoutes = () => {
     price: "",
     stops: []
   });
+
+  const [availableCoachCompanies, setAvailableCoachCompanies] = useState([]);
 
 
   const locations = ["TP.HCM", "Hà Nội", "Đà Lạt", "Sapa", "Đà Nẵng", "Nha Trang"];
@@ -253,14 +256,18 @@ const filteredAndSortedRoutes = useMemo(() => {
         console.error("Lỗi khi lấy dữ liệu:", error.message);
       }
     };
+
+    const getAvailableCoachCompanies = async () => {
+      const data = await fetchCoachCompanies();
+      const coachCompanies = data.map((coachCompany) => coachCompany.name)
+      setAvailableCoachCompanies(coachCompanies);
+      console.log(coachCompanies);
+    }
  
     useEffect(() => {
+      getAvailableCoachCompanies();
       fetchRoutesData();
     }, []);
-
-
-
-
 
 
     const handleExportToExcel = () => {
@@ -616,13 +623,22 @@ const filteredAndSortedRoutes = useMemo(() => {
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Nhà xe</label>
-                    <input
-                      type="text"
-                      className="w-full p-3 border rounded-lg"
-                      value={newRoute.name}
-                      onChange={(e) => setNewRoute({ ...newRoute, name: e.target.value })}
-                      required
-                    />
+                    <>
+                      <input
+                        type="text"
+                        className="w-full p-3 border rounded-lg"
+                        value={newRoute.name}
+                        onChange={(e) => setNewRoute({ ...newRoute, name: e.target.value })}
+                        list="name-suggestions" // Kết nối với datalist
+                        required
+                      />
+
+                      <datalist id="name-suggestions">
+                        {availableCoachCompanies.map((value, index) => (
+                          <option key={index} value={value} />
+                        ))}
+                      </datalist>
+                    </>
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Giá vé</label>
