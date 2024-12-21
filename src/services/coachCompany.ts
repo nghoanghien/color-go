@@ -68,9 +68,9 @@ export async function addCoachCompany(info: any) {
       type: info.type
     });
 
+    console.log('Document successfully added with ID: ', docRef.id);
     return docRef.id;
 
-    console.log('Document successfully added with ID: ', docRef.id);
   } catch (error) {
     // Re-throw lỗi để xử lý bên ngoài
     throw error;
