@@ -1,21 +1,27 @@
 'use client';
 
+
 import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
+
 
 import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
+
 import { useRouter } from "next/navigation";
 import { addPromotion, deletePromotion, fetchPromotion, updatePromotion } from "@/services/promotion";
 
+
 import LoadingOverlay from "@/components/loading-overlay";
-import { exportToExcel, exportToPDF } from "@/utils/exportPDF";
+import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal } from "@/utils/time-manipulation";
+
 
 const AdminPromotions = () => {
   const router = useRouter();
+
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("promotions");
@@ -28,7 +34,9 @@ const AdminPromotions = () => {
     sortDate: null
   });
 
+
   const [promotionsData, setPromotionsData] = useState();
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPromotion, setEditingPromotion] = useState(null);
@@ -41,6 +49,7 @@ const AdminPromotions = () => {
     value: "",
     type: "percentage"
   });
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -55,26 +64,39 @@ const AdminPromotions = () => {
   const [fileName, setFileName] = useState("DanhSanhMaGiamGia");
   const [sheetName, setSheetName] = useState("Mã giảm giá");
   const [title, setTitle] = useState("Danh sách mã giảm giá");
-  const [fieldsToExclude, setFieldsToExclude] = useState("id, valid");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id");
+  const [desiredColumnOrder, setDesiredColumnOrder] = useState([
+    "code",
+    "title",
+    "minApply",
+    "max",
+    "value",
+    "valid"
+  ])
+
 
   const onDrop = useCallback((acceptedFiles) => {
     // Handle file upload logic here
    // setUploadProgress(100); // Simulate upload completion
   }, []);
 
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
   });
+
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
     setTimeout(() => setNotification({ show: false, message: "", type: "" }), 3000);
   };
 
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+
 
   const handleFilterToggle = (filterType) => {
     if (filterType === "percentage" || filterType === "amount") {
@@ -93,6 +115,7 @@ const AdminPromotions = () => {
       }));
     }
   };
+
 
   const filteredAndSortedPromotions = () => {
     let result = [...promotionsData];
@@ -121,20 +144,24 @@ const AdminPromotions = () => {
     return result;
   };
 
+
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này?")) {
       await deletePromotion(id);
+
 
       setPromotionsData(prev => prev.filter(promo => promo.id !== id));
       showNotification("Xóa ưu đãi thành công!", "success");
     }
   };
 
+
   const handleEdit = (promotion) => {
     setEditingPromotion(promotion);
     setNewPromotion(promotion);
     setIsModalOpen(true);
   };
+
 
   const handleAdd = () => {
     setEditingPromotion(null);
@@ -152,11 +179,13 @@ const AdminPromotions = () => {
     setIsModalOpen(true);
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingPromotion) {
         await updatePromotion(newPromotion);
+
 
         setPromotionsData(prev =>
           prev.map(promo =>
@@ -166,6 +195,7 @@ const AdminPromotions = () => {
         showNotification("Cập nhật ưu đãi thành công!", "success");
       } else {
         const newId = await addPromotion(newPromotion);
+
 
         setPromotionsData(prev => [
           ...prev,
@@ -179,6 +209,7 @@ const AdminPromotions = () => {
     }
   };
 
+
   const handleNavigate = (tab) => {
     setActiveTab(tab);
     if (tab !== "logout") {
@@ -188,6 +219,7 @@ const AdminPromotions = () => {
       router.replace("/admin/admin-login");
     }
   }
+
 
   const fetchPromotionsData = async () => {
     try {
@@ -199,20 +231,28 @@ const AdminPromotions = () => {
     }
   };
 
+
   useEffect(() => {
     fetchPromotionsData();
   }, []);
 
+
   const handleExportToExcel = () => {
     const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-    exportToExcel(promotionsData, fileName, sheetName, fieldsArray);
+    const dataToExport = formatDataForExport(filteredAndSortedPromotions(), desiredColumnOrder);
+    exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
   };
+
+
+
 
   const handleExportToPDF = () => {
     const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-    exportToPDF(promotionsData, fileName, fieldsArray, title);
+    const dataToExport = formatDataForExport(filteredAndSortedPromotions(), desiredColumnOrder);
+    exportToPDF(dataToExport, fileName, fieldsArray, title);
    
   };
+
 
   return !promotionsData ? <LoadingOverlay isLoading /> :  (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
@@ -229,6 +269,10 @@ const AdminPromotions = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+
+
+
 
 
 
@@ -276,6 +320,10 @@ const AdminPromotions = () => {
 
 
 
+
+
+
+
       <div className="flex-1 p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -299,6 +347,10 @@ const AdminPromotions = () => {
                 <FiUploadCloud className="inline-block w-5 h-5 mr-2 text-white" />
                 Tải file
               </motion.button>
+
+
+
+
 
 
 
@@ -336,6 +388,10 @@ const AdminPromotions = () => {
 
 
 
+
+
+
+
           <div className="mb-6 space-y-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -350,6 +406,7 @@ const AdminPromotions = () => {
               />
             </div>
 
+
             <div className="flex flex-wrap gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -361,6 +418,7 @@ const AdminPromotions = () => {
                 <span>Giảm theo %</span>
               </motion.button>
 
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -371,6 +429,7 @@ const AdminPromotions = () => {
                 <span>Giảm theo tiền</span>
               </motion.button>
 
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -380,6 +439,7 @@ const AdminPromotions = () => {
                 {filters.sortValue === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
                 <span>Giá trị giảm</span>
               </motion.button>
+
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -392,6 +452,7 @@ const AdminPromotions = () => {
               </motion.button>
             </div>
           </div>
+
 
           <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <table className="w-full">
@@ -451,6 +512,10 @@ const AdminPromotions = () => {
           </motion.div>
         </motion.div>
       </div>
+
+
+
+
 
 
 
@@ -528,7 +593,7 @@ const AdminPromotions = () => {
                   >
                     <option value="1">Phần trăm (%)</option>
                     <option value="0">Số tiền cố định</option>
-                  </select> 
+                  </select>
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2">Giá trị giảm</label>
@@ -572,9 +637,14 @@ const AdminPromotions = () => {
         )}
       </AnimatePresence>
 
+
     </div>
   );
 };
+
+
+
+
 
 
 
