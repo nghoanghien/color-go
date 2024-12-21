@@ -36,4 +36,12 @@ export const readExcelFile = (input: any): Promise<any[]> => {
   });
 };
 
+export function hasRequiredProperties(obj: object, requiredProperties: string[]): boolean {
+  if (!obj || typeof obj !== 'object') {
+    throw new Error('Tham số đầu tiên phải là một đối tượng hợp lệ.');
+  }
+
+  return requiredProperties.every((prop) => prop in obj);
+}
+
  

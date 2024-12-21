@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { addCoachCompany, deleteCoachCompanyById, fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
-import { readExcelFile } from "@/utils/import-export";
+import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 
 
 
@@ -64,9 +64,26 @@ const AdminTransport = () => {
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const data = await readExcelFile(acceptedFiles);
-    console.log("Data", data);
+    const requiredProps = ["name", "type", "numberSeat", "facility"];
+
     try {
-      // Dùng for...of thay vì map, để xử lý bất đồng bộ với async/await
+      // File không có dữ liệu
+      try {
+        if (data.length === 0) {
+          throw new Error("Lỗi đọc file: File tải lên không có dữ liệu");
+        }
+      } catch (error) {
+        throw new Error(error.message);
+      }
+
+      try {
+        if (!hasRequiredProperties(data[0], requiredProps)) {
+          throw new Error(`Lỗi đọc file: File tải lên cần có đủ các cột (${requiredProps.join(", ")})`);
+        }
+      } catch (error) {
+        throw new Error(error.message);
+      }
+
       for (let index = 0; index < data.length; index++) {
         try {
           const newId = await addCoachCompany(data[index]);
