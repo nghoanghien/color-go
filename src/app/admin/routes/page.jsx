@@ -185,7 +185,6 @@ const AdminRoutes = () => {
         showNotification("Cập nhật chuyến xe thành công!", "success");
       } else {
         const newId = await addRoute(newRoute);
-        console.log(newRoute);
         
         setRoutesData([...routesData, { ...newRoute, id: newId }]);
         showNotification("Thêm chuyến xe mới thành công!", "success");
@@ -211,7 +210,6 @@ const AdminRoutes = () => {
 
 
 const filteredAndSortedRoutes = useMemo(() => {
-  console.log("Đang thực hiện filter và sort");
   if (!routesData) return [];
 
 
@@ -250,7 +248,6 @@ const filteredAndSortedRoutes = useMemo(() => {
     const fetchRoutesData = async () => {
       try {
         const fetchedRoute = await fetchRoute();
-        console.log("Dữ liệu lấy được từ fetchCoachCompanies:", fetchedRoute);
         setRoutesData(fetchedRoute);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error.message);
@@ -261,7 +258,6 @@ const filteredAndSortedRoutes = useMemo(() => {
       const data = await fetchCoachCompanies();
       const coachCompanies = data.map((coachCompany) => coachCompany.name)
       setAvailableCoachCompanies(coachCompanies);
-      console.log(coachCompanies);
     }
  
     useEffect(() => {
@@ -274,7 +270,6 @@ const filteredAndSortedRoutes = useMemo(() => {
       const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
       const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
       exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
-      console.log("Routedata: ",routesData);
     };
  
  
