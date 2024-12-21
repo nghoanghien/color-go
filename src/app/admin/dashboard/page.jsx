@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 import { fetchRoute } from "@/services/routes";
 import { fetchCustomer } from "@/services/membership";
+import LoadingOverlay from "@/components/loading-overlay";
 
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
@@ -49,30 +50,9 @@ const AdminDashboard = () => {
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
  
-  const [bookingData, setBookingData] = useState({
-    labels: months,
-    datasets: [
-      {
-        label: "Số lượt đặt vé",
-        data: [],
-        borderColor: "rgb(59, 130, 246)",
-        backgroundColor: "rgba(59, 130, 246, 0.5)",
-        tension: 0.4
-      }
-    ]
-  });
+  const [bookingData, setBookingData] = useState();
+  const [routeData,setRouteData] = useState()
 
-
-  const [routeData,setRouteData] = useState({
-    labels: months,
-    datasets: [
-      {
-        label: "Số chuyến xe",
-        data: [],
-        backgroundColor: "rgba(16, 185, 129, 0.7)"
-      }
-    ]
-  })
   const options = {
     responsive: true,
     plugins: {
@@ -232,7 +212,7 @@ const AdminDashboard = () => {
 
 
 
-  return (
+  return (!bookingData || !routeData) ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50">
       {/* Sidebar */}
       <div className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 transition-all duration-300 relative`}>
