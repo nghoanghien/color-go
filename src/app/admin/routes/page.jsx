@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import LoadingOverlay from "@/components/loading-overlay";
-import { deleteRoute, fetchRoute } from "@/services/routes";
+import { addRoute, deleteRoute, fetchRoute } from "@/services/routes";
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 
@@ -125,12 +125,9 @@ const AdminRoutes = () => {
 
 
   const handleEdit = (route) => {
-    console.log(route);
     setEditingRoute(route);
     setNewRoute(route);
     setIsModalOpen(true);
-    console.log(newRoute);
-    console.log("Done");
   };
 
 
@@ -153,9 +150,11 @@ const AdminRoutes = () => {
 
 
   const handleAddStop = () => {
+    const now = new Date();
+    now.toISOString();
     setNewRoute(prev => ({
       ...prev,
-      stops: [...prev.stops, { stop: "", address: "", datetime: new Date() }]
+      stops: [...prev.stops, { stop: "", address: "", datetime: convertDatetimeLocalToFirestoreTimestamp(now) }]
     }));
   };
 
@@ -168,7 +167,7 @@ const AdminRoutes = () => {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingRoute) {
@@ -177,7 +176,10 @@ const AdminRoutes = () => {
         ));
         showNotification("Cập nhật chuyến xe thành công!", "success");
       } else {
-        setRoutesData([...routesData, { ...newRoute, id: routesData.length + 1 }]);
+        const newId = await addRoute(newRoute);
+        console.log(newRoute);
+        
+        setRoutesData([...routesData, { ...newRoute, id: newId }]);
         showNotification("Thêm chuyến xe mới thành công!", "success");
       }
       setIsModalOpen(false);
@@ -594,7 +596,7 @@ const filteredAndSortedRoutes = useMemo(() => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-40"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -654,6 +656,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                       value={convertTimestampToDatetimeLocal(newRoute.departureTime)}
                       onChange={(e) => setNewRoute({ ...newRoute, departureTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
                       className="w-full p-3 border rounded-lg"
+                      min={new Date().toISOString().slice(0, 16)}
                       required
                     />
                   </div>
@@ -664,6 +667,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                       value={convertTimestampToDatetimeLocal(newRoute.arrivalTime)}
                       onChange={(e) => setNewRoute({ ...newRoute, arrivalTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
                       className="w-full p-3 border rounded-lg"
+                      min={new Date().toISOString().slice(0, 16)}
                       required
                     />
                   </div>
@@ -700,7 +704,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                           value={stopp.stop}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
-                            newStops[index].name = e.target.value;
+                            newStops[index].stop = e.target.value;
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
                           required

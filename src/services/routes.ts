@@ -1,5 +1,6 @@
 import { db } from "../firebase/store";
 import {
+  addDoc,
   arrayRemove,
   collection,
   deleteDoc,
@@ -131,6 +132,43 @@ export async function deleteRoute(routeId: any) {
     console.log('Route successfully deleted!');
   } catch (error) {
     console.error('Error deleting route: ', error);
+    throw error;
+  }
+}
+
+export async function addRoute(route: any) {
+  try {
+    const { arrivalTime, departureTime, stops } = route;
+
+    // Kiểm tra giờ đến và giờ khởi hành
+    if (arrivalTime <= departureTime) {
+      throw new Error('Giờ đến phải lớn hơn giờ khởi hành.');
+    }
+
+    // Kiểm tra các điểm dừng
+    for (const stop of stops) {
+      if (stop.datetime < departureTime || stop.datetime > arrivalTime) {
+        throw new Error(`Giờ đến của điểm dừng "${stop.stop}" phải nằm trong hành trình của chuyến xe.`);
+      }
+    }
+
+    // Thêm thuộc tính totalSeat và bookedSeats nếu chưa tồn tại
+    const newRoute = {
+      ...route,
+      totalSeat: 36,
+      bookedSeats: []
+    };
+
+    // Tạo tham chiếu đến collection routes
+    const routesCollectionRef = collection(db, 'routes');
+
+    // Thêm document mới vào collection
+    const docRef = await addDoc(routesCollectionRef, newRoute);
+
+    console.log('Route successfully added with ID: ', docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding route: ', error);
     throw error;
   }
 }
