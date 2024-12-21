@@ -221,8 +221,8 @@ const filteredAndSortedRoutes = useMemo(() => {
         route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (!filterDeparture || route.departureLocation === filterDeparture) &&
         (!filterArrival || route.arrivalLocation === filterArrival) &&
-        (!startDate || new Date(route.departureTime) >= startDate) &&
-        (!endDate || new Date(route.departureTime) <= endDate)
+        (!startDate || new Date(route.departureTime * 1000) >= startDate) &&
+        (!endDate || new Date(route.departureTime * 1000) <= endDate)
       );
     })
     .sort((a, b) => {
@@ -235,7 +235,7 @@ const filteredAndSortedRoutes = useMemo(() => {
           comparison = a.price - b.price;
           break;
         case "departureTime":
-          comparison = new Date(a.departureTime) - new Date(b.departureTime);
+          comparison = a.departureTime - b.departureTime;
           break;
         default:
           comparison = 0;
@@ -461,7 +461,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                   endDate={endDate}
                   placeholderText="Từ ngày (khởi hành)"
                   className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
-                  dateFormat="dd/MM/yyyy"
+                  //dateFormat="dd/MM/yyyy"
                 />
               </div>
 
@@ -488,7 +488,7 @@ const filteredAndSortedRoutes = useMemo(() => {
               >
                 <span>Giá vé</span>
                 {sortBy.field === "price" ? (
-                  sortBy.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountUpAlt />
+                  sortBy.order === "asc" ? <FaSortAmountUpAlt /> : <FaSortAmountDown />
                 ) : <FaSortAmountDown className="text-gray-400" />}
               </motion.button>
 
@@ -500,7 +500,7 @@ const filteredAndSortedRoutes = useMemo(() => {
               >
                 <span>Giờ đi</span>
                 {sortBy.field === "departureTime" ? (
-                  sortBy.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountUpAlt />
+                  sortBy.order === "asc" ? <FaSortAmountUpAlt /> : <FaSortAmountDown />
                 ) : <FaSortAmountDown className="text-gray-400" />}
               </motion.button>
             </div>
