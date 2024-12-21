@@ -95,6 +95,20 @@ export function formatTimestampToDate(timestamp: any) {
   return `${day}/${month}/${year}`;
 }
 
+export function formatFirestoreTimestampToStandard(timestamp: any): string {
+  if (!timestamp || !timestamp.toDate) {
+    throw new Error('Đầu vào không phải là kiểu Firestore timestamp hợp lệ.');
+  }
+
+  const date = timestamp.toDate(); // Chuyển Firestore timestamp thành Date object
+  const hours = date.getHours().toString().padStart(2, '0'); // Lấy giờ (HH)
+  const minutes = date.getMinutes().toString().padStart(2, '0'); // Lấy phút (mm)
+  const day = date.getDate().toString().padStart(2, '0'); // Lấy ngày (dd)
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Lấy tháng (mm)
+  const year = date.getFullYear(); // Lấy năm (yyyy)
+
+  return `${hours}:${minutes}, ${day}/${month}/${year}`;
+}
 
 
 

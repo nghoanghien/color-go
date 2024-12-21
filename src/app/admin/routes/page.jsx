@@ -13,7 +13,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import LoadingOverlay from "@/components/loading-overlay";
 import { addRoute, deleteRoute, fetchRoute, updateRoute } from "@/services/routes";
-import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
+import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatFirestoreTimestampToStandard, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { fetchCoachCompanies } from "@/services/coachCompany";
 
@@ -590,7 +590,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                                   <h4 className="font-medium text-blue-600">{stopp.stop}</h4>
                                   <p className="text-sm text-gray-600 mt-1">{stopp.address}</p>
                                   <p className="text-sm text-gray-500 mt-2">
-                                    Giờ đến: {timeString(stopp.datetime) + ", " + formatTimestampToDate(stopp.datetime)}
+                                    Giờ đến: {formatFirestoreTimestampToStandard(stopp.datetime)}
                                   </p>
                                 </div>
                               ))}
