@@ -431,8 +431,8 @@ const filteredAndSortedRoutes = useMemo(() => {
               <select
                 value={filterDeparture}
                 onChange={(e) => setFilterDeparture(e.target.value)}
-                className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
+                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
+                >
                 <option value="">Điểm đi</option>
                 {locations.map(location => (
                   <option key={location} value={location}>{location}</option>
@@ -443,8 +443,8 @@ const filteredAndSortedRoutes = useMemo(() => {
               <select
                 value={filterArrival}
                 onChange={(e) => setFilterArrival(e.target.value)}
-                className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
+                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
+                >
                 <option value="">Điểm đến</option>
                 {locations.map(location => (
                   <option key={location} value={location}>{location}</option>
@@ -460,7 +460,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                   startDate={startDate}
                   endDate={endDate}
                   placeholderText="Từ ngày (khởi hành)"
-                  className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 w-full"
+                  className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
                   dateFormat="dd/MM/yyyy"
                 />
               </div>
@@ -475,32 +475,34 @@ const filteredAndSortedRoutes = useMemo(() => {
                   endDate={endDate}
                   minDate={startDate}
                   placeholderText="Đến ngày (khởi hành)"
-                  className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 w-full"
+                  className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
                   dateFormat="dd/MM/yyyy"
                 />
               </div>
 
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.97 }}
                 onClick={() => handleSort("price")}
-                className="flex items-center justify-center space-x-2 p-2 border rounded-lg hover:bg-gray-50"
+                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${sortBy.field === "price" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <span>Giá vé</span>
                 {sortBy.field === "price" ? (
                   sortBy.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountUpAlt />
                 ) : <FaSortAmountDown className="text-gray-400" />}
-              </button>
+              </motion.button>
 
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.97 }}
                 onClick={() => handleSort("departureTime")}
-                className="flex items-center justify-center space-x-2 p-2 border rounded-lg hover:bg-gray-50"
+                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${sortBy.field === "departureTime" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <span>Giờ đi</span>
                 {sortBy.field === "departureTime" ? (
                   sortBy.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountUpAlt />
                 ) : <FaSortAmountDown className="text-gray-400" />}
-              </button>
+              </motion.button>
             </div>
           </div>
 
