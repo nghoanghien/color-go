@@ -1,10 +1,12 @@
 'use client';
 
+
 import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaFileDownload, FaSort, FaSortAmountDown, FaSortAmountUp, FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaUserCircle, FaGift, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
+
 
 import { useRouter } from "next/navigation";
 import { deleteUserById, getUsers } from "@/services/user";
@@ -14,11 +16,18 @@ import LoadingOverlay from "@/components/loading-overlay";
 import { updateTicketStatus } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { changeMembershipById } from "@/services/membership";
+import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
+
+
+
+
+
 
 
 
 const AdminCustomers = () => {
   const router = useRouter();
+
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("customers");
@@ -28,17 +37,32 @@ const AdminCustomers = () => {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
 
+
   const [customersData, setCustomersData] = useState();
+
+
+  const [fileName, setFileName] = useState("DanhSachKhachHang");
+  const [sheetName, setSheetName] = useState("Khách hàng");
+  const [title, setTitle] = useState("Danh sách khách hàng");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id");
+  const [desiredColumnOrder, setDesiredColumnOrder] = useState([
+    "name",
+    "email",
+    "points",
+    "balance",
+  ])
+
 
   useEffect(() => {
     (async () => {
       loadUsers();
     })();
-  }, []); 
+  }, []);
+
 
   async function loadUsers() {
     let data = await getUsers();
-    
+   
     const userData = await Promise.all(
       data.map(async (user) => {
         const tickets = await Promise.all(
@@ -58,7 +82,7 @@ const AdminCustomers = () => {
             };
           })
         );
-    
+   
         return {
           id: user.id,
           name: user.name,
@@ -70,10 +94,12 @@ const AdminCustomers = () => {
       })
     );
 
+
     console.log(userData);
-    
+   
     setCustomersData(userData);
   }
+
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -81,6 +107,7 @@ const AdminCustomers = () => {
       setNotification({ show: false, message: "", type: "" });
     }, 3000);
   };
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -93,25 +120,29 @@ const AdminCustomers = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
+
   const onDrop = useCallback((acceptedFiles) => {
     // Handle file upload logic here
    // setUploadProgress(100); // Simulate upload completion
   }, []);
 
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
-  }); 
+  });
+
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
+
   const handleDeleteCustomer = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
         await deleteUserById(id);
-  
+ 
         setCustomersData(customersData.filter(customer => customer.id !== id));
         showNotification("Xóa khách hàng thành công!", "success");
       }
@@ -119,6 +150,7 @@ const AdminCustomers = () => {
       showNotification(`Xóa khách hàng thất bại: ${err.message}`, "error");
     }
   };
+
 
   const handleDeleteTicket = async (customerId, ticket) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa vé này?")) {
@@ -130,6 +162,7 @@ const AdminCustomers = () => {
         -parseInt(ticket.price) / 1_000
       );
       await removeBookedSeats(ticket.routeId, ticket.seatNumber.split(","));
+
 
       setCustomersData(customersData.map(customer => {
         if (customer.id === customerId) {
@@ -144,6 +177,7 @@ const AdminCustomers = () => {
     }
   };
 
+
   const handleExport = () => {
     const data = customersData.map(({ tickets, ...rest }) => rest);
     const csv = data.map(row => Object.values(row).join(",")).join("\n");
@@ -156,6 +190,7 @@ const AdminCustomers = () => {
     window.URL.revokeObjectURL(url);
   };
 
+
   const handleSort = (type) => {
     if (sortBy === type) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -164,6 +199,7 @@ const AdminCustomers = () => {
       setSortOrder("asc");
     }
   };
+
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
@@ -174,6 +210,7 @@ const AdminCustomers = () => {
       router.replace("/admin/admin-login");
     }
   }
+
 
   let sortedCustomers = {};
   if (customersData) {
@@ -187,7 +224,23 @@ const AdminCustomers = () => {
       customer.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
-  
+
+
+  const handleExportToExcel = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    const dataToExport = formatDataForExport(sortedCustomers, desiredColumnOrder);
+    exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
+  };
+
+
+
+
+  const handleExportToPDF = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    const dataToExport = formatDataForExport(sortedCustomers, desiredColumnOrder);
+    exportToPDF(dataToExport, fileName, fieldsArray, title);
+  };
+ 
   return (!customersData) ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Notification */}
@@ -208,6 +261,7 @@ const AdminCustomers = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* Sidebar */}
       <motion.div
@@ -253,6 +307,7 @@ const AdminCustomers = () => {
         ))}
       </motion.div>
 
+
       {/* Main Content */}
       <div className="flex-1 p-8">
         <motion.div
@@ -267,7 +322,7 @@ const AdminCustomers = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleExport}
+                onClick={handleExportToExcel}
                 className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
               >
                 <FaFileDownload />
@@ -276,7 +331,7 @@ const AdminCustomers = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                
+                onClick={handleExportToPDF}
                 className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
               >
                 <FaFilePdf />
@@ -284,6 +339,7 @@ const AdminCustomers = () => {
               </motion.button>
             </div>
           </div>
+
 
           {/* Search and Sort */}
           <div className="mb-6 space-y-4">
@@ -324,6 +380,7 @@ const AdminCustomers = () => {
               </button>
             </div>
           </div>
+
 
           {/* Customers Table */}
           <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -436,5 +493,6 @@ const AdminCustomers = () => {
     </div>
   );
 };
+
 
 export default AdminCustomers;
