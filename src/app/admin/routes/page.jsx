@@ -1,17 +1,25 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
+
 
 import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaSortAmountDown, FaSortAmountUpAlt, FaGift, FaUserCircle, FaTicketAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import LoadingOverlay from "@/components/loading-overlay";
+import { fetchRoute } from "@/services/routes";
+import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal } from "@/utils/time-manipulation";
+import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
+
 
 const AdminRoutes = () => {
   const router = useRouter();
+
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("routes");
@@ -23,65 +31,39 @@ const AdminRoutes = () => {
   const [filterArrival, setFilterArrival] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  
-  const [routesData, setRoutesData] = useState([
-    {
-      id: 1,
-      transportName: "Phương Trang",
-      departure: "TP.HCM",
-      arrival: "Đà Lạt",
-      departureTime: "2024-01-20T06:00:00",
-      arrivalTime: "2024-01-20T14:00:00",
-      price: 280000,
-      stops: [
-        {
-          name: "Trạm Dầu Giây",
-          address: "QL20, Xuân Lộc, Đồng Nai",
-          arrivalTime: "2024-01-20T08:30:00"
-        },
-        {
-          name: "Bảo Lộc",
-          address: "QL20, Bảo Lộc, Lâm Đồng",
-          arrivalTime: "2024-01-20T11:30:00"
-        }
-      ]
-    },
-    {
-      id: 2,
-      transportName: "Thành Bưởi",
-      departure: "Hà Nội",
-      arrival: "Sapa",
-      departureTime: "2024-01-20T20:00:00",
-      arrivalTime: "2024-01-21T06:00:00",
-      price: 350000,
-      stops: [
-        {
-          name: "Yên Bái",
-          address: "QL32, TP. Yên Bái",
-          arrivalTime: "2024-01-21T01:30:00"
-        },
-        {
-          name: "Lào Cai",
-          address: "QL4D, TP. Lào Cai",
-          arrivalTime: "2024-01-21T04:00:00"
-        }
-      ]
-    }
-  ]);
+
+
+  const [fileName, setFileName] = useState("DanhSachChuyenXe");
+  const [sheetName, setSheetName] = useState("Chuyến xe");
+  const [title, setTitle] = useState("Danh sách chuyến xe");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id, bookSeats, stops");
+  const [desiredColumnOrder, setDesiredColumnOrder] = useState([
+    "name",
+    "departureLocation",
+    "arrivalLocation",
+    "departureTime",
+    "arrivalTime",
+    "price"
+  ])
+ 
+  const [routesData, setRoutesData] = useState();
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoute, setEditingRoute] = useState(null);
   const [newRoute, setNewRoute] = useState({
-    transportName: "",
-    departure: "",
-    arrival: "",
+    name: "",
+    departureLocation: "",
+    arrivalLocation: "",
     departureTime: new Date(),
     arrivalTime: new Date(),
     price: "",
     stops: []
   });
 
+
   const locations = ["TP.HCM", "Hà Nội", "Đà Lạt", "Sapa", "Đà Nẵng", "Nha Trang"];
+
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -89,6 +71,7 @@ const AdminRoutes = () => {
       setNotification({ show: false, message: "", type: "" });
     }, 5000);
   };
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -101,15 +84,18 @@ const AdminRoutes = () => {
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
 
+
   const onDrop = useCallback((acceptedFiles) => {
     // Handle file upload logic here
    // setUploadProgress(100); // Simulate upload completion
   }, []);
 
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false
   });
+
 
   const handleSort = (field) => {
     setSortBy(prev => ({
@@ -118,9 +104,11 @@ const AdminRoutes = () => {
     }));
   };
 
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+
 
   const handleDelete = (id) => {
     try {
@@ -133,6 +121,7 @@ const AdminRoutes = () => {
     }
   };
 
+
   const handleEdit = (route) => {
     setEditingRoute(route);
     setNewRoute({
@@ -143,26 +132,31 @@ const AdminRoutes = () => {
     setIsModalOpen(true);
   };
 
+
   const handleAdd = () => {
     setEditingRoute(null);
+    const now = new Date();
+    now.toISOString();
     setNewRoute({
-      transportName: "",
-      departure: "",
-      arrival: "",
-      departureTime: new Date(),
-      arrivalTime: new Date(),
+      name: "",
+      departureLocation: "",
+      arrivalLocation: "",
+      departureTime: now,
+      arrivalTime: now,
       price: "",
       stops: []
     });
     setIsModalOpen(true);
   };
 
+
   const handleAddStop = () => {
     setNewRoute(prev => ({
       ...prev,
-      stops: [...prev.stops, { name: "", address: "", arrivalTime: new Date() }]
+      stops: [...prev.stops, { stop: "", address: "", datetime: new Date() }]
     }));
   };
+
 
   const handleRemoveStop = (index) => {
     setNewRoute(prev => ({
@@ -170,6 +164,7 @@ const AdminRoutes = () => {
       stops: prev.stops.filter((_, i) => i !== index)
     }));
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -189,6 +184,7 @@ const AdminRoutes = () => {
     }
   };
 
+
   const handleNavigate = (tab) => {
     setActiveTab(tab);
     if (tab !== "logout") {
@@ -199,17 +195,28 @@ const AdminRoutes = () => {
     }
   }
 
-  const filteredAndSortedRoutes = routesData
-    .filter(route =>
-      route.transportName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (!filterDeparture || route.departure === filterDeparture) &&
-      (!filterArrival || route.arrival === filterArrival) &&
-      (!startDate || new Date(route.departureTime) >= startDate) &&
-      (!endDate || new Date(route.departureTime) <= endDate)
-    )
+
+
+
+const filteredAndSortedRoutes = useMemo(() => {
+  console.log("Đang thực hiện filter và sort");
+  if (!routesData) return [];
+
+
+  return routesData
+    .filter(route => {
+      return (
+        route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (!filterDeparture || route.departureLocation === filterDeparture) &&
+        (!filterArrival || route.arrivalLocation === filterArrival) &&
+        (!startDate || new Date(route.departureTime) >= startDate) &&
+        (!endDate || new Date(route.departureTime) <= endDate)
+      );
+    })
     .sort((a, b) => {
       if (!sortBy.field) return 0;
-      
+
+
       let comparison = 0;
       switch (sortBy.field) {
         case "price":
@@ -223,10 +230,47 @@ const AdminRoutes = () => {
       }
       return sortBy.order === "asc" ? comparison : -comparison;
     });
+}, [routesData, searchTerm, filterDeparture, filterArrival, startDate, endDate, sortBy]);
 
 
 
-  return (
+
+    const fetchRoutesData = async () => {
+      try {
+        const fetchedRoute = await fetchRoute();
+        console.log("Dữ liệu lấy được từ fetchCoachCompanies:", fetchedRoute);
+        setRoutesData(fetchedRoute);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error.message);
+      }
+    };
+ 
+    useEffect(() => {
+      fetchRoutesData();
+    }, []);
+
+
+
+
+
+
+    const handleExportToExcel = () => {
+      const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+      const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
+      exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
+      console.log("Routedata: ",routesData);
+    };
+ 
+ 
+    const handleExportToPDF = () => {
+      const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+      const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
+      exportToPDF(dataToExport, fileName, fieldsArray, title);
+     
+    };
+
+
+    return !routesData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Rest of the component remains the same until the filters section */}
       {/* Notification */}
@@ -247,6 +291,7 @@ const AdminRoutes = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* Sidebar */}
       <motion.div
@@ -292,6 +337,7 @@ const AdminRoutes = () => {
         ))}
       </motion.div>
 
+
       {/* Main Content */}
       <div className="flex-1 p-8">
         <motion.div
@@ -317,10 +363,11 @@ const AdminRoutes = () => {
                 Tải file
               </motion.button>
 
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                // onClick={handleExport}
+                onClick={handleExportToExcel}
                 className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFileDownload />
@@ -329,7 +376,7 @@ const AdminRoutes = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                
+                onClick={handleExportToPDF}
                 className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFilePdf />
@@ -347,6 +394,7 @@ const AdminRoutes = () => {
             </div>
           </div>
 
+
           {/* Search and Filters */}
           <div className="mb-6 space-y-4">
             <div className="relative">
@@ -362,6 +410,7 @@ const AdminRoutes = () => {
               />
             </div>
 
+
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
               <select
                 value={filterDeparture}
@@ -374,6 +423,7 @@ const AdminRoutes = () => {
                 ))}
               </select>
 
+
               <select
                 value={filterArrival}
                 onChange={(e) => setFilterArrival(e.target.value)}
@@ -384,6 +434,7 @@ const AdminRoutes = () => {
                   <option key={location} value={location}>{location}</option>
                 ))}
               </select>
+
 
               <div className="flex items-center space-x-2">
                 <DatePicker
@@ -397,6 +448,7 @@ const AdminRoutes = () => {
                   dateFormat="dd/MM/yyyy"
                 />
               </div>
+
 
               <div className="flex items-center space-x-2">
                 <DatePicker
@@ -412,6 +464,7 @@ const AdminRoutes = () => {
                 />
               </div>
 
+
               <button
                 onClick={() => handleSort("price")}
                 className="flex items-center justify-center space-x-2 p-2 border rounded-lg hover:bg-gray-50"
@@ -421,6 +474,7 @@ const AdminRoutes = () => {
                   sortBy.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountUpAlt />
                 ) : <FaSortAmountDown className="text-gray-400" />}
               </button>
+
 
               <button
                 onClick={() => handleSort("departureTime")}
@@ -433,6 +487,7 @@ const AdminRoutes = () => {
               </button>
             </div>
           </div>
+
 
           {/* Rest of your original code remains exactly the same */}
           {/* Routes Table */}
@@ -461,11 +516,11 @@ const AdminRoutes = () => {
                       className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
                       onClick={() => setExpandedRow(expandedRow === route.id ? null : route.id)}
                     >
-                      <td className="px-6 py-4">{route.transportName}</td>
-                      <td className="px-6 py-4">{route.departure}</td>
-                      <td className="px-6 py-4">{route.arrival}</td>
-                      <td className="px-6 py-4">{new Date(route.departureTime).toLocaleString()}</td>
-                      <td className="px-6 py-4">{new Date(route.arrivalTime).toLocaleString()}</td>
+                      <td className="px-6 py-4">{route.name}</td>
+                      <td className="px-6 py-4">{route.departureLocation}</td>
+                      <td className="px-6 py-4">{route.arrivalLocation}</td>
+                      <td className="px-6 py-4">{new Date(route.departureTime.seconds * 1000).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-6 py-4">{new Date(route.arrivalTime.seconds * 1000).toLocaleDateString('vi-VN')}</td>
                       <td className="px-6 py-4 text-right">{route.price.toLocaleString()}đ</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
@@ -505,15 +560,15 @@ const AdminRoutes = () => {
                           <div className="space-y-4">
                             <h3 className="font-semibold text-lg text-gray-700">Điểm dừng</h3>
                             <div className="grid grid-cols-3 gap-4">
-                              {route.stops.map((stop, index) => (
+                              {route.stops.map((stopp, index) => (
                                 <div
                                   key={index}
                                   className="bg-white p-4 rounded-lg shadow"
                                 >
-                                  <h4 className="font-medium text-blue-600">{stop.name}</h4>
-                                  <p className="text-sm text-gray-600 mt-1">{stop.address}</p>
+                                  <h4 className="font-medium text-blue-600">{stopp.stop}</h4>
+                                  <p className="text-sm text-gray-600 mt-1">{stopp.address}</p>
                                   <p className="text-sm text-gray-500 mt-2">
-                                    Giờ đến: {new Date(stop.arrivalTime).toLocaleString()}
+                                    Giờ đến: {new Date(stopp.datetime.seconds * 1000).toLocaleDateString('vi-VN')}
                                   </p>
                                 </div>
                               ))}
@@ -529,6 +584,7 @@ const AdminRoutes = () => {
           </motion.div>
         </motion.div>
       </div>
+
 
       {/* Modal */}
       <AnimatePresence>
@@ -555,8 +611,8 @@ const AdminRoutes = () => {
                     <input
                       type="text"
                       className="w-full p-3 border rounded-lg"
-                      value={newRoute.transportName}
-                      onChange={(e) => setNewRoute({ ...newRoute, transportName: e.target.value })}
+                      value={newRoute.name}
+                      onChange={(e) => setNewRoute({ ...newRoute, name: e.target.value })}
                       required
                     />
                   </div>
@@ -575,8 +631,8 @@ const AdminRoutes = () => {
                     <input
                       type="text"
                       className="w-full p-3 border rounded-lg"
-                      value={newRoute.departure}
-                      onChange={(e) => setNewRoute({ ...newRoute, departure: e.target.value })}
+                      value={newRoute.departureLocation}
+                      onChange={(e) => setNewRoute({ ...newRoute, departureLocation: e.target.value })}
                       required
                     />
                   </div>
@@ -585,8 +641,8 @@ const AdminRoutes = () => {
                     <input
                       type="text"
                       className="w-full p-3 border rounded-lg"
-                      value={newRoute.arrival}
-                      onChange={(e) => setNewRoute({ ...newRoute, arrival: e.target.value })}
+                      value={newRoute.arrivalLocation}
+                      onChange={(e) => setNewRoute({ ...newRoute, arrivalLocation: e.target.value })}
                       required
                     />
                   </div>
@@ -594,7 +650,7 @@ const AdminRoutes = () => {
                     <label className="block text-gray-700 font-medium mb-2">Giờ đi</label>
                     <DatePicker
                       selected={newRoute.departureTime}
-                      onChange={(date) => setNewRoute({ ...newRoute, departureTime: date })}
+                      onChange={(e) => setNewRoute({ ...newRoute, departureTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
                       showTimeSelect
                       dateFormat="Pp"
                       className="w-full p-3 border rounded-lg"
@@ -605,7 +661,7 @@ const AdminRoutes = () => {
                     <label className="block text-gray-700 font-medium mb-2">Giờ đến</label>
                     <DatePicker
                       selected={newRoute.arrivalTime}
-                      onChange={(date) => setNewRoute({ ...newRoute, arrivalTime: date })}
+                      onChange={(e) => setNewRoute({ ...newRoute, arrivalTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
                       showTimeSelect
                       dateFormat="Pp"
                       className="w-full p-3 border rounded-lg"
@@ -613,6 +669,7 @@ const AdminRoutes = () => {
                     />
                   </div>
                 </div>
+
 
                 {/* Stops Section */}
                 <div className="space-y-4">
@@ -627,7 +684,7 @@ const AdminRoutes = () => {
                       <span>Thêm điểm dừng</span>
                     </button>
                   </div>
-                  {newRoute.stops.map((stop, index) => (
+                  {newRoute.stops.map((stopp, index) => (
                     <div key={index} className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg relative">
                       <button
                         type="button"
@@ -641,7 +698,7 @@ const AdminRoutes = () => {
                         <input
                           type="text"
                           className="w-full p-3 border rounded-lg"
-                          value={stop.name}
+                          value={stopp.stop}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
                             newStops[index].name = e.target.value;
@@ -667,10 +724,10 @@ const AdminRoutes = () => {
                       <div>
                         <label className="block text-gray-700 font-medium mb-2">Giờ đến</label>
                         <DatePicker
-                          selected={new Date(stop.arrivalTime)}
-                          onChange={(date) => {
+                          selected={new Date(stopp.arrivalTime)}
+                          onChange={(e) => {
                             const newStops = [...newRoute.stops];
-                            newStops[index].arrivalTime = date;
+                            newStops[index].datetime = convertDatetimeLocalToFirestoreTimestamp(e.target.value);
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
                           showTimeSelect
@@ -682,6 +739,7 @@ const AdminRoutes = () => {
                     </div>
                   ))}
                 </div>
+
 
                 <div className="flex justify-end space-x-4">
                   <motion.button
@@ -710,5 +768,6 @@ const AdminRoutes = () => {
     </div>
   );
 };
+
 
 export default AdminRoutes;

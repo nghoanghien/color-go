@@ -75,3 +75,14 @@ export const exportToPDF = (
       doc.save(`${fileName}.pdf`);
 
 };
+
+export const formatDataForExport = (data: any[], columnOrder: string[]) => {
+  return data.map((item) => {
+    const formattedItem: Record<string, any> = {};
+    columnOrder.forEach((key) => {
+      formattedItem[key] = item[key] !== undefined ? item[key] : ""; // Nếu thiếu trường, để trống
+    });
+    return formattedItem;
+  });
+};
+

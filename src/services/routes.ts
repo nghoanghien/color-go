@@ -99,5 +99,11 @@ export async function removeBookedSeats(routeId: any, seatsToRemove: any) {
   }
 }
 
+export const fetchRoute = async () => {
+  const routeCollection = collection(db, 'routes');
+  const routeSnapshot = await getDocs(routeCollection);
+  const routeList = routeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return routeList;
+};
 
   
