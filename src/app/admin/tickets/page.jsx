@@ -189,6 +189,7 @@ const AdminTickets = () => {
   let filteredTickets;
   if (ticketsData) {
     filteredTickets = ticketsData.filter(ticket => {
+      console.log(startDate, new Date(endDate));
       const matchesTransport = ticket.transportName.toLowerCase().includes(searchTransport.toLowerCase());
       const matchesCustomer = ticket.customerName.toLowerCase().includes(searchCustomer.toLowerCase());
       const matchesDeparture = !selectedDeparture || ticket.departure === selectedDeparture;
@@ -393,7 +394,7 @@ const AdminTickets = () => {
             <div className="flex items-center space-x-2">
               <DatePicker
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                onChange={(date) => setEndDate(date.setHours(23, 59, 59, 999))}
                 placeholderText="Đến ngày"
                 customInput={<CustomDateInput />}
                 dateFormat="dd/MM/yyyy"
