@@ -464,7 +464,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                   endDate={endDate}
                   placeholderText="Từ ngày (khởi hành)"
                   className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
-                  //dateFormat="dd/MM/yyyy"
+                  dateFormat="dd/MM/yyyy"
                 />
               </div>
 
