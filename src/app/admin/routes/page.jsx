@@ -464,7 +464,7 @@ const filteredAndSortedRoutes = useMemo(() => {
               <div className="flex items-center space-x-2">
                 <DatePicker
                   selected={endDate}
-                  onChange={(date) => setEndDate(date)}
+                  onChange={(date) => setEndDate(date.setHours(23, 59, 59, 999))}
                   selectsEnd
                   startDate={startDate}
                   endDate={endDate}
