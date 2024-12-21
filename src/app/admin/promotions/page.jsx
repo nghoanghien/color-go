@@ -16,7 +16,7 @@ import { addPromotion, deletePromotion, fetchPromotion, updatePromotion } from "
 
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
-import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal } from "@/utils/time-manipulation";
+import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatTimestampToCustom, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
 
 
 const AdminPromotions = () => {
@@ -136,8 +136,8 @@ const AdminPromotions = () => {
     }
     if (filters.sortDate) {
       result.sort((a, b) => {
-        const dateA = new Date(a.expiry);
-        const dateB = new Date(b.expiry);
+        const dateA = a.valid;
+        const dateB = b.valid;
         return filters.sortDate === "asc" ? dateA - dateB : dateB - dateA;
       });
     }
@@ -447,7 +447,7 @@ const AdminPromotions = () => {
                 onClick={() => handleFilterToggle("date")}
                 className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${filters.sortDate ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
-                <FaCalendarAlt />
+                {filters.sortDate === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
                 <span>Hạn sử dụng</span>
               </motion.button>
             </div>
@@ -483,7 +483,7 @@ const AdminPromotions = () => {
                       <td className="px-6 py-4">{promotion.minApply.toLocaleString()}đ</td>
                       <td className="px-6 py-4">{promotion.max.toLocaleString()}đ</td>
                       <td className="px-6 py-4">{promotion.value}{promotion.type === 1 ? "%" : "đ"}</td>
-                      <td className="px-6 py-4">{new Date(promotion.valid.seconds * 1000).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-6 py-4">{timeString(promotion.valid) + ", " + formatTimestampToDate(promotion.valid)}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button
