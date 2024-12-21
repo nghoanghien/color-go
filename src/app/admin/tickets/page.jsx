@@ -2,7 +2,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import { FaHome, FaBus, FaRoute, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt, FaFileDownload, FaFilePdf } from "react-icons/fa";
+import { FaHome, FaBus, FaRoute, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt, FaFileDownload, FaFilePdf, FaArrowRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -123,7 +123,7 @@ const AdminTickets = () => {
 
 
   const CustomDateInput = React.forwardRef(({ value, onClick, placeholder }, ref) => (
-    <div className="relative cursor-pointer" onClick={onClick}>
+    <div className="cursor-pointer" onClick={onClick}>
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <FaCalendarAlt className="text-blue-500" />
       </div>
@@ -131,7 +131,7 @@ const AdminTickets = () => {
         ref={ref}
         value={value}
         placeholder={placeholder}
-        className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white"
+        className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
         readOnly
       />
     </div>
@@ -146,8 +146,8 @@ const AdminTickets = () => {
       <select
         value={value}
         onChange={onChange}
-        className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white cursor-pointer"
-      >
+        className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out appearance-none"
+        >
         <option value="">{placeholder}</option>
         {options.map((option) => (
           <option key={option} value={option}>{option}</option>
@@ -373,25 +373,32 @@ const AdminTickets = () => {
 
           {/* Filter Options */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="relative">
+            <div className="flex items-center space-x-2">
               <DatePicker
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
                 placeholderText="Từ ngày"
                 customInput={<CustomDateInput />}
                 dateFormat="dd/MM/yyyy"
-                className="w-full"
+                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
+
               />
+              <div>
+                <FaArrowRight 
+                style={{ color: 'gray', fontSize: '24px' }} 
+                className="ml-4"/>
+              </div>
             </div>
-            <div className="relative">
+
+            <div className="flex items-center space-x-2">
               <DatePicker
                 selected={endDate}
                 onChange={(date) => setEndDate(date)}
                 placeholderText="Đến ngày"
                 customInput={<CustomDateInput />}
                 dateFormat="dd/MM/yyyy"
-                className="w-full"
-              />
+                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                />
             </div>
             <CustomSelect
               value={selectedDeparture}
