@@ -205,7 +205,7 @@ const AdminPromotions = () => {
       }
       setIsModalOpen(false);
     } catch (error) {
-      showNotification("Có lỗi xảy ra!", "error");
+      showNotification(`Thao tác thất bại: ${error.message}`, "error");
     }
   };
 
@@ -262,7 +262,7 @@ const AdminPromotions = () => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 20 }}
             exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-0 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
+            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
           >
             {notification.type === "success" ? <FaCheckCircle className="text-xl" /> : <FaTimesCircle className="text-xl" />}
             <span>{notification.message}</span>
@@ -474,7 +474,7 @@ const AdminPromotions = () => {
                       <td className="px-6 py-4">{promotion.title}</td>
                       <td className="px-6 py-4">{promotion.minApply.toLocaleString()}đ</td>
                       <td className="px-6 py-4">{promotion.max.toLocaleString()}đ</td>
-                      <td className="px-6 py-4">{promotion.value}{promotion.type === 1 ? "%" : "đ"}</td>
+                      <td className="px-6 py-4">{promotion.value.toLocaleString()}{promotion.type === 1 ? "%" : "đ"}</td>
                       <td className="px-6 py-4">{timeString(promotion.valid) + ", " + formatTimestampToDate(promotion.valid)}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
@@ -518,7 +518,7 @@ const AdminPromotions = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-40"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -605,6 +605,7 @@ const AdminPromotions = () => {
                     className="w-full p-2 border rounded-lg"
                     value={convertTimestampToDatetimeLocal(newPromotion.valid)}
                     onChange={(e) => setNewPromotion({ ...newPromotion, valid: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
+                    min={new Date().toISOString().slice(0, 16)}
                     required
                   />
                 </div>

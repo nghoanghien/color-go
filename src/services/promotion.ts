@@ -41,16 +41,32 @@ export async function addPromotion(promotion: any) {
     // Tạo tham chiếu đến collection promotions
     const promotionsCollectionRef = collection(db, 'promotions');
 
+    // Lấy tất cả các documents trong collection promotions
+    const querySnapshot = await getDocs(promotionsCollectionRef);
+
+    // Kiểm tra trùng mã code
+    querySnapshot.forEach((doc) => {
+      if (doc.data().code === promotion.code) {
+        throw new Error(`Mã "${promotion.code}" đã tồn tại.`);
+      }
+    });
+
+    // Kiểm tra giá trị max nếu type là 0
+    if (promotion.type === 0 && promotion.max !== promotion.value) {
+      throw new Error('Giảm tối đa phải bằng giá trị giảm cho voucher giảm tiền cố định.');
+    }
+
     // Thêm document mới vào collection
     const docRef = await addDoc(promotionsCollectionRef, promotion);
 
     console.log('Promotion successfully added with ID: ', docRef.id);
     return docRef.id;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error adding promotion: ', error);
     throw error;
   }
 }
+
 
 export async function deletePromotion(promotionId: any) {
   try {
