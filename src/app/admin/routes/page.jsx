@@ -123,13 +123,12 @@ const AdminRoutes = () => {
 
 
   const handleEdit = (route) => {
+    console.log(route);
     setEditingRoute(route);
-    setNewRoute({
-      ...route,
-      departureTime: new Date(route.departureTime),
-      arrivalTime: new Date(route.arrivalTime)
-    });
+    setNewRoute(route);
     setIsModalOpen(true);
+    console.log(newRoute);
+    console.log("Done");
   };
 
 
@@ -137,12 +136,13 @@ const AdminRoutes = () => {
     setEditingRoute(null);
     const now = new Date();
     now.toISOString();
+    now.toISOString();
     setNewRoute({
       name: "",
       departureLocation: "",
       arrivalLocation: "",
-      departureTime: now,
-      arrivalTime: now,
+      departureTime: convertDatetimeLocalToFirestoreTimestamp(now),
+      arrivalTime: convertDatetimeLocalToFirestoreTimestamp(now),
       price: "",
       stops: []
     });
@@ -647,22 +647,20 @@ const filteredAndSortedRoutes = useMemo(() => {
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Giờ đi</label>
-                    <DatePicker
-                      selected={newRoute.departureTime}
+                    <input
+                      type="datetime-local"
+                      value={convertTimestampToDatetimeLocal(newRoute.departureTime)}
                       onChange={(e) => setNewRoute({ ...newRoute, departureTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
-                      showTimeSelect
-                      dateFormat="Pp"
                       className="w-full p-3 border rounded-lg"
                       required
                     />
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Giờ đến</label>
-                    <DatePicker
-                      selected={newRoute.arrivalTime}
+                    <input
+                      type="datetime-local"
+                      value={convertTimestampToDatetimeLocal(newRoute.arrivalTime)}
                       onChange={(e) => setNewRoute({ ...newRoute, arrivalTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
-                      showTimeSelect
-                      dateFormat="Pp"
                       className="w-full p-3 border rounded-lg"
                       required
                     />
@@ -711,7 +709,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                         <input
                           type="text"
                           className="w-full p-3 border rounded-lg"
-                          value={stop.address}
+                          value={stopp.address}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
                             newStops[index].address = e.target.value;
@@ -722,15 +720,14 @@ const filteredAndSortedRoutes = useMemo(() => {
                       </div>
                       <div>
                         <label className="block text-gray-700 font-medium mb-2">Giờ đến</label>
-                        <DatePicker
-                          selected={new Date(stopp.arrivalTime)}
+                        <input
+                          type="datetime-local"
+                          value={convertTimestampToDatetimeLocal(stopp.datetime)}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
                             newStops[index].datetime = convertDatetimeLocalToFirestoreTimestamp(e.target.value);
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
-                          showTimeSelect
-                          dateFormat="Pp"
                           className="w-full p-3 border rounded-lg"
                           required
                         />
