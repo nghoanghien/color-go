@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useState, useEffect } from "react";
 import { FaHome, FaBus, FaRoute, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt, FaFileDownload, FaFilePdf } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,9 +13,14 @@ import { formatDate } from "@/utils/time-manipulation";
 import LoadingOverlay from "@/components/loading-overlay";
 import { adjustUserBalance } from "@/services/wallet";
 import { changeMembershipById } from "@/services/membership";
+import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
+
+
+
 
 const AdminTickets = () => {
   const router = useRouter();
+
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("tickets");
@@ -27,19 +33,37 @@ const AdminTickets = () => {
   const [selectedDeparture, setSelectedDeparture] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("");
 
+
   const [ticketsData, setTicketsData] = useState();
+
 
   const [departureLocations, setDepartureLocations] = useState([]);
   const [arrivalLocations, setArrivalLocations] = useState([]);
-  
+  const [fileName, setFileName] = useState("DanhSachVeXe");
+  const [sheetName, setSheetName] = useState("Vé xe");
+  const [title, setTitle] = useState("Danh sách vé xe");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id");
+  const [desiredColumnOrder, setDesiredColumnOrder] = useState([
+    "customerName",
+    "transportName",
+    "departure",
+    "destination",
+    "departureTime",
+    "seatNumber",
+    "phone",
+  ])
+ 
+  console.log(ticketsData);
   useEffect(() => {
     (async () => {
       loadTickets();
     })();
-  }, []); 
+  }, []);
+
 
   async function loadTickets() {
     let data = await getAllTicketsWithUserId();
+
 
     const ticketData = await Promise.all(
       data
@@ -53,14 +77,14 @@ const AdminTickets = () => {
             }
             return prevLocations;
           });
-  
+ 
           setArrivalLocations(prevLocations => {
             if (!prevLocations.includes(route.arrivalLocation)) {
               return [...prevLocations, route.arrivalLocation]; // Tạo mảng mới với địa điểm mới
             }
             return prevLocations;
           });
-  
+ 
           return {
             id: ticket.id,
             userId: ticket.userId,
@@ -81,9 +105,11 @@ const AdminTickets = () => {
         })
     );
 
+
     setTicketsData(ticketData);
     console.log(arrivalLocations);
   }
+
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
@@ -94,6 +120,7 @@ const AdminTickets = () => {
       router.replace("/admin/admin-login");
     }
   }
+
 
   const CustomDateInput = React.forwardRef(({ value, onClick, placeholder }, ref) => (
     <div className="relative cursor-pointer" onClick={onClick}>
@@ -109,6 +136,7 @@ const AdminTickets = () => {
       />
     </div>
   ));
+
 
   const CustomSelect = ({ value, onChange, placeholder, options }) => (
     <div className="relative">
@@ -131,12 +159,14 @@ const AdminTickets = () => {
     </div>
   );
 
+
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
     setTimeout(() => {
       setNotification({ show: false, message: "", type: "" });
     }, 3000);
   };
+
 
   const handleDelete = async (ticket) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa vé xe này?")) {
@@ -149,10 +179,12 @@ const AdminTickets = () => {
       );
       await removeBookedSeats(ticket.routeId, ticket.seatNumber.split(","));
 
+
       setTicketsData(ticketsData.filter(ticket2 => ticket2.id !== ticket.id));
       showNotification("Xóa vé xe thành công!", "success");
     }
   };
+
 
   let filteredTickets;
   if (ticketsData) {
@@ -163,11 +195,12 @@ const AdminTickets = () => {
       const matchesDestination = !selectedDestination || ticket.destination === selectedDestination;
       const ticketDate = new Date(ticket.date.seconds * 1000);
       const matchesDateRange = (!startDate || ticketDate >= startDate) && (!endDate || ticketDate <= endDate);
-  
+ 
       return matchesTransport && matchesCustomer && matchesDeparture && matchesDestination && matchesDateRange;
     });
   }
-    
+   
+
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -179,6 +212,23 @@ const AdminTickets = () => {
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
     { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
   ];
+
+
+  const handleExportToExcel = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    const dataToExport = formatDataForExport(filteredTickets, desiredColumnOrder);
+    exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
+  };
+
+
+
+
+  const handleExportToPDF = () => {
+    const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
+    const dataToExport = formatDataForExport(filteredTickets, desiredColumnOrder);
+    exportToPDF(dataToExport, fileName, fieldsArray, title);
+  };
+
 
   return !ticketsData ? (
     <LoadingOverlay isLoading />
@@ -206,6 +256,7 @@ const AdminTickets = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* Sidebar */}
       <motion.div
@@ -237,6 +288,7 @@ const AdminTickets = () => {
           </motion.button>
         </div>
 
+
         {sidebarItems.map((item) => (
           <motion.button
             key={item.id}
@@ -255,6 +307,7 @@ const AdminTickets = () => {
         ))}
       </motion.div>
 
+
       {/* Main Content */}
       <div className="flex-1 p-8">
         <motion.div
@@ -270,7 +323,7 @@ const AdminTickets = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                //onClick={handleExport}
+                onClick={handleExportToExcel}
                 className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
               >
                 <FaFileDownload />
@@ -279,6 +332,7 @@ const AdminTickets = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={handleExportToPDF}
                 className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
               >
                 <FaFilePdf />
@@ -286,6 +340,7 @@ const AdminTickets = () => {
               </motion.button>
             </div>
           </div>
+
 
           {/* Search and Filter Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -314,6 +369,7 @@ const AdminTickets = () => {
               />
             </div>
           </div>
+
 
           {/* Filter Options */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -350,6 +406,7 @@ const AdminTickets = () => {
               options={arrivalLocations}
             />
           </div>
+
 
           {/* Tickets Table */}
           <motion.div
@@ -467,5 +524,6 @@ const AdminTickets = () => {
     </div>
   );
 };
+
 
 export default AdminTickets;
