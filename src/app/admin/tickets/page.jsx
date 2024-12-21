@@ -325,7 +325,7 @@ const AdminTickets = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleExportToExcel}
-                className="bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
+                className="shadow-md bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
               >
                 <FaFileDownload />
                 <span>Xuất Excel</span>
@@ -334,7 +334,7 @@ const AdminTickets = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleExportToPDF}
-                className="bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
+                className="shadow-md bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300 font-medium"
               >
                 <FaFilePdf />
                 <span>Xuất PDF</span>
@@ -344,7 +344,7 @@ const AdminTickets = () => {
 
 
           {/* Search and Filter Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FaSearch className="text-gray-400" />
@@ -352,7 +352,7 @@ const AdminTickets = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm theo tên nhà xe..."
-                className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
                 value={searchTransport}
                 onChange={(e) => setSearchTransport(e.target.value)}
               />
@@ -364,7 +364,7 @@ const AdminTickets = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm theo tên khách hàng..."
-                className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
                 value={searchCustomer}
                 onChange={(e) => setSearchCustomer(e.target.value)}
               />
@@ -387,11 +387,11 @@ const AdminTickets = () => {
               <div>
                 <FaArrowRight 
                 style={{ color: 'gray', fontSize: '24px' }} 
-                className="ml-4"/>
+                className="ml-6"/>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 pl-6">
               <DatePicker
                 selected={endDate}
                 onChange={(date) => setEndDate(date.setHours(23, 59, 59, 999))}
