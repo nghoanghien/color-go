@@ -217,12 +217,14 @@ const filteredAndSortedRoutes = useMemo(() => {
 
   return routesData
     .filter(route => {
+      console.log("Startdate", startDate);
+      console.log("Enddate", endDate);
       return (
         route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (!filterDeparture || route.departureLocation === filterDeparture) &&
         (!filterArrival || route.arrivalLocation === filterArrival) &&
-        (!startDate || new Date(route.departureTime * 1000) >= startDate) &&
-        (!endDate || new Date(route.departureTime * 1000) <= endDate)
+        (!startDate || new Date(route.departureTime.seconds * 1000) >= startDate) &&
+        (!endDate || new Date(route.departureTime.seconds * 1000) <= endDate)
       );
     })
     .sort((a, b) => {
