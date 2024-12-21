@@ -358,7 +358,7 @@ const AdminCustomers = () => {
             <div className="flex space-x-4">
               <button
                 onClick={() => handleSort("points")}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300"
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${sortBy === "points" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <span>Điểm hội viên</span>
                 {sortBy === "points" ? (
@@ -369,7 +369,7 @@ const AdminCustomers = () => {
               </button>
               <button
                 onClick={() => handleSort("balance")}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-300"
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${sortBy === "balance" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <span>Số dư</span>
                 {sortBy === "balance" ? (
