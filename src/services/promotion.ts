@@ -21,6 +21,10 @@ export const fetchPromotion = async () => {
 
 export async function updatePromotion(promotion: any) {
   try {
+
+    if (promotion.type === 0 && promotion.max !== promotion.value) {
+      throw new Error('Giảm tối đa phải bằng giá trị giảm cho giảm tiền cố định.');
+    }
     // Tạo tham chiếu đến document cần cập nhật trong collection promotions
     const promotionDocRef = doc(db, 'promotions', promotion.id);
 
@@ -53,7 +57,7 @@ export async function addPromotion(promotion: any) {
 
     // Kiểm tra giá trị max nếu type là 0
     if (promotion.type === 0 && promotion.max !== promotion.value) {
-      throw new Error('Giảm tối đa phải bằng giá trị giảm cho voucher giảm tiền cố định.');
+      throw new Error('Giảm tối đa phải bằng giá trị giảm cho giảm tiền cố định.');
     }
 
     // Thêm document mới vào collection
