@@ -67,11 +67,19 @@ const AdminRoutes = () => {
 
   const locations = ["TP.HCM", "Hà Nội", "Đà Lạt", "Sapa", "Đà Nẵng", "Nha Trang"];
   const provinces = [
-    "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "Bình Định",
-    "Khánh Hòa", "Quảng Ngãi", "Yên Bái", "Hưng Yên", "Hà Tĩnh", "Gia Lai", "Kon Tum",
-    "Lai Châu", "Nam Định", "Phú Thọ", "Phú Yên", "Quảng Nam", "Quảng Trị",
-    "Sóc Trăng", "Tây Ninh", "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế",
+    "TP. Hồ Chí Minh", "Hà Nội",
+    "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh",
+    "Bến Tre", "Bình Định", "Bình Dương", "Bình Phước", "Bình Thuận", "Cà Mau",
+    "Cao Bằng", "Cần Thơ", "Đà Nẵng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai",
+    "Đồng Tháp", "Gia Lai", "Hà Giang", "Hà Nam", "Hà Tĩnh", "Hải Dương",
+    "Hải Phòng", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Khánh Hòa", "Kiên Giang",
+    "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", "Nam Định",
+    "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam",
+    "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình",
+    "Thái Nguyên", "Thanh Hóa", "Thừa Thiên - Huế", "Tiền Giang",
+    "Trà Vinh", "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
   ];
+  
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -429,7 +437,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
                 >
                 <option value="">Điểm đi</option>
-                {locations.map(location => (
+                {provinces.map(location => (
                   <option key={location} value={location}>{location}</option>
                 ))}
               </select>
@@ -441,7 +449,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
                 >
                 <option value="">Điểm đến</option>
-                {locations.map(location => (
+                {provinces.map(location => (
                   <option key={location} value={location}>{location}</option>
                 ))}
               </select>
