@@ -781,6 +781,7 @@ const filteredAndSortedRoutes = useMemo(() => {
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
                           className="w-full p-3 border rounded-lg"
+                          min={new Date().toISOString().slice(0, 16)}
                           required
                         />
                       </div>
