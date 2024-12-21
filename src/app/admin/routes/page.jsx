@@ -63,7 +63,12 @@ const AdminRoutes = () => {
 
 
   const locations = ["TP.HCM", "Hà Nội", "Đà Lạt", "Sapa", "Đà Nẵng", "Nha Trang"];
-
+  const provinces = [
+    "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "Bình Định",
+    "Khánh Hòa", "Quảng Ngãi", "Yên Bái", "Hưng Yên", "Hà Tĩnh", "Gia Lai", "Kon Tum",
+    "Lai Châu", "Nam Định", "Phú Thọ", "Phú Yên", "Quảng Nam", "Quảng Trị",
+    "Sóc Trăng", "Tây Ninh", "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế",
+  ];
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -631,23 +636,41 @@ const filteredAndSortedRoutes = useMemo(() => {
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Điểm đi</label>
-                    <input
-                      type="text"
-                      className="w-full p-3 border rounded-lg"
-                      value={newRoute.departureLocation}
-                      onChange={(e) => setNewRoute({ ...newRoute, departureLocation: e.target.value })}
-                      required
-                    />
+                    <>
+                      <input
+                        type="text"
+                        className="w-full p-3 border rounded-lg"
+                        value={newRoute.departureLocation}
+                        onChange={(e) => setNewRoute({ ...newRoute, departureLocation: e.target.value })}
+                        list="departure-locations" // Kết nối với datalist
+                        required
+                      />
+                      
+                      <datalist id="departure-locations">
+                        {provinces.map((location, index) => (
+                          <option key={index} value={location} />
+                        ))}
+                      </datalist>
+                    </>
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Điểm đến</label>
-                    <input
-                      type="text"
-                      className="w-full p-3 border rounded-lg"
-                      value={newRoute.arrivalLocation}
-                      onChange={(e) => setNewRoute({ ...newRoute, arrivalLocation: e.target.value })}
-                      required
-                    />
+                    <>
+                      <input
+                        type="text"
+                        className="w-full p-3 border rounded-lg"
+                        value={newRoute.arrivalLocation}
+                        onChange={(e) => setNewRoute({ ...newRoute, arrivalLocation: e.target.value })}
+                        list="arrival-locations" // Kết nối với datalist
+                        required
+                      />
+
+                      <datalist id="arrival-locations">
+                        {provinces.map((location, index) => (
+                          <option key={index} value={location} />
+                        ))}
+                      </datalist>
+                    </>
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Giờ đi</label>

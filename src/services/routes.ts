@@ -140,6 +140,10 @@ export async function addRoute(route: any) {
   try {
     const { arrivalTime, departureTime, stops } = route;
 
+    if (route.departureLocation === route.arrivalLocation) {
+      throw new Error('Điểm khởi hành và điểm đến phải khác nhau.');
+    }
+
     // Kiểm tra giờ đến và giờ khởi hành
     if (arrivalTime <= departureTime) {
       throw new Error('Giờ đến phải lớn hơn giờ khởi hành.');
