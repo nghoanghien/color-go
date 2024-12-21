@@ -2,6 +2,7 @@ import { db } from "../firebase/store";
 import {
   arrayRemove,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -106,4 +107,31 @@ export const fetchRoute = async () => {
   return routeList;
 };
 
+export async function deleteRoute(routeId: any) {
+  try {
+    // Tạo tham chiếu đến document trong collection routes
+    const routeDocRef = doc(db, 'routes', routeId);
+
+    // Lấy document để kiểm tra dữ liệu
+    const routeDoc = await getDoc(routeDocRef);
+
+    if (!routeDoc.exists()) {
+      throw new Error('Route not found');
+    }
+
+    const routeData = routeDoc.data();
+
+    // Kiểm tra nếu mảng bookedSeats không rỗng
+    if (routeData.bookedSeats && routeData.bookedSeats.length > 0) {
+      throw new Error('Chuyến xe này đã có người đặt vé');
+    }
+
+    // Xóa document nếu kiểm tra hợp lệ
+    await deleteDoc(routeDocRef);
+    console.log('Route successfully deleted!');
+  } catch (error) {
+    console.error('Error deleting route: ', error);
+    throw error;
+  }
+}
   

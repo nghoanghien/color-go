@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import LoadingOverlay from "@/components/loading-overlay";
-import { fetchRoute } from "@/services/routes";
+import { deleteRoute, fetchRoute } from "@/services/routes";
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 
@@ -110,9 +110,11 @@ const AdminRoutes = () => {
   };
 
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa chuyến xe này?")) {
+        await deleteRoute(id);
+
         setRoutesData(routesData.filter(route => route.id !== id));
         showNotification("Xóa chuyến xe thành công!", "success");
       }
@@ -280,7 +282,7 @@ const filteredAndSortedRoutes = useMemo(() => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 20 }}
             exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-0 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
+            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
           >
             {notification.type === "success" ? (
               <FaCheckCircle className="text-xl" />
