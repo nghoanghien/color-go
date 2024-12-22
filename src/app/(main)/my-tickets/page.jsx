@@ -5,7 +5,7 @@ import PendingOverlay from "@/components/pending-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { changeMembershipById } from "@/services/membership";
 import { getDetailRoute, removeBookedSeats } from "@/services/routes";
-import { getTickets, isValidForCancel, updateTicketStatus } from "@/services/ticket";
+import { getTickets, isValidForCancel, isValidTicket, updateTicketStatus } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { formatDate, timeString } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -189,7 +189,7 @@ const TicketHistoryPage = () => {
           currentDate
       );
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return ticket.status === "success" && diffDays <= 7;
+      return ticket.status === "success" && diffDays <= 2 && isValidTicket(ticket.originalDepartureTime);
     });
   };
 

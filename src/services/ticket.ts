@@ -154,3 +154,9 @@ export function isValidForCancel(ticket: any) {
   // Kiểm tra thời gian khởi hành của ticket có lớn hơn thời gian hiện tại cộng 4 tiếng
   return ticket.originalDepartureTime > convertDatetimeLocalToFirestoreTimestamp(fourHoursFromNow);
 }
+
+export function isValidTicket(time: any) {
+  const now = new Date();
+
+  return time > convertDatetimeLocalToFirestoreTimestamp(now);
+}
