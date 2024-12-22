@@ -8,11 +8,13 @@ import { signOut, useUserInfomation } from "@/firebase/authenticate";
 import { useRouter } from "next/navigation";
 import LoadingOverlay from '@/components/loading-overlay'
 import { getLevelByPoint, getMembershipById } from "@/services/membership";
+import PendingOverlay from "@/components/pending-overlay";
 
 const AccountPage = () => {
   const router = useRouter();
 
   const [isLoading, user] = useUserInfomation();
+  const [isPending, setIsPending] = useState(false);
 
   const [membershipLevel, setMembershipLevel] = useState("bronze"); // bronze, silver, gold, diamond
 
@@ -51,6 +53,7 @@ const AccountPage = () => {
       title: "Ví ColorPay",
       description: "Thanh toán dễ dàng và tiện lợi",
       onClick: () => {
+        setIsPending(true);
         router.push("/wallet");
       }
     },
@@ -60,6 +63,7 @@ const AccountPage = () => {
       title: "Bảo mật",
       description: "Cài đặt mật khẩu và bảo mật tài khoản",
       onClick: () => {
+        setIsPending(true);
         router.push("/in-development");
       }
     },
@@ -69,6 +73,7 @@ const AccountPage = () => {
       title: "Liên hệ hỗ trợ",
       description: "Hỗ trợ 24/7",
       onClick: () => {
+        setIsPending(true);
         router.push("/contact-and-support");
       }
     },
@@ -78,14 +83,19 @@ const AccountPage = () => {
       title: "Đăng xuất",
       description: "Đăng xuất khỏi tài khoản",
       onClick: () => {
+        setIsPending(true);
         signOut();
-        router.push("/login");
+        router.replace("/login");
       }
     }
   ];
 
-  return isLoading ? <LoadingOverlay isLoading /> : (
+  return isLoading ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-50 via-blue-50 to-yellow-50 p-6 pb-24">
+      <PendingOverlay isLoading={isPending} />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -106,10 +116,20 @@ const AccountPage = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-800 mb-1">{user.displayName}</h1>
+              <h1 className="text-2xl font-bold text-gray-800 mb-1">
+                {user.displayName}
+              </h1>
               <div className="flex items-center space-x-2">
                 <MembershipIcon className={`${membershipInfo.color} text-sm`} />
-                <span className="text-gray-600" onClick={() => {router.push("/membership")}}>Hội viên {membershipInfo.text}</span>
+                <span
+                  className="text-gray-600"
+                  onClick={() => {
+                    setIsPending(true);
+                    router.push("/membership");
+                  }}
+                >
+                  Hội viên {membershipInfo.text}
+                </span>
               </div>
               {/* <p className="text-gray-500 text-sm mt-1">{user.uid}</p> */}
             </div>
@@ -132,7 +152,9 @@ const AccountPage = () => {
                     <item.icon className="text-blue-500 text-xl" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-800">{item.title}</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {item.title}
+                    </h2>
                     <p className="text-sm text-gray-500">{item.description}</p>
                   </div>
                 </div>

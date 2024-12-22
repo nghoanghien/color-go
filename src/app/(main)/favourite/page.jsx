@@ -9,9 +9,12 @@ import { addTicketToFavorites, getFavoriteTickets, removeTicketFromFavorites } f
 import { getTicketsFromIds } from "@/services/ticket";
 import LoadingOverlay from "@/components/loading-overlay";
 import { timeString } from "@/utils/time-manipulation";
+import PendingOverlay from "@/components/pending-overlay";
 
 const FavoriteTicketsPage = () => {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+
 
   const [favorites, setFavorites] = useState();
   const [notification, setNotification] = useState({ show: false, message: "", action: null });
@@ -86,13 +89,16 @@ const FavoriteTicketsPage = () => {
   };
 
   const handleClickTicket = (id) => {
+    setIsPending(true);
     router.push(`/choose?id=${id}`);
   }
 
-  return (isLoading || !favorites) ? (
+  return isLoading || !favorites ? (
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
+      <PendingOverlay isLoading={isPending} />
+
       <AnimatePresence>
         {notification.show && (
           <motion.div
@@ -136,19 +142,25 @@ const FavoriteTicketsPage = () => {
               exit={{ opacity: 0, scale: 0.8 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`bg-white rounded-2xl p-4 shadow-lg relative overflow-hidden transition-all duration-500 ${favorites.includes(ticket.id) ? "hover:shadow-rainbow" : ""}`}
+              className={`bg-white rounded-2xl p-4 shadow-lg relative overflow-hidden transition-all duration-500 ${
+                favorites.includes(ticket.id) ? "hover:shadow-rainbow" : ""
+              }`}
             >
               <div className="flex justify-between items-center mb-4 relative z-10">
                 <div className="flex flex-col w-full">
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="text-xl font-bold text-gray-800">{timeString(ticket.departureTime)}</div>
+                    <div className="text-xl font-bold text-gray-800">
+                      {timeString(ticket.departureTime)}
+                    </div>
                     <div className="flex-1 flex items-center justify-center relative">
                       <div className="border-t-2 border-dashed border-gray-300 w-full absolute"></div>
                       <div className="transform rotate-0 bg-white px-2 z-10">
                         <FaBus className="text-gray-500 text-xl" />
                       </div>
                     </div>
-                    <div className="text-xl font-bold text-gray-800">{timeString(ticket.arrivalTime)}</div>
+                    <div className="text-xl font-bold text-gray-800">
+                      {timeString(ticket.arrivalTime)}
+                    </div>
                   </div>
                   <div className="flex justify-between items-center text-sm text-gray-500">
                     <span>{ticket.departureLocation}</span>
@@ -174,7 +186,11 @@ const FavoriteTicketsPage = () => {
                       className="flex items-center justify-center p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-all duration-300"
                     >
                       <FaHeart
-                        className={`text-sm transition-colors duration-300 ${favorites.includes(ticket.id) ? "text-[#ff4757]" : "text-[#ccc]"}`}
+                        className={`text-sm transition-colors duration-300 ${
+                          favorites.includes(ticket.id)
+                            ? "text-[#ff4757]"
+                            : "text-[#ccc]"
+                        }`}
                       />
                     </button>
                   </div>
@@ -185,8 +201,10 @@ const FavoriteTicketsPage = () => {
 
               <div className="flex justify-between items-start relative z-10">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-800">{ticket.name}</h2>
-                  <button 
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {ticket.name}
+                  </h2>
+                  <button
                     onClick={() => handleRouteClick(ticket.stops)}
                     className="flex items-center mt-2 text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"
                   >
@@ -225,8 +243,12 @@ const FavoriteTicketsPage = () => {
               exit="exit"
               className="bg-white/85 backdrop-blur-md rounded-3xl p-6 m-4 w-full max-w-md shadow-xl border border-white/20"
             >
-              <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">Xác nhận xóa</h3>
-              <p className="text-gray-600 mb-6">Bạn có chắc chắn muốn xóa vé này khỏi danh sách yêu thích?</p>
+              <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">
+                Xác nhận xóa
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Bạn có chắc chắn muốn xóa vé này khỏi danh sách yêu thích?
+              </p>
               <div className="flex space-x-3">
                 <button
                   onClick={() => setShowConfirmModal(false)}
@@ -256,20 +278,24 @@ const FavoriteTicketsPage = () => {
               exit="exit"
               className="bg-white/85 backdrop-blur-md rounded-3xl p-6 m-4 w-full max-w-md shadow-xl border border-white/20"
             >
-              <h3 className="text-2xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600">Lộ trình chi tiết</h3>
-              
+              <h3 className="text-2xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600">
+                Lộ trình chi tiết
+              </h3>
+
               <div className="space-y-6 relative">
                 {selectedRoute.map((stop, index) => (
                   <div key={index} className="flex items-start space-x-4">
-                    <div className="w-10 text-sm text-gray-600 pt-1">{timeString(stop.datetime)}</div>
-                    
+                    <div className="w-10 text-sm text-gray-600 pt-1">
+                      {timeString(stop.datetime)}
+                    </div>
+
                     <div className="relative flex flex-col items-center -my-2">
                       <FaMapMarker className="text-blue-500 z-10 bg-white" />
                       {index < selectedRoute.length - 1 && (
                         <div className="h-full border-l-2 border-dashed border-gray-300 absolute top-4"></div>
                       )}
                     </div>
-                    
+
                     <div className="flex-1">
                       <p className="text-gray-800 font-medium">{stop.stop}</p>
                     </div>
@@ -280,7 +306,8 @@ const FavoriteTicketsPage = () => {
               <div className="mt-8 p-4 bg-yellow-50 rounded-xl">
                 <p className="text-sm text-yellow-700">
                   <FaExclamationCircle className="inline-block mr-2" />
-                  Lưu ý: Lịch trình chỉ là dự kiến và có thể thay đổi tùy vào tình hình giao thông.
+                  Lưu ý: Lịch trình chỉ là dự kiến và có thể thay đổi tùy vào
+                  tình hình giao thông.
                 </p>
               </div>
 
