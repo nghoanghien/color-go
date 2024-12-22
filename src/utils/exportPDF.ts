@@ -1,6 +1,8 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { convertTimestampToDatetimeLocal, formatFirestoreTimestampToStandard } from './time-manipulation';
+import { formatCurrencyVN } from './money-manipulation';
 
 
 export const formatDataForExport = (data: any[], columnOrder: string[]) => {
@@ -97,37 +99,47 @@ doc.addFont("Roboto-Regular.ttf", "Roboto", "normal"); // Đăng ký font
         const newItem = { ...item };
        
         if (newItem.departureTime && newItem.departureTime.seconds) {
-          // Chuyển đổi 'seconds' thành đối tượng Date
-          const date = new Date(newItem.departureTime.seconds * 1000); // 'seconds' là số giây, nên nhân với 1000 để có milisecond
-          // Chuyển đối tượng Date thành chuỗi định dạng 'YYYY-MM-DD HH:mm:ss'
-          newItem.departureTime = date.toLocaleString('vi-VN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          }); // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+          newItem.departureTime = formatFirestoreTimestampToStandard(newItem.departureTime);
+         // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
         }
    
         if (newItem.arrivalTime && newItem.arrivalTime.seconds) {
-          // Chuyển đổi 'seconds' thành đối tượng Date
-          const date = new Date(newItem.arrivalTime.seconds * 1000); // 'seconds' là số giây, nên nhân với 1000 để có milisecond
-          // Chuyển đối tượng Date thành chuỗi định dạng 'YYYY-MM-DD HH:mm:ss'
-          newItem.arrivalTime = date.toLocaleString('vi-VN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          }); // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+          newItem.arrivalTime = formatFirestoreTimestampToStandard(newItem.arrivalTime); 
+         // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
         }
 
 
         if (newItem.valid && newItem.valid.seconds) {
-          // Chuyển đổi 'seconds' thành đối tượng Date
-          const date = new Date(newItem.valid.seconds * 1000); // 'seconds' là số giây, nên nhân với 1000 để có milisecond
-          // Chuyển đối tượng Date thành chuỗi định dạng 'YYYY-MM-DD HH:mm:ss'
-          newItem.valid = date.toLocaleString('vi-VN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          }); // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+          newItem.valid = formatFirestoreTimestampToStandard(newItem.valid);
+          // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+        }
+
+        if (newItem.points) {
+          newItem.points = Math.round(newItem.points);
+        }
+
+        if (newItem.balance) {
+          newItem.balance = formatCurrencyVN(newItem.balance);
+        }
+
+        if (newItem.minApply) {
+          newItem.minApply = formatCurrencyVN(newItem.minApply);
+        }
+
+        if (newItem.max) {
+          newItem.max = formatCurrencyVN(newItem.max);
+        }
+
+        if (newItem.price) {
+          newItem.price = formatCurrencyVN(newItem.price);
+        }
+
+        if (newItem.value) {
+          if (newItem.value > 100) {
+            newItem.value = formatCurrencyVN(newItem.value);
+          } else {
+            newItem.value = `${newItem.value}%`;
+          }
         }
 
 
