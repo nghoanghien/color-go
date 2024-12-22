@@ -79,6 +79,7 @@ const AdminPromotions = () => {
 
 
   const onDrop = useCallback(async (acceptedFiles) => {
+    setIsPending(true);
     const data = await readExcelFile(acceptedFiles);
     const requiredProps = ["code", "title", "minApply", "max", "value", "valid"];
 
@@ -113,8 +114,10 @@ const AdminPromotions = () => {
           throw new Error(`Lỗi dòng dữ liệu (${index + 1}): ${error.message}`);
         }
       }
+      setIsPending(false);
       showNotification("Tải dữ liệu trong file thành công!", "success");
     } catch (error) {
+      setIsPending(false);
       showNotification(`${error.message}`, "error");
     }
   }, []);
