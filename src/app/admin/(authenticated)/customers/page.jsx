@@ -13,7 +13,7 @@ import { deleteUserById, getUsers } from "@/services/user";
 import { getDetailRoute, removeBookedSeats } from "@/services/routes";
 import { formatDate, formatTimestampToCustom, timeString } from "@/utils/time-manipulation";
 import LoadingOverlay from "@/components/loading-overlay";
-import { updateTicketStatus } from "@/services/ticket";
+import { isValidTicket, updateTicketStatus } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { changeMembershipById } from "@/services/membership";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
@@ -76,6 +76,8 @@ const AdminCustomers = () => {
             };
           })
         );
+
+        const availableTickets = tickets.filter(ticket => isValidTicket(ticket.departureTime));
    
         return {
           id: user.id,
@@ -83,7 +85,7 @@ const AdminCustomers = () => {
           email: user.email,
           points: user.membership.point,
           balance: user.wallet.balance,
-          tickets: tickets,
+          tickets: availableTickets,
         };
       })
     );
