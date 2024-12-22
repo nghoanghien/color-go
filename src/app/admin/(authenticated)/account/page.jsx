@@ -28,9 +28,11 @@ import LoadingOverlay from "@/components/loading-overlay";
 import { useAdminUser } from "@/hooks/useAdminUser";
 import { convertTimestampToDatetimeLocalWithoutTime } from "@/utils/time-manipulation";
 import { Timestamp } from "firebase/firestore";
+import PendingOverlay from "@/components/pending-overlay";
 
 const AdminAccount = () => {
 	const router = useRouter();
+	const [isPending, setIsPending] = useState(false);
 
 	const adminUser = useAdminUser();
 
@@ -68,7 +70,9 @@ const AdminAccount = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setIsPending(true);
 		await updateAdminInfo(editedData);
+		setIsPending(false);
 
 		setAdminData(editedData);
 		setIsEditing(false);
@@ -81,6 +85,7 @@ const AdminAccount = () => {
 	};
 
 	const handleNavigate = (tab) => {
+		setIsPending(true);
 		setActiveTab(tab);
 		if (tab !== "logout") {
 			router.replace(`/admin/${tab}`);
@@ -102,6 +107,7 @@ const AdminAccount = () => {
 		<LoadingOverlay isLoading />
 	) : (
 		<div className="min-h-screen w-full flex bg-gray-50 relative">
+			<PendingOverlay isLoading={isPending} />
 			<AnimatePresence>
 				{notification.show && (
 					<motion.div
