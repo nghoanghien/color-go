@@ -18,12 +18,21 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useRouter } from "next/navigation";
-import { fetchAdminData, updateAdminInfo } from "../../../../services/admin";
+import {
+	fetchAdminData,
+	getDetailAdmin,
+	updateAdminInfo,
+} from "../../../../services/admin";
 
 import LoadingOverlay from "@/components/loading-overlay";
+import { useAdminUser } from "@/hooks/useAdminUser";
+import { convertTimestampToDatetimeLocalWithoutTime } from "@/utils/time-manipulation";
+import { Timestamp } from "firebase/firestore";
 
 const AdminAccount = () => {
 	const router = useRouter();
+
+	const adminUser = useAdminUser();
 
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 	const [activeTab, setActiveTab] = useState("account");
@@ -81,16 +90,12 @@ const AdminAccount = () => {
 	};
 
 	useEffect(() => {
-		const getAdminData = async () => {
-			const data = await fetchAdminData();
-			if (data.length > 0) {
-				setAdminData(data[0]);
-				setEditedData(data[0]);
-				//console.log("edit: ", editedData);
-			}
-		};
-
-		getAdminData();
+		(async () => {
+			const adminData = await getDetailAdmin(adminUser.id);
+			setAdminData(adminData);
+			setEditedData(adminData);
+			localStorage.setItem("admin-user", JSON.stringify(adminData));
+		})();
 	}, []);
 
 	return !adminData ? (
@@ -293,11 +298,14 @@ const AdminAccount = () => {
 												? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 												: "border-gray-200 bg-gray-50"
 										}`}
-										value={editedData.birth || ""}
+										value={
+											convertTimestampToDatetimeLocalWithoutTime(
+												editedData.birth
+											) || ""
+										}
 										onChange={(e) => {
-											const newBirthDate = new Date(
-												e.target.value
-											).getTime();
+											const newBirthDate = new Timestamp(new Date(e.target.value).getTime() / 1000, 0);
+											
 											console.log(
 												"New Birth Date (timestamp):",
 												newBirthDate
