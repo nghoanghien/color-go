@@ -16,6 +16,7 @@ import { addRoute, deleteRoute, fetchRoute, updateRoute } from "@/services/route
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatFirestoreTimestampToStandard, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { fetchCoachCompanies } from "@/services/coachCompany";
+import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 
 
 const AdminRoutes = () => {
@@ -37,14 +38,15 @@ const AdminRoutes = () => {
   const [fileName, setFileName] = useState("DanhSachChuyenXe");
   const [sheetName, setSheetName] = useState("Chuyến xe");
   const [title, setTitle] = useState("Danh sách chuyến xe");
-  const [fieldsToExclude, setFieldsToExclude] = useState("id, bookSeats, stops");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id, bookSeats");
   const [desiredColumnOrder, setDesiredColumnOrder] = useState([
     "name",
     "departureLocation",
     "arrivalLocation",
     "departureTime",
     "arrivalTime",
-    "price"
+    "price",
+    "stops"
   ])
  
   const [routesData, setRoutesData] = useState();
@@ -101,9 +103,74 @@ const AdminRoutes = () => {
   ];
 
 
-  const onDrop = useCallback((acceptedFiles) => {
-    // Handle file upload logic here
-   // setUploadProgress(100); // Simulate upload completion
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const data = await readExcelFile(acceptedFiles);
+    const requiredProps = ["name", "departureTime", "arrivalTime", "departureLocation", "arrivalLocation", "price", "stops"];
+    const requiredPropsStop = ["stop", "datetime", "address"];
+    try {
+      // File không có dữ liệu
+      try {
+        if (data.length === 0) {
+          throw new Error("Lỗi đọc file: File tải lên không có dữ liệu");
+        }
+      } catch (error) {
+        throw new Error(error.message);
+      }
+
+      try {
+        if (!hasRequiredProperties(data[0], requiredProps)) {
+          throw new Error(`Lỗi đọc file: File cần có đủ các cột (${requiredProps.join(", ")})`);
+        }
+      } catch (error) {
+        throw new Error(error.message);
+      }
+
+      for (let index = 0; index < data.length; index++) {
+        try {
+          try {
+            data[index].departureTime = convertDatetimeLocalToFirestoreTimestamp(data[index].departureTime);
+            data[index].arrivalTime = convertDatetimeLocalToFirestoreTimestamp(data[index].arrivalTime);
+          } catch (error) {
+            throw new Error(`Định dạng thời gian chưa chính xác.(Vd đúng: yyyy-mm-ddTHH:mm)`);
+          }
+
+          try {
+            data[index].stops = JSON.parse(data[index].stops);
+          } catch (error) {
+            throw new Error(`Dữ liệu cột 'Điểm dừng' phải là dạng JSON`);
+          }
+
+          for (let j = 0; j < data[index].stops.length; j++) {
+            try {
+              if (!hasRequiredProperties(data[index].stops[j], requiredPropsStop)) {
+                throw new Error(`Dữ liệu 'Điểm dừng' thứ ${j + 1} chưa có đủ các cột (${requiredPropsStop.join(", ")})`);
+              }
+            } catch (error) {
+              throw new Error(error.message);
+            }
+
+            try {
+              data[index].stops[j].datetime = convertDatetimeLocalToFirestoreTimestamp(data[index].stops[j].datetime);
+            } catch (error) {
+              throw new Error(`Điểm dừng thứ ${j + 1} có Định dạng thời gian chưa chính xác.(Vd đúng: yyyy-mm-ddTHH:mm)`);
+            }
+          }
+
+
+          const newId = await addRoute(data[index]);
+
+          setRoutesData(prev => [
+            ...prev,
+            { ...data[index], id: newId }
+          ]);        
+        } catch (error) {
+          throw new Error(`Lỗi dòng dữ liệu (${index + 1}): ${error.message}`);
+        }
+      }
+      showNotification("Tải dữ liệu trong file thành công!", "success");
+    } catch (error) {
+      showNotification(`${error.message}`, "error");
+    }
   }, []);
 
 
@@ -279,6 +346,7 @@ const filteredAndSortedRoutes = useMemo(() => {
     const handleExportToExcel = () => {
       const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
       const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
+      console.log("hi", filteredAndSortedRoutes);
       exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
     };
  
@@ -301,7 +369,7 @@ const filteredAndSortedRoutes = useMemo(() => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 20 }}
             exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
+            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 max-w-xl ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
           >
             {notification.type === "success" ? (
               <FaCheckCircle className="text-xl" />

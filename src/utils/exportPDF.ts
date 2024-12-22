@@ -32,26 +32,23 @@ export const exportToExcel = (data: any[], fileName: string, sheetName: string, 
 
 
     if (newItem.departureTime && newItem.departureTime.seconds) {
-      // Chuyển đổi 'seconds' thành đối tượng Date
-      const date = new Date(newItem.departureTime.seconds * 1000); // 'seconds' là số giây, nên nhân với 1000 để có milisecond
-      // Chuyển đối tượng Date thành chuỗi định dạng 'YYYY-MM-DD HH:mm:ss'
-      newItem.departureTime = date.toLocaleString('vi-VN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }); // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+      newItem.departureTime = convertTimestampToDatetimeLocal(newItem.departureTime);
+      // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
     }
 
 
     if (newItem.arrivalTime && newItem.arrivalTime.seconds) {
-      // Chuyển đổi 'seconds' thành đối tượng Date
-      const date = new Date(newItem.arrivalTime.seconds * 1000); // 'seconds' là số giây, nên nhân với 1000 để có milisecond
-      // Chuyển đối tượng Date thành chuỗi định dạng 'YYYY-MM-DD HH:mm:ss'
-      newItem.arrivalTime = date.toLocaleString('vi-VN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }); // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+      newItem.arrivalTime = convertTimestampToDatetimeLocal(newItem.arrivalTime);
+    }
+
+    if (newItem.stops) {
+      console.log(newItem);
+      newItem.stops = newItem.stops.map((stop: any) => ({
+        datetime: convertTimestampToDatetimeLocal(stop.datetime),
+        address: stop.address,
+        stop: stop.stop,
+      }));
+      newItem.stops = JSON.stringify(newItem.stops);
     }
 
 
