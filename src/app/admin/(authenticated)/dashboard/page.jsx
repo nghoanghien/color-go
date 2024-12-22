@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { fetchRoute } from "@/services/routes";
 import { fetchCustomer } from "@/services/membership";
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
 
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
 
   const [totalRoute, setTotalRoute] = useState();
@@ -74,6 +76,8 @@ const AdminDashboard = () => {
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
+    setIsPending(true);
+    
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
     }
@@ -214,6 +218,7 @@ const AdminDashboard = () => {
 
   return (!bookingData || !routeData) ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50">
+      <PendingOverlay isLoading={isPending} />
       {/* Sidebar */}
       <div className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 transition-all duration-300 relative`}>
         <div className="mb-8 text-center relative">
