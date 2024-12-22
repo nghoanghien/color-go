@@ -16,7 +16,8 @@ import { addPromotion, deletePromotion, fetchPromotion, updatePromotion } from "
 
 import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
-import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatTimestampToCustom, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
+import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatFirestoreTimestampToStandard, formatTimestampToCustom, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
+import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 
 
 const AdminPromotions = () => {
@@ -75,9 +76,45 @@ const AdminPromotions = () => {
   ])
 
 
-  const onDrop = useCallback((acceptedFiles) => {
-    // Handle file upload logic here
-   // setUploadProgress(100); // Simulate upload completion
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const data = await readExcelFile(acceptedFiles);
+    const requiredProps = ["code", "title", "minApply", "max", "value", "valid"];
+
+    try {
+      // File không có dữ liệu
+      try {
+        if (data.length === 0) {
+          throw new Error("Lỗi đọc file: File tải lên không có dữ liệu");
+        }
+      } catch (error) {
+        throw new Error(error.message);
+      }
+
+      try {
+        if (!hasRequiredProperties(data[0], requiredProps)) {
+          throw new Error(`Lỗi đọc file: File cần có đủ các cột (${requiredProps.join(", ")})`);
+        }
+      } catch (error) {
+        throw new Error(error.message);
+      }
+
+      for (let index = 0; index < data.length; index++) {
+        try {
+          data[index].valid = convertDatetimeLocalToFirestoreTimestamp(data[index].valid);
+          const newId = await addPromotion(data[index]);
+
+          setPromotionsData(prev => [
+            ...prev,
+            { ...data[index], id: newId }
+          ]);        
+        } catch (error) {
+          throw new Error(`Lỗi dòng dữ liệu (${index + 1}): ${error.message}`);
+        }
+      }
+      showNotification("Tải dữ liệu trong file thành công!", "success");
+    } catch (error) {
+      showNotification(`${error.message}`, "error");
+    }
   }, []);
 
 
@@ -474,7 +511,7 @@ const AdminPromotions = () => {
                       <td className="px-6 py-4">{promotion.minApply.toLocaleString()}đ</td>
                       <td className="px-6 py-4">{promotion.max.toLocaleString()}đ</td>
                       <td className="px-6 py-4">{promotion.value.toLocaleString()}{promotion.type === 1 ? "%" : "đ"}</td>
-                      <td className="px-6 py-4">{timeString(promotion.valid) + ", " + formatTimestampToDate(promotion.valid)}</td>
+                      <td className="px-6 py-4">{formatFirestoreTimestampToStandard(promotion.valid)}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button

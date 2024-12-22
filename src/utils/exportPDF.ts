@@ -26,14 +26,8 @@ export const exportToExcel = (data: any[], fileName: string, sheetName: string, 
 
 
     if (newItem.valid && newItem.valid.seconds) {
-      // Chuyển đổi 'seconds' thành đối tượng Date
-      const date = new Date(newItem.valid.seconds * 1000); // 'seconds' là số giây, nên nhân với 1000 để có milisecond
-      // Chuyển đối tượng Date thành chuỗi định dạng 'YYYY-MM-DD HH:mm:ss'
-      newItem.valid = date.toLocaleString('vi-VN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }); // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
+      newItem.valid = convertTimestampToDatetimeLocal(newItem.valid);
+       // hoặc bạn có thể sử dụng thư viện như `moment` hoặc `date-fns` để định dạng theo ý muốn
     }
 
 
