@@ -2,14 +2,17 @@
 
 
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaGlobe, FaEnvelope, FaLock } from "react-icons/fa";
 import { motion } from 'framer-motion';  // Thêm import framer-motion
 import { fetchAdminData } from '../../../services/admin'; // Giữ nguyên import này
+import { useSignout } from "@/hooks/useSignout";
 
 
 const SignIn = () => {
   const router = useRouter();
+
+  const handleSignout = useSignout();
 
 
   const [formData, setFormData] = useState({
@@ -57,6 +60,9 @@ const SignIn = () => {
     router.push("/admin/dashboard");
   };
 
+  useEffect(() => {
+    handleSignout();
+  }, []);
 
   return (
     <div
