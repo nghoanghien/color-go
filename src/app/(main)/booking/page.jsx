@@ -6,9 +6,11 @@ import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaExchangeAlt, FaTimes } 
 import { useRouter } from 'next/navigation';
 
 import LocationModal from "@/components/location-modal"
+import PendingOverlay from "@/components/pending-overlay";
 
 const BookingPage = () => {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [showFromModal, setShowFromModal] = useState(false);
@@ -94,6 +96,7 @@ const BookingPage = () => {
     setValidationErrors(errors);
 
     if (!errors.from && !errors.to) {
+      setIsPending(true);
       router.push(`/search-tickets?from=${fromLocation}&to=${toLocation}&date=${date.getTime()}`);
     }
   };
@@ -289,6 +292,7 @@ const BookingPage = () => {
       variants={containerVariants}
       className="min-h-screen bg-gradient-to-b from-green-50 via-blue-50 to-yellow-50"
     >
+      <PendingOverlay isLoading={isPending} />
       <div className=" mx-auto p-6 pb-24 max-w-4xl">
         <motion.div
           initial="hidden"
