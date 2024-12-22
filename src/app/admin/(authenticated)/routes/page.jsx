@@ -292,6 +292,7 @@ const AdminRoutes = () => {
 
 
   const handleNavigate = (tab) => {
+    setIsPending(true);
     setActiveTab(tab);
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
