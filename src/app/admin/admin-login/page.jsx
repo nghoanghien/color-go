@@ -31,17 +31,19 @@ const SignIn = () => {
     e.preventDefault();
     const adminList = await fetchAdminData(); // Lấy dữ liệu admin từ Firestore
     let isValidUser = false;
-
+    let adminUser = null;
 
     // Kiểm tra email và password
     adminList.forEach((adminData) => {
       if (adminData.email === formData.email && adminData.password === formData.password) {
         isValidUser = true; // Nếu tìm thấy người dùng hợp lệ
+        adminUser = adminData;
       }
     });
 
 
     if (isValidUser) {
+      localStorage.setItem("admin-user", JSON.stringify(adminUser));
       console.log("Đăng nhập thành công:", formData);
       handleVerify(); // Chuyển hướng nếu thông tin hợp lệ
     } else {
