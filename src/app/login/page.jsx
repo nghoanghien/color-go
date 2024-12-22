@@ -1,11 +1,13 @@
 'use client';
 
+import PendingOverlay from "@/components/pending-overlay";
 import { signIn } from "@/firebase/authenticate";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { FaGoogle, FaFacebook, FaBus, FaRoad, FaShieldAlt, FaTicketAlt, FaMapMarkedAlt, FaUserShield, FaClock, FaCompass, FaChevronDown, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
+
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -18,6 +20,7 @@ const LoginPage = () => {
   const loginRef = useRef(null);
 
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -148,11 +151,13 @@ const LoginPage = () => {
 
   async function handleSignIn() {
     const result = await signIn();
+    setIsPending(true);
     router.replace('/booking')
   }
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 md:p-8 overflow-y-auto relative">
+      <PendingOverlay isLoading={isPending} />
       <div 
         className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden"
         style={typeof window !== 'undefined' && window.innerWidth <= 768 ? mobileScrollStyle : {}}
