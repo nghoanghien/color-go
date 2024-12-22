@@ -132,7 +132,7 @@ export default function Page() {
           arrivalTime: new Date(arrivalTimeNum),
           name: excludeAndPickRandom(busCompanies, ''),
           stops: pickRandomBusStopsWithTime(busStops, new Date(departureTimeNum), Math.ceil(Math.random() * 5 + 5)),
-          price: Math.ceil(Math.random() * 50_000) + 150_000,
+          price: Math.ceil(Math.random() * 5) * 50_000 + 150_000,
           totalSeat: 36,
           bookedSeats: []
         };
