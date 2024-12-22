@@ -184,9 +184,7 @@ const AdminPromotions = () => {
     e.preventDefault();
     try {
       if (editingPromotion) {
-        console.log(newPromotion);
         await updatePromotion(newPromotion);
-
 
         setPromotionsData(prev =>
           prev.map(promo =>
