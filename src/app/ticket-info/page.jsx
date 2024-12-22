@@ -1,7 +1,7 @@
 "use client";
 
+
 import LoadingOverlay from "@/components/loading-overlay";
-import PendingOverlay from "@/components/pending-overlay";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { formatDate, timeString } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -14,6 +14,11 @@ import {
   FaPen,
   FaTimes
 } from "react-icons/fa";
+import { useUserInfomation } from "@/firebase/authenticate";
+import { fetchCustomer } from "@/services/membership";
+import { fileURLToPath } from "url";
+import PendingOverlay from "@/components/pending-overlay";
+
 
 const TripInfoPage = () => {
   const router = useRouter();
@@ -28,6 +33,7 @@ const TripInfoPage = () => {
   const [modalError, setModalError] = useState("");
   const [showContactError, setShowContactError] = useState(false);
 
+
   const [contactInfo, setContactInfo] = useState(
     searchParams.has("contact")
       ? JSON.parse(searchParams.get("contact"))
@@ -38,9 +44,22 @@ const TripInfoPage = () => {
         }
   );
 
+
   const [isLoading, route] = useRouteDetail(searchParams.get("id"));
 
+
   const [tripData, setTripData] = useState(null);
+
+
+  const [isLoadingUser, user] = useUserInfomation()
+
+
+  const [uid, setUid] = useState();
+
+
+
+
+
 
   useEffect(() => {
     (async () => {
@@ -51,6 +70,7 @@ const TripInfoPage = () => {
       const dropoff = route.stops.find(
         (d) => d.stop == searchParams.get("dropoff")
       );
+
 
       const tripData = {
         busCompany: route.name,
@@ -76,16 +96,20 @@ const TripInfoPage = () => {
         }).format(route.price * searchParams.get("seats").split(",").length),
       };
 
+
       setTripData(tripData);
     })();
   }, [route]);
+
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("contact", JSON.stringify(contactInfo));
 
+
     router.replace(`/ticket-info?${newSearchParams.toString()}`);
   }, [contactInfo]);
+
 
   const modalVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -93,12 +117,17 @@ const TripInfoPage = () => {
     exit: { opacity: 0, y: 50 },
   };
 
+
+
+
+ 
   const handleContactInfoChange = (field, value) => {
     setContactInfo((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
+
 
   const validateContactInfo = () => {
     if (!contactInfo.name.trim()) {
@@ -116,6 +145,7 @@ const TripInfoPage = () => {
     return true;
   };
 
+
   const handleConfirmContact = () => {
     if (validateContactInfo()) {
       setShowContactModal(false);
@@ -123,12 +153,14 @@ const TripInfoPage = () => {
     }
   };
 
+
   const handlePayment = () => {
     if (!contactInfo.name || !contactInfo.phone || !contactInfo.email) {
       setShowContactError(true);
       setTimeout(() => setShowContactError(false), 3000);
       return;
     }
+
 
     if (!acceptTerms) {
       setShowError(true);
@@ -140,6 +172,58 @@ const TripInfoPage = () => {
     // Handle payment logic
     router.push(`/payment?${searchParams.toString()}`);
   };
+
+
+  useEffect(() => {
+    if (user && user.uid !== uid) { // Chỉ setUid khi uid thay đổi
+      setUid(user.uid);
+    }
+  }, [user, uid]);
+
+
+  const fetchCustomerData = async () => {
+    const fetchedCustomer = await fetchCustomer(); // Giả sử dữ liệu được trả về từ API
+    // console.log("Dữ liệu lấy được từ fetchCustomer:", fetchedCustomer);
+    // console.log("uid ", uid)
+
+
+    const filteredCustomers = fetchedCustomer.filter(
+      (customer) => customer.id == uid
+    );
+    console.log(filteredCustomers)
+    filteredCustomers.forEach((customer) => {
+      // Kiểm tra nếu có tickets
+      if (customer.tickets && customer.tickets.length > 0) {
+        // Lấy ticket cuối cùng
+        const lastTicket = customer.tickets[customer.tickets.length - 1];
+        if (lastTicket && lastTicket.contact) {
+          const { contact } = lastTicket; // Lấy contact từ ticket cuối cùng
+          const contactt = JSON.parse(contact);
+
+
+          // Cập nhật thông tin liên hệ vào state contactInfo
+          setContactInfo((prevState) => ({
+            ...prevState,
+            name: contactt.name || "",  // Nếu contact.name tồn tại, dùng nó, nếu không thì để trống
+            phone: contactt.phone || "", // Nếu contact.phone tồn tại, dùng nó, nếu không thì để trống
+            email: contactt.email || "", // Nếu contact.email tồn tại, dùng nó, nếu không thì để trống
+          }));
+        }
+      }
+    });
+  };
+ 
+  useEffect(() => {
+    if (uid) { // Đảm bảo rằng uid có giá trị hợp lệ trước khi gọi hàm
+      fetchCustomerData();
+    }
+  }, [uid]); // Chỉ gọi khi `uid` thay đổi
+
+
+    useEffect(() => {
+      console.log("contactInfo updated:", contactInfo);
+    }, [contactInfo]);
+
 
   return !tripData ? (
     <LoadingOverlay isLoading />
@@ -161,6 +245,7 @@ const TripInfoPage = () => {
           </h1>
         </div>
       </div>
+
 
       <div className="max-w-2xl mx-auto px-4 space-y-6 mt-4">
         <h2 className="text-lg font-semibold text-gray-800 mb-2">
@@ -189,6 +274,7 @@ const TripInfoPage = () => {
               </div>
             </div>
 
+
             <div className="flex items-center gap-4 mt-6">
               <div className="flex-1 space-y-1">
                 <div className="text-2xl font-bold text-gray-800">
@@ -205,6 +291,7 @@ const TripInfoPage = () => {
                 </div>
               </div>
 
+
               <div className="flex flex-col items-center">
                 <div className="text-base font-semibold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
                   {tripData.duration}
@@ -215,6 +302,7 @@ const TripInfoPage = () => {
                   </div>
                 </div>
               </div>
+
 
               <div className="flex-1 space-y-1 text-right">
                 <div className="text-2xl font-bold text-gray-800">
@@ -233,6 +321,7 @@ const TripInfoPage = () => {
             </div>
           </div>
         </div>
+
 
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-800">
@@ -254,6 +343,7 @@ const TripInfoPage = () => {
             <FaPen className="text-gray-400" />
           </div>
         </div>
+
 
         <div className="flex items-start gap-2">
           <input
@@ -277,6 +367,7 @@ const TripInfoPage = () => {
         </div>
       </div>
 
+
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-100 p-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="text-2xl font-bold text-blue-600">
@@ -290,6 +381,7 @@ const TripInfoPage = () => {
           </button>
         </div>
       </div>
+
 
       <AnimatePresence>
         {showError && (
@@ -306,6 +398,7 @@ const TripInfoPage = () => {
           </motion.div>
         )}
 
+
         {showContactError && (
           <motion.div
             initial={{ opacity: 0, y: -50 }}
@@ -319,6 +412,7 @@ const TripInfoPage = () => {
             </div>
           </motion.div>
         )}
+
 
         {showContactModal && (
           <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-50">
@@ -395,6 +489,7 @@ const TripInfoPage = () => {
           </div>
         )}
 
+
         {showTermsModal && (
           <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-50">
             <motion.div
@@ -425,6 +520,7 @@ const TripInfoPage = () => {
     </div>
   );
 };
+
 
 export default () => {
   return <Suspense fallback={<LoadingOverlay isLoading />}>
