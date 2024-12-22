@@ -86,7 +86,7 @@ export async function deleteCoachCompanyById(coachCompanyId: any) {
     const coachCompanySnapshot = await getDoc(coachCompanyDocRef);
 
     if (!coachCompanySnapshot.exists()) {
-      throw new Error('Coach company not found');
+      throw new Error('Không tìm thấy nhà xe. Tải lại trang để cập nhật dữ liệu mới nhất nhé.');
     }
 
     const coachCompanyData = coachCompanySnapshot.data();

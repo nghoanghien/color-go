@@ -74,6 +74,8 @@ const AdminTransport = () => {
 	]);
 
 	const onDrop = useCallback(async (acceptedFiles) => {
+
+		setIsPending(true);
 		const data = await readExcelFile(acceptedFiles);
 		const requiredProps = ["name", "type", "numberSeat", "facility"];
 
@@ -113,11 +115,17 @@ const AdminTransport = () => {
 					);
 				}
 			}
+
+			setIsPending(false);
 			showNotification("Tải dữ liệu trong file thành công!", "success");
 		} catch (error) {
+
+			setIsPending(false);
 			showNotification(`${error.message}`, "error");
+		} finally {
+			setIsPending(false);
 		}
-	}, []);
+	}, [transportData]);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
