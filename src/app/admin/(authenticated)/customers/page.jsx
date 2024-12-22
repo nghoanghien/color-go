@@ -17,17 +17,11 @@ import { updateTicketStatus } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { changeMembershipById } from "@/services/membership";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
-
-
-
-
-
-
-
+import PendingOverlay from "@/components/pending-overlay";
 
 const AdminCustomers = () => {
   const router = useRouter();
-
+  const [isPending, setIsPending] = useState(false);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("customers");
@@ -141,12 +135,15 @@ const AdminCustomers = () => {
   const handleDeleteCustomer = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
+        setIsPending(true);
         await deleteUserById(id);
+        setIsPending(false);
  
         setCustomersData(customersData.filter(customer => customer.id !== id));
         showNotification("Xóa khách hàng thành công!", "success");
       }
     } catch (err) {
+      setIsPending(false);
       showNotification(`Xóa khách hàng thất bại: ${err.message}`, "error");
     }
   };
@@ -154,6 +151,7 @@ const AdminCustomers = () => {
 
   const handleDeleteTicket = async (customerId, ticket) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa vé này?")) {
+      setIsPending(true);
       await updateTicketStatus(customerId, ticket.id);
       await adjustUserBalance(customerId, "Hủy vé (hệ thống)", parseInt(ticket.price));
       await changeMembershipById(
@@ -163,7 +161,7 @@ const AdminCustomers = () => {
       );
       await removeBookedSeats(ticket.routeId, ticket.seatNumber.split(","));
 
-
+      setIsPending(false);
       setCustomersData(customersData.map(customer => {
         if (customer.id === customerId) {
           return {
@@ -202,6 +200,7 @@ const AdminCustomers = () => {
 
 
   const handleNavigate = (tab) => {
+    setIsPending(true);
     setActiveTab(tab);
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
@@ -243,6 +242,7 @@ const AdminCustomers = () => {
  
   return (!customersData) ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
+      <PendingOverlay isLoading={isPending} />
       {/* Notification */}
       <AnimatePresence>
         {notification.show && (
