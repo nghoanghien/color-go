@@ -237,7 +237,7 @@ const TicketHistoryPage = () => {
               : (activeTab === "history"
                   ? ticketsData
                   : getUpcomingTickets()
-                ).map((ticket) => (
+                ).slice().reverse().map((ticket) => (
                   <motion.div
                     key={ticket.id}
                     whileHover={{ scale: 1.02 }}

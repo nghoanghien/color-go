@@ -146,7 +146,7 @@ const LoyaltyPage = () => {
               className="bg-white rounded-lg shadow-lg p-6"
             >
               <div className="space-y-4">
-                {membership.history.map((item) => (
+                {membership.history.slice().reverse().map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center justify-between p-4 border-b border-gray-100 last:border-none"

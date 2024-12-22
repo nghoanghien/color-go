@@ -134,7 +134,7 @@ const FavoriteTicketsPage = () => {
 
       <div className="max-w-2xl mx-auto mt-4 px-4 space-y-4">
         <AnimatePresence>
-          {tickets.map((ticket) => (
+          {tickets.slice().reverse().map((ticket) => (
             <motion.div
               key={ticket.id}
               initial={{ opacity: 0, scale: 0.8 }}
