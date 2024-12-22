@@ -1,6 +1,7 @@
 'use client';
 
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { getCoachDetail } from "@/services/coachCompany";
 import { getDetailRoute } from "@/services/routes";
 import { formatDate, timeString } from "@/utils/time-manipulation";
@@ -15,6 +16,7 @@ const SeatSelectionPage = () => {
   const searchParams = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isPending, setIsPending] = useState(false);
 
   const [name, setName] = useState('');
   const [departureTime, setDepartureTime] = useState('');
@@ -250,6 +252,7 @@ const SeatSelectionPage = () => {
   };
 
   const handleLocationSelectionClick = () => {
+    setIsPending(true);
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("seats", selectedSeats.join(","));
     router.push(`/location?${newSearchParams.toString()}`);
@@ -257,6 +260,7 @@ const SeatSelectionPage = () => {
 
   return isLoading ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
+      <PendingOverlay isLoading={isPending} />
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 bg-white/30 backdrop-blur-sm rounded-full px-4 py-3 shadow-sm">
