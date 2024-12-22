@@ -17,6 +17,7 @@ import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLoc
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { fetchCoachCompanies } from "@/services/coachCompany";
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 const AdminRoutes = () => {
@@ -269,6 +270,7 @@ const AdminRoutes = () => {
         showNotification("Cập nhật chuyến xe thành công!", "success");
       } else {
         setIsPending(true);
+        console.log(isPending);
         const newId = await addRoute(newRoute);
         setIsPending(false);
         
@@ -372,7 +374,7 @@ const filteredAndSortedRoutes = useMemo(() => {
     return !routesData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Rest of the component remains the same until the filters section */}
-      {isPending && <LoadingOverlay isLoading />}
+      <PendingOverlay isLoading={isPending} />
       {/* Notification */}
       <AnimatePresence>
         {notification.show && (
