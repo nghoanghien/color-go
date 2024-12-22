@@ -237,7 +237,7 @@ export function filterAvailableUpcomingTickets(tickets: any) {
 
   // Lọc các ticket có departureTime lớn hơn thời gian hiện tại và còn chỗ
   const availableUpcomingTickets = tickets.filter((ticket: any) => {
-    const isUpcoming = ticket.departureTime.toDate() > now;
+    const isUpcoming = ticket.departureTime > convertDatetimeLocalToFirestoreTimestamp(now);
     const hasAvailableSeats = ticket.totalSeat - ticket.bookedSeats.length > 0;
     return isUpcoming && hasAvailableSeats;
   });

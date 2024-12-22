@@ -10,6 +10,7 @@ import { getTicketsFromIds } from "@/services/ticket";
 import LoadingOverlay from "@/components/loading-overlay";
 import { timeString } from "@/utils/time-manipulation";
 import PendingOverlay from "@/components/pending-overlay";
+import { filterAvailableUpcomingTickets } from "@/services/routes";
 
 const FavoriteTicketsPage = () => {
   const router = useRouter();
@@ -34,7 +35,6 @@ const FavoriteTicketsPage = () => {
     (async () => {
       const data = await getFavoriteTickets(user.uid);
       setFavorites(data);
-      console.log(data);
     })();
   }, [user]);
 
@@ -42,8 +42,8 @@ const FavoriteTicketsPage = () => {
     if (!favorites) return;
     (async () => {
       const routesData = await getTicketsFromIds(favorites);
-      console.log(routesData);
-      setTickets(routesData);
+      const availableRoutes = filterAvailableUpcomingTickets(routesData);
+      setTickets(availableRoutes);
     })();
   }, [favorites]);
 
