@@ -1,15 +1,22 @@
 'use client';
-
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FaBus, FaHeart, FaTicketAlt, FaTag, FaUser } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import PendingOverlay from '@/components/pending-overlay';
 
-const BottomNavigation = ({ activeTab, setActiveTab }) => {
+const BottomNavigation = ({ activeTab, setActiveTab, setIsLoading }) => {
   const router = useRouter();
 
   const handleNavigation = (tab) => {
+    // Nếu click vào tab hiện tại thì không làm gì cả
+    if (tab === activeTab) {
+      return;
+    }
+    
     setActiveTab(tab);
+    setIsLoading(true); // Set loading state before navigation
+    
     switch (tab) {
       case "booking":
         router.push("/booking");
@@ -32,9 +39,7 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <motion.div
-      className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50"
-    >
+    <motion.div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-green-100 px-6 py-4 shadow-lg z-50">
       <div className="flex justify-between items-center max-w-lg mx-auto">
         <motion.button
           whileHover={{ scale: 1.1 }}
@@ -87,13 +92,25 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
 };
 
 export default function Layout({ children }) {
-  const currentTab = typeof window === 'undefined' ? 'booking' : location.pathname.split('/').at(-1);
-  const [activeTab, setActiveTab] = useState(currentTab); // Default active tab
+  const pathname = usePathname();
+  const currentTab = pathname?.split('/').at(-1) || 'booking';
+  const [activeTab, setActiveTab] = useState(currentTab);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Listen for route changes to update loading state
+  React.useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
 
   return (
     <div>
       {children}
-      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <PendingOverlay isLoading={isLoading} />
+      <BottomNavigation 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        setIsLoading={setIsLoading}
+      />
     </div>
   );
 }
