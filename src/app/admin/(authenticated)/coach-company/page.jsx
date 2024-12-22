@@ -166,6 +166,7 @@ const AdminTransport = () => {
 				showNotification("Xóa nhà xe thành công!", "success");
 			}
 		} catch (error) {
+			setIsPending(false);
 			showNotification(`Xóa nhà xe thất bại: ${error.message}`, "error");
 		} finally {
 			setIsPending(false);
@@ -191,9 +192,13 @@ const AdminTransport = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		setIsPending(true);
 		try {
 			if (editingTransport) {
 				await updateCoachCompany(newTransport);
+				setIsPending(false);
+
 				setTransportData(
 					transportData.map((transport) =>
 						transport.id === editingTransport.id
@@ -204,6 +209,8 @@ const AdminTransport = () => {
 				showNotification("Cập nhật nhà xe thành công!", "success");
 			} else {
 				const newId = await addCoachCompany(newTransport);
+				setIsPending(false);
+
 				setTransportData([
 					...transportData,
 					{ ...newTransport, id: newId },
@@ -212,8 +219,11 @@ const AdminTransport = () => {
 			}
 			setIsModalOpen(false);
 		} catch (error) {
+			setIsPending(false);
 			showNotification(`Thao tác thất bại: ${error.message}`, "error");
 			setIsModalOpen(false);
+		} finally {
+			setIsPending(false);
 		}
 	};
 
@@ -492,7 +502,7 @@ const AdminTransport = () => {
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.2 }}
-						className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+						className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-40"
 					>
 						<motion.div
 							initial={{ scale: 0.9, opacity: 0 }}

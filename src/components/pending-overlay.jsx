@@ -7,7 +7,7 @@ const PendingOverlay = ({ isLoading }) => (
       key="loading-overlay"
       initial={{ opacity: 0 }}
       animate={{ opacity: isLoading ? 1 : 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.4 }}
       style={{ pointerEvents: isLoading ? "auto" : "none" }}
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm ${
         !isLoading ? "pointer-events-none" : ""
