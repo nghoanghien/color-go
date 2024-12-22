@@ -9,31 +9,16 @@ import { FaFilePdf, FaFileDownload, FaHome, FaBus, FaRoute, FaFileInvoice, FaSig
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
-
-
-
 import { useRouter } from "next/navigation";
 import { addCoachCompany, deleteCoachCompanyById, fetchCoachCompanies, updateCoachCompany } from '../../../services/coachCompany';
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 
-
-
-
-
-
-
-
-
-
-
-
 const AdminTransport = () => {
   const router = useRouter();
-
-
-
+  const [isPending, setIsPending] = useState(false);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("coach-company");
@@ -151,14 +136,17 @@ const AdminTransport = () => {
   const handleDelete = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa nhà xe này?")) {
+        setIsPending(true);
         await deleteCoachCompanyById(id);
-
+        setIsPending(false);
 
         setTransportData(transportData.filter(transport => transport.id !== id));
         showNotification("Xóa nhà xe thành công!", "success");
       }
     } catch (error) {
       showNotification(`Xóa nhà xe thất bại: ${error.message}`, "error");
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -263,6 +251,7 @@ const AdminTransport = () => {
 
   return !transportData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
+      <PendingOverlay isLoading={isPending} />
       {/* Notification */}
       <AnimatePresence>
         {notification.show && (
