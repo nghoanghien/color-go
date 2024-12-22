@@ -1,3 +1,4 @@
+import { convertDatetimeLocalToFirestoreTimestamp } from "@/utils/time-manipulation";
 import { db } from "../firebase/store";
 import {
   addDoc,
@@ -141,7 +142,7 @@ export async function addRoute(route: any) {
     const { arrivalTime, departureTime, stops } = route;
 
     const now = new Date();
-    if (departureTime <= now) {
+    if (departureTime <= convertDatetimeLocalToFirestoreTimestamp(now)) {
       throw new Error('Giờ khởi hành phải lớn hơn giờ hiện tại.');
     }
 
