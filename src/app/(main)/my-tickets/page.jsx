@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { changeMembershipById } from "@/services/membership";
 import { getDetailRoute, removeBookedSeats } from "@/services/routes";
@@ -20,6 +21,7 @@ import {
 
 const TicketHistoryPage = () => {
   const [isLoading, user] = useUserInfomation();
+  const [isPending, setIsPending] = useState(false);
 
   const [tickets, setTickets] = useState();
 
@@ -100,13 +102,7 @@ const TicketHistoryPage = () => {
       return;
     }
 
-    setTicketsData((prev) =>
-      prev.map((ticket) =>
-        ticket.id === selectedTicket.id
-          ? { ...ticket, status: "cancelled" }
-          : ticket
-      )
-    );
+    setIsPending(true);
 
     const ticket = selectedTicket;
 
@@ -118,6 +114,15 @@ const TicketHistoryPage = () => {
       -parseInt(ticket.price) / 1_000
     );
     await removeBookedSeats(ticket.routeId, ticket.seats);
+    setIsPending(false);
+
+    setTicketsData((prev) =>
+      prev.map((ticket) =>
+        ticket.id === selectedTicket.id
+          ? { ...ticket, status: "cancelled" }
+          : ticket
+      )
+    );
 
     setShowCancelModal(false);
     setTermsAccepted(false);
@@ -199,6 +204,8 @@ const TicketHistoryPage = () => {
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
+      <PendingOverlay isLoading={isPending} />
+
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-center bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm mb-6">
@@ -394,7 +401,7 @@ const TicketHistoryPage = () => {
 
       <AnimatePresence>
         {showCancelModal && (
-          <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/15 backdrop-blur-sm flex items-center justify-center z-40 p-4">
             <motion.div
               variants={modalVariants}
               initial="hidden"
