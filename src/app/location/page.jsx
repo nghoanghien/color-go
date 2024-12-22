@@ -1,6 +1,7 @@
 'use client';
 
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { timeString } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -14,6 +15,7 @@ const PickupDropoffPage = () => {
   const searchParams = useSearchParams();
 
   const [isLoading, route] = useRouteDetail(searchParams.get('id'));
+  const [isPending, setIsPending] = useState(false);
 
   const [activeTab, setActiveTab] = useState("pickup");
   const [selectedPickup, setSelectedPickup] = useState(null);
@@ -60,11 +62,13 @@ const PickupDropoffPage = () => {
   };
 
   const handleContinueClick = () => {
+    setIsPending(true);
     router.push(`/ticket-info?${searchParams.toString()}`);
   }
 
   return isLoading ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70">
+      <PendingOverlay isLoading={isPending} />
       <div className="p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
