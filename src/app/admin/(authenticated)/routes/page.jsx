@@ -106,6 +106,8 @@ const AdminRoutes = () => {
 
 
   const onDrop = useCallback(async (acceptedFiles) => {
+    setIsPending(true);
+
     const data = await readExcelFile(acceptedFiles);
     const requiredProps = ["name", "departureTime", "arrivalTime", "departureLocation", "arrivalLocation", "price", "stops"];
     const requiredPropsStop = ["stop", "datetime", "address"];
@@ -169,9 +171,13 @@ const AdminRoutes = () => {
           throw new Error(`Lỗi dòng dữ liệu (${index + 1}): ${error.message}`);
         }
       }
+      setIsPending(false);
       showNotification("Tải dữ liệu trong file thành công!", "success");
     } catch (error) {
+      setIsPending(false);
       showNotification(`${error.message}`, "error");
+    } finally {
+      setIsPending(false);
     }
   }, []);
 
@@ -258,9 +264,9 @@ const AdminRoutes = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsPending(true);
     try {
       if (editingRoute) {
-        setIsPending(true);
         await updateRoute(newRoute);
         setIsPending(false);
 
@@ -269,8 +275,6 @@ const AdminRoutes = () => {
         ));
         showNotification("Cập nhật chuyến xe thành công!", "success");
       } else {
-        setIsPending(true);
-        console.log(isPending);
         const newId = await addRoute(newRoute);
         setIsPending(false);
         
@@ -279,6 +283,7 @@ const AdminRoutes = () => {
       }
       setIsModalOpen(false);
     } catch (error) {
+      setIsPending(false);
       showNotification(`Thao tác thất bại: ${error.message}`, "error");
     } finally {
       setIsPending(false);
@@ -354,6 +359,13 @@ const filteredAndSortedRoutes = useMemo(() => {
       getAvailableCoachCompanies();
       fetchRoutesData();
     }, []);
+
+    useEffect(() => {
+      if (isPending) {
+        console.log(isPending);
+      }
+    }, [isPending]);
+    
 
 
     const handleExportToExcel = () => {
