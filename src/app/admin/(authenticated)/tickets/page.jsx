@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
-import { getAllTicketsWithUserId, updateTicketStatus } from "@/services/ticket";
+import { getAllTicketsWithUserId, isValidTicket, updateTicketStatus } from "@/services/ticket";
 import { getDetailRoute, removeBookedSeats } from "@/services/routes";
 import { formatDate } from "@/utils/time-manipulation";
 import LoadingOverlay from "@/components/loading-overlay";
@@ -69,7 +69,6 @@ const AdminTickets = () => {
 
     const ticketData = await Promise.all(
       data
-        .filter((ticket) => ticket.status == 1)
         .map(async (ticket) => {
           const route = await getDetailRoute(ticket.routeId);
           const passengerInfo = JSON.parse(ticket.contact);
@@ -103,6 +102,7 @@ const AdminTickets = () => {
             dropoffPoint: ticket.dropoff,
             departureTime: route.departureTime,
             price: ticket.price,
+            status: ticket.status
           };
         })
     );
@@ -264,7 +264,6 @@ const AdminTickets = () => {
         )}
       </AnimatePresence>
 
-
       {/* Sidebar */}
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
@@ -295,7 +294,6 @@ const AdminTickets = () => {
           </motion.button>
         </div>
 
-
         {sidebarItems.map((item) => (
           <motion.button
             key={item.id}
@@ -314,7 +312,6 @@ const AdminTickets = () => {
         ))}
       </motion.div>
 
-
       {/* Main Content */}
       <div className="flex-1 p-8">
         <motion.div
@@ -323,9 +320,7 @@ const AdminTickets = () => {
           className="max-w-7xl mx-auto"
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">
-              Quản lý vé xe
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-800">Quản lý vé xe</h1>
             <div className="flex space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -347,7 +342,6 @@ const AdminTickets = () => {
               </motion.button>
             </div>
           </div>
-
 
           {/* Search and Filter Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -377,7 +371,6 @@ const AdminTickets = () => {
             </div>
           </div>
 
-
           {/* Filter Options */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="flex items-center space-x-2">
@@ -388,12 +381,12 @@ const AdminTickets = () => {
                 customInput={<CustomDateInput />}
                 dateFormat="dd/MM/yyyy"
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
-
               />
               <div>
-                <FaArrowRight 
-                style={{ color: 'gray', fontSize: '24px' }} 
-                className="ml-6"/>
+                <FaArrowRight
+                  style={{ color: "gray", fontSize: "24px" }}
+                  className="ml-6"
+                />
               </div>
             </div>
 
@@ -405,7 +398,7 @@ const AdminTickets = () => {
                 customInput={<CustomDateInput />}
                 dateFormat="dd/MM/yyyy"
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
-                />
+              />
             </div>
             <CustomSelect
               value={selectedDeparture}
@@ -420,7 +413,6 @@ const AdminTickets = () => {
               options={arrivalLocations}
             />
           </div>
-
 
           {/* Tickets Table */}
           <motion.div
@@ -460,17 +452,20 @@ const AdminTickets = () => {
                       <td className="px-6 py-4">{ticket.seatNumber}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
-                          <motion.button
-                            whileHover={{ scale: 1.2 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(ticket);
-                            }}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <FaTrash size={20} />
-                          </motion.button>
+                          {ticket.status == 1 &&
+                            isValidTicket(ticket.date) && (
+                              <motion.button
+                                whileHover={{ scale: 1.2 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(ticket);
+                                }}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <FaTrash size={20} />
+                              </motion.button>
+                            )}
                           <motion.div
                             animate={{
                               rotate: expandedRow === ticket.id ? 180 : 0,
