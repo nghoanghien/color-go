@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { formatDate, timeString } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,6 +18,8 @@ import {
 const TripInfoPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, setIsPending] = useState(false);
+
 
   const [showContactModal, setShowContactModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -133,6 +136,7 @@ const TripInfoPage = () => {
       return;
     }
 
+    setIsPending(true);
     // Handle payment logic
     router.push(`/payment?${searchParams.toString()}`);
   };
@@ -141,6 +145,7 @@ const TripInfoPage = () => {
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
+      <PendingOverlay isLoading={isPending} />
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
