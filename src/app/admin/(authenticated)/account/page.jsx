@@ -347,7 +347,7 @@ const AdminAccount = () => {
 												type="radio"
 												name="gender"
 												value="Nữ"
-												checked={editedData.gender === "Nữ"}
+												checked={editedData.sex === "Nữ"}
 												onChange={(e) =>
 													setEditedData({
 														...editedData,
