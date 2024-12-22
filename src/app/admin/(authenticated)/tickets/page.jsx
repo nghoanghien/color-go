@@ -14,12 +14,14 @@ import LoadingOverlay from "@/components/loading-overlay";
 import { adjustUserBalance } from "@/services/wallet";
 import { changeMembershipById } from "@/services/membership";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 
 
 const AdminTickets = () => {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -112,6 +114,7 @@ const AdminTickets = () => {
 
 
   const handleNavigate = (tab) => {
+    setIsPending(true);
     setActiveTab(tab);
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
@@ -170,6 +173,7 @@ const AdminTickets = () => {
 
   const handleDelete = async (ticket) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa vé xe này?")) {
+      setIsPending(true);
       await updateTicketStatus(ticket.userId, ticket.id);
       await adjustUserBalance(ticket.userId, "Hủy vé (hệ thống)", parseInt(ticket.price));
       await changeMembershipById(
@@ -178,6 +182,7 @@ const AdminTickets = () => {
         -parseInt(ticket.price) / 1_000
       );
       await removeBookedSeats(ticket.routeId, ticket.seatNumber.split(","));
+      setIsPending(false);
 
 
       setTicketsData(ticketsData.filter(ticket2 => ticket2.id !== ticket.id));
@@ -235,6 +240,7 @@ const AdminTickets = () => {
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
+      <PendingOverlay isLoading={isPending} />
       {/* Notification */}
       <AnimatePresence>
         {notification.show && (
