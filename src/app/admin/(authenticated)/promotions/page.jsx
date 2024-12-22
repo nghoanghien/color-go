@@ -18,10 +18,12 @@ import LoadingOverlay from "@/components/loading-overlay";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatFirestoreTimestampToStandard, formatTimestampToCustom, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 const AdminPromotions = () => {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -184,7 +186,9 @@ const AdminPromotions = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này?")) {
+      setIsPending(true);
       await deletePromotion(id);
+      setIsPending(false);
 
 
       setPromotionsData(prev => prev.filter(promo => promo.id !== id));
@@ -219,9 +223,11 @@ const AdminPromotions = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsPending(true);
     try {
       if (editingPromotion) {
         await updatePromotion(newPromotion);
+        setIsPending(false);
 
         setPromotionsData(prev =>
           prev.map(promo =>
@@ -231,7 +237,7 @@ const AdminPromotions = () => {
         showNotification("Cập nhật ưu đãi thành công!", "success");
       } else {
         const newId = await addPromotion(newPromotion);
-
+        setIsPending(false);
 
         setPromotionsData(prev => [
           ...prev,
@@ -241,12 +247,14 @@ const AdminPromotions = () => {
       }
       setIsModalOpen(false);
     } catch (error) {
+      setIsPending(false);
       showNotification(`Thao tác thất bại: ${error.message}`, "error");
     }
   };
 
 
   const handleNavigate = (tab) => {
+    setIsPending(true);
     setActiveTab(tab);
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
@@ -292,6 +300,9 @@ const AdminPromotions = () => {
 
   return !promotionsData ? <LoadingOverlay isLoading /> :  (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
+      <PendingOverlay isLoading={isPending} />
+
+
       <AnimatePresence>
         {notification.show && (
           <motion.div
