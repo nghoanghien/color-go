@@ -5,7 +5,7 @@ import PendingOverlay from "@/components/pending-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { changeMembershipById } from "@/services/membership";
 import { getDetailRoute, removeBookedSeats } from "@/services/routes";
-import { getTickets, updateTicketStatus } from "@/services/ticket";
+import { getTickets, isValidForCancel, updateTicketStatus } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { formatDate, timeString } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -241,72 +241,74 @@ const TicketHistoryPage = () => {
             {(activeTab === "history" ? ticketsData : getUpcomingTickets())
               .length === 0
               ? renderEmptyState()
-              : (activeTab === "history"
-                  ? ticketsData
-                  : getUpcomingTickets()
-                ).slice().reverse().map((ticket) => (
-                  <motion.div
-                    key={ticket.id}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleTicketClick(ticket)}
-                    className={`${getStatusBgColor(
-                      ticket.status
-                    )} rounded-2xl p-6 shadow-lg cursor-pointer transition-all duration-300 border border-white/20 relative`}
-                  >
-                    {(ticket.status === "success" ||
-                      ticket.status === "pending") && (
-                      <div className="absolute top-4 right-4 flex gap-2">
-                        {ticket.status === "pending" && (
-                          <button
-                            onClick={(e) => handlePayNow(ticket.id, e)}
-                            className="px-3 py-1 bg-green-50 text-green-600 border border-green-500 rounded-lg flex items-center gap-1 hover:bg-green-100 transition-colors"
-                          >
-                            <FaMoneyBillWave /> Thanh toán ngay
-                          </button>
-                        )}
-                        <button
-                          onClick={(e) => handleCancelTicket(ticket, e)}
-                          className="px-3 py-1 bg-red-50 text-red-600 border border-red-500 rounded-lg flex items-center gap-1 hover:bg-red-100 transition-colors"
+              : (activeTab === "history" ? ticketsData : getUpcomingTickets())
+                  .slice()
+                  .reverse()
+                  .map((ticket) => (
+                    <motion.div
+                      key={ticket.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleTicketClick(ticket)}
+                      className={`${getStatusBgColor(
+                        ticket.status
+                      )} rounded-2xl p-6 shadow-lg cursor-pointer transition-all duration-300 border border-white/20 relative`}
+                    >
+                      {(ticket.status === "success" ||
+                        ticket.status === "pending") && (
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          {ticket.status === "pending" && (
+                            <button
+                              onClick={(e) => handlePayNow(ticket.id, e)}
+                              className="px-3 py-1 bg-green-50 text-green-600 border border-green-500 rounded-lg flex items-center gap-1 hover:bg-green-100 transition-colors"
+                            >
+                              <FaMoneyBillWave /> Thanh toán ngay
+                            </button>
+                          )}
+                          {isValidForCancel(ticket) && (
+                            <button
+                              onClick={(e) => handleCancelTicket(ticket, e)}
+                              className="px-3 py-1 bg-red-50 text-red-600 border border-red-500 rounded-lg flex items-center gap-1 hover:bg-red-100 transition-colors"
+                            >
+                              <FaTimes /> Hủy vé
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="mb-4 pb-4 border-b border-dashed border-gray-200">
+                        <div className="text-lg font-bold text-gray-800 mb-2">
+                          Mã vé: {ticket.ticketCode}
+                        </div>
+                        <div
+                          className={`font-medium ${getStatusColor(
+                            ticket.status
+                          )}`}
                         >
-                          <FaTimes /> Hủy vé
-                        </button>
+                          {getStatusText(ticket.status)}
+                        </div>
                       </div>
-                    )}
 
-                    <div className="mb-4 pb-4 border-b border-dashed border-gray-200">
-                      <div className="text-lg font-bold text-gray-800 mb-2">
-                        Mã vé: {ticket.ticketCode}
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <span className="font-medium text-gray-700">
+                            {ticket.from}
+                          </span>
+                          <FaArrowRight className="text-blue-500" />
+                          <span className="font-medium text-gray-700">
+                            {ticket.to}
+                          </span>
+                        </div>
+                        <div className="text-gray-600">
+                          Số ghế: {ticket.seatNumber}
+                        </div>
+                        <div className="text-gray-600">
+                          Giờ xuất bến: {ticket.departureTime},{" "}
+                          {ticket.departureDay}, {ticket.departureDate}
+                        </div>
                       </div>
-                      <div
-                        className={`font-medium ${getStatusColor(
-                          ticket.status
-                        )}`}
-                      >
-                        {getStatusText(ticket.status)}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <span className="font-medium text-gray-700">
-                          {ticket.from}
-                        </span>
-                        <FaArrowRight className="text-blue-500" />
-                        <span className="font-medium text-gray-700">
-                          {ticket.to}
-                        </span>
-                      </div>
-                      <div className="text-gray-600">
-                        Số ghế: {ticket.seatNumber}
-                      </div>
-                      <div className="text-gray-600">
-                        Giờ xuất bến: {ticket.departureTime},{" "}
-                        {ticket.departureDay}, {ticket.departureDate}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
           </div>
         </div>
       </div>

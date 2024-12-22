@@ -1,4 +1,5 @@
 import { db } from "@/firebase/store";
+import { convertDatetimeLocalToFirestoreTimestamp } from "@/utils/time-manipulation";
 import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc, } from "firebase/firestore";
 
 export async function createTicket(userId: string, ticket: any) {
@@ -142,4 +143,14 @@ export async function getAllTicketsWithUserId() {
     console.error('Error fetching tickets: ', error);
     throw error;
   }
+}
+
+export function isValidForCancel(ticket: any) {
+  const now = new Date();
+
+  // Thời gian hiện tại cộng thêm 4 tiếng
+  const fourHoursFromNow = new Date(now.getTime() + 4 * 60 * 60 * 1000);
+
+  // Kiểm tra thời gian khởi hành của ticket có lớn hơn thời gian hiện tại cộng 4 tiếng
+  return ticket.originalDepartureTime > convertDatetimeLocalToFirestoreTimestamp(fourHoursFromNow);
 }
