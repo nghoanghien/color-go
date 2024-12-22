@@ -38,7 +38,7 @@ const AdminRoutes = () => {
   const [fileName, setFileName] = useState("DanhSachChuyenXe");
   const [sheetName, setSheetName] = useState("Chuyến xe");
   const [title, setTitle] = useState("Danh sách chuyến xe");
-  const [fieldsToExclude, setFieldsToExclude] = useState("id, bookSeats");
+  const [fieldsToExclude, setFieldsToExclude] = useState("id, bookSeats, stops");
   const [desiredColumnOrder, setDesiredColumnOrder] = useState([
     "name",
     "departureLocation",
@@ -346,7 +346,6 @@ const filteredAndSortedRoutes = useMemo(() => {
     const handleExportToExcel = () => {
       const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
       const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
-      console.log("hi", filteredAndSortedRoutes);
       exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
     };
  
