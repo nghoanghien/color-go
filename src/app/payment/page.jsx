@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { changeMembershipById } from "@/services/membership";
@@ -24,6 +25,8 @@ import {
 const PaymentConfirmationPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, setIsPending] = useState(false);
+
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const [showCouponModal, setShowCouponModal] = useState(false);
@@ -122,6 +125,8 @@ const PaymentConfirmationPage = () => {
       return;
     }
 
+    setIsPending(true);
+
     const ticketData = {
       id: generateRandomId(8),
       routeId: searchParams.get('id'),
@@ -138,6 +143,7 @@ const PaymentConfirmationPage = () => {
       await changeMembershipById(user.uid, "Đặt vé xe khách", Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000));
       router.push("/payment-success?" + searchParams.toString());
     } catch (error) {
+      setIsPending(false);
       if (error.message === 'Invalid balance') {
         setShowInvalidBalance(true);
         setTimeout(() => setShowInvalidBalance(false), 3000);
@@ -153,6 +159,7 @@ const PaymentConfirmationPage = () => {
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
+      <PendingOverlay isLoading={isPending} />
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
