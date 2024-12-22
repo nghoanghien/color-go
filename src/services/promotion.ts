@@ -1,6 +1,7 @@
 import { addDoc, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/store";
 import { collection, query, where } from "firebase/firestore";
+import { convertDatetimeLocalToFirestoreTimestamp } from "@/utils/time-manipulation";
 
 export async function getPromotionList() {
   const q = query(
@@ -42,6 +43,12 @@ export async function updatePromotion(promotion: any) {
 
 export async function addPromotion(promotion: any) {
   try {
+
+    const now = new Date();
+    if(promotion.valid <= convertDatetimeLocalToFirestoreTimestamp(now)) {
+      throw new Error(`Hạn sử dụng của mã "${promotion.code}" phải lớn hơn thời gian hiện tại.`);
+    }
+
     // Tạo tham chiếu đến collection promotions
     const promotionsCollectionRef = collection(db, 'promotions');
 
