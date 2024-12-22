@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
 import { getRouteList } from "@/services/routes";
 import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user";
@@ -27,6 +28,7 @@ const SearchResultsPage = () => {
   const selectedDateRef = useRef(null);
 
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
   const [selectedDate, setSelectedDate] = useState(date);
   const [showSortModal, setShowSortModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -180,6 +182,7 @@ const SearchResultsPage = () => {
   };
 
   const handleClickTicket = (id) => {
+    setIsPending(true);
     router.push(`/choose?id=${id}`);
   };
 
@@ -206,6 +209,7 @@ const SearchResultsPage = () => {
 
   return !tickets ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
+      <PendingOverlay isLoading={isPending} />
       {/* Phần thông báo cho nút trái tim yêu thích */}
       <AnimatePresence>
         {notification.show && (
