@@ -21,6 +21,7 @@ import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 
 const AdminRoutes = () => {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -196,13 +197,17 @@ const AdminRoutes = () => {
   const handleDelete = async (id) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa chuyến xe này?")) {
+        setIsPending(true);
         await deleteRoute(id);
+        setIsPending(false);
 
         setRoutesData(routesData.filter(route => route.id !== id));
         showNotification("Xóa chuyến xe thành công!", "success");
       }
     } catch (error) {
       showNotification(`Xóa chuyến xe thất bại: ${error.message}`, "error");
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -361,6 +366,7 @@ const filteredAndSortedRoutes = useMemo(() => {
     return !routesData ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Rest of the component remains the same until the filters section */}
+      {isPending && <LoadingOverlay isLoading />}
       {/* Notification */}
       <AnimatePresence>
         {notification.show && (
