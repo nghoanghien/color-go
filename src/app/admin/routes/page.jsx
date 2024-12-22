@@ -259,14 +259,18 @@ const AdminRoutes = () => {
     e.preventDefault();
     try {
       if (editingRoute) {
+        setIsPending(true);
         await updateRoute(newRoute);
+        setIsPending(false);
 
         setRoutesData(routesData.map(route =>
           route.id === editingRoute.id ? { ...newRoute, id: route.id } : route
         ));
         showNotification("Cập nhật chuyến xe thành công!", "success");
       } else {
+        setIsPending(true);
         const newId = await addRoute(newRoute);
+        setIsPending(false);
         
         setRoutesData([...routesData, { ...newRoute, id: newId }]);
         showNotification("Thêm chuyến xe mới thành công!", "success");
@@ -274,6 +278,8 @@ const AdminRoutes = () => {
       setIsModalOpen(false);
     } catch (error) {
       showNotification(`Thao tác thất bại: ${error.message}`, "error");
+    } finally {
+      setIsPending(false);
     }
   };
 
