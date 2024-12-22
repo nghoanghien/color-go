@@ -121,7 +121,7 @@ export default function Page() {
 
   function handleGenerateRoutes() {
     const ONE_DAY_TIME = 24 * 60 * 60 * 1000;
-    Array(dateNum * 2).fill('').forEach((_, dateOffset) => {  
+    Array(dateNum).fill('').forEach((_, dateOffset) => {  
       provinces.forEach(province => {
         const departureTimeNum = new Date().getTime() + (dateOffset) * ONE_DAY_TIME + Math.random() * ONE_DAY_TIME;
         const arrivalTimeNum = departureTimeNum + Math.random() * ONE_DAY_TIME; 
@@ -132,7 +132,7 @@ export default function Page() {
           arrivalTime: new Date(arrivalTimeNum),
           name: excludeAndPickRandom(busCompanies, ''),
           stops: pickRandomBusStopsWithTime(busStops, new Date(departureTimeNum), Math.ceil(Math.random() * 5 + 5)),
-          price: Math.ceil(Math.random() * 5) * 50_000 + 150_000,
+          price: Math.ceil(Math.random() * 20) * 10_000 + 150_000,
           totalSeat: 36,
           bookedSeats: []
         };
