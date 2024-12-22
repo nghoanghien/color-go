@@ -8,11 +8,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import LoadingOverlay from "@/components/loading-overlay";
 import { formatDate, timeString } from "@/utils/time-manipulation";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 const PaymentSuccessPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, setIsPending] = useState(false);
+
 
   const [isLoading, route] = useRouteDetail(searchParams.get("id"));
 
@@ -61,10 +64,17 @@ const PaymentSuccessPage = () => {
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
+      <PendingOverlay isLoading={isPending} />
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.replace("/booking")}}/>
+            <FaArrowLeft
+              className="text-gray-600 text-xl"
+              onClick={() => {
+                setIsPending(true);
+                router.replace("/booking");
+              }}
+            />
           </button>
           <h1 className="text-xl font-bold text-gray-800">Về trang chủ</h1>
         </div>
@@ -93,7 +103,9 @@ const PaymentSuccessPage = () => {
           transition={{ delay: 0.5 }}
           className="space-y-4"
         >
-          <h2 className="text-2xl font-bold text-gray-800">Thanh toán thành công</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Thanh toán thành công
+          </h2>
           <p className="text-lg text-gray-600">
             Chúc cho hành trình của bạn sẽ thật nhiều{" "}
             <span className="bg-gradient-to-r from-blue-500 to-green-500 text-transparent bg-clip-text font-bold">
@@ -116,10 +128,15 @@ const PaymentSuccessPage = () => {
                 </h3>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Số ghế:</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Số ghế:
+                </span>
                 <div className="flex flex-wrap gap-2">
                   {tripData.selectedSeats.map((seat) => (
-                    <span key={seat} className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium shadow-sm">
+                    <span
+                      key={seat}
+                      className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium shadow-sm"
+                    >
                       {seat}
                     </span>
                   ))}
@@ -129,10 +146,18 @@ const PaymentSuccessPage = () => {
 
             <div className="flex items-center gap-2">
               <div className="flex-1 space-y-2 text-left">
-                <div className="text-2xl font-bold text-gray-800">{tripData.departure.time}</div>
-                <div className="text-sm font-medium text-blue-600">{tripData.departure.date}</div>
-                <div className="text-base font-medium text-gray-800">{tripData.departure.location}</div>
-                <div className="text-sm text-gray-600">{tripData.departure.pickupPoint}</div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {tripData.departure.time}
+                </div>
+                <div className="text-sm font-medium text-blue-600">
+                  {tripData.departure.date}
+                </div>
+                <div className="text-base font-medium text-gray-800">
+                  {tripData.departure.location}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {tripData.departure.pickupPoint}
+                </div>
               </div>
 
               <div className="flex flex-col items-center gap-2">
@@ -147,10 +172,18 @@ const PaymentSuccessPage = () => {
               </div>
 
               <div className="flex-1 space-y-2 text-right">
-                <div className="text-2xl font-bold text-gray-800">{tripData.arrival.time}</div>
-                <div className="text-sm font-medium text-blue-600">{tripData.arrival.date}</div>
-                <div className="text-base font-medium text-gray-800">{tripData.arrival.location}</div>
-                <div className="text-sm text-gray-600">{tripData.arrival.dropoffPoint}</div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {tripData.arrival.time}
+                </div>
+                <div className="text-sm font-medium text-blue-600">
+                  {tripData.arrival.date}
+                </div>
+                <div className="text-base font-medium text-gray-800">
+                  {tripData.arrival.location}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {tripData.arrival.dropoffPoint}
+                </div>
               </div>
             </div>
           </div>
@@ -162,9 +195,9 @@ const PaymentSuccessPage = () => {
           transition={{ delay: 0.9 }}
           className="pt-4"
         >
-          <img 
-            src="/images/Logo-new.png" 
-            alt="Website Logo" 
+          <img
+            src="/images/Logo-new.png"
+            alt="Website Logo"
             className="h-12 mx-auto object-contain"
           />
         </motion.div>
