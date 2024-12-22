@@ -6,6 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { Inter } from 'next/font/google';
 import { useRouter } from 'next/navigation';
+import PendingOverlay from "@/components/pending-overlay";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -13,6 +14,7 @@ const LandingPage = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     AOS.init({
@@ -31,6 +33,7 @@ const LandingPage = () => {
   }, []);
 
   const handleClick = () => {
+    setIsPending(true);
     router.push("/login");
   }
 
@@ -111,6 +114,7 @@ const LandingPage = () => {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-blue-400 via-green-300 to-yellow-200 ${inter.className}`}>
+      <PendingOverlay isLoading={isPending} />
       <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-lg" : "bg-transparent"}}`}>
         <div className="max-w-4xl mx-auto px-4 py-4" data-aos="fade-down">
           <div className="flex items-center justify-between">
