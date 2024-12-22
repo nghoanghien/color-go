@@ -7,6 +7,7 @@ import { FaGlobe, FaEnvelope, FaLock } from "react-icons/fa";
 import { motion } from 'framer-motion';  // Thêm import framer-motion
 import { fetchAdminData } from '../../../services/admin'; // Giữ nguyên import này
 import { useSignout } from "@/hooks/useSignout";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 const SignIn = () => {
@@ -20,6 +21,7 @@ const SignIn = () => {
     password: "",
     language: "English"
   });
+  const [isPending, setIsPending] = useState(false);
 
 
   const handleChange = (e) => {
@@ -32,6 +34,8 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setIsPending(true);
     const adminList = await fetchAdminData(); // Lấy dữ liệu admin từ Firestore
     let isValidUser = false;
     let adminUser = null;
@@ -51,6 +55,7 @@ const SignIn = () => {
       handleVerify(); // Chuyển hướng nếu thông tin hợp lệ
     } else {
       console.error("Không đúng email hoặc mật khẩu"); // Thông báo lỗi
+      setIsPending(false);
       alert("Không đúng email hoặc mật khẩu"); // Hiển thị thông báo cho người dùng
     }
   };
@@ -66,9 +71,9 @@ const SignIn = () => {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-br from-blue-500 via-green-400 to-blue-500"
-      
+      className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-br from-blue-500 via-green-400 to-blue-500" 
     >
+      <PendingOverlay isLoading={isPending} />
 
       {/* Dòng chữ ColorGo trên đầu trang */}
       <div className="absolute top-9 left-1/2 transform -translate-x-1/2 text-4xl font-extrabold text-white z-40 text-4xl md:text-7xl font-black mb-8 text-white drop-shadow-lg tracking-tight leading-tight">
@@ -80,7 +85,7 @@ const SignIn = () => {
         ColorGo
       </div>
           <motion.div
-        className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl z-50 w-full max-w-2xl"
+        className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl z-40 w-full max-w-2xl"
         initial={{ opacity: 0 }}   // Hiệu ứng bắt đầu từ opacity 0
         animate={{ opacity: 1 }}   // Sau khi render, opacity sẽ là 1
         transition={{ duration: 1 }} // Thời gian hiệu ứng là 1 giây
