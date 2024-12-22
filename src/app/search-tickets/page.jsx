@@ -3,7 +3,7 @@
 import LoadingOverlay from "@/components/loading-overlay";
 import PendingOverlay from "@/components/pending-overlay";
 import { useUserInfomation } from "@/firebase/authenticate";
-import { getRouteList } from "@/services/routes";
+import { filterAvailableUpcomingTickets, getRouteList } from "@/services/routes";
 import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -48,8 +48,9 @@ const SearchResultsPage = () => {
   useEffect(() => {
     (async () => {
       const data = await getRouteList(from, to, selectedDate);
-      setTickets(data);
-      setOriginalTickets(data);
+      const availableRoutes = filterAvailableUpcomingTickets(data);
+      setTickets(availableRoutes);
+      setOriginalTickets(availableRoutes);
     })();
   }, [selectedDate]);
 

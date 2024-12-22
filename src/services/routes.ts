@@ -231,3 +231,16 @@ export async function updateRoute(route: any) {
     throw error;
   }
 }
+
+export function filterAvailableUpcomingTickets(tickets: any) {
+  const now = new Date();
+
+  // Lọc các ticket có departureTime lớn hơn thời gian hiện tại và còn chỗ
+  const availableUpcomingTickets = tickets.filter((ticket: any) => {
+    const isUpcoming = ticket.departureTime.toDate() > now;
+    const hasAvailableSeats = ticket.totalSeat - ticket.bookedSeats.length > 0;
+    return isUpcoming && hasAvailableSeats;
+  });
+
+  return availableUpcomingTickets;
+}
