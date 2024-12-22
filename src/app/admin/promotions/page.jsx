@@ -184,6 +184,7 @@ const AdminPromotions = () => {
     e.preventDefault();
     try {
       if (editingPromotion) {
+        console.log(newPromotion);
         await updatePromotion(newPromotion);
 
 
@@ -593,7 +594,7 @@ const AdminPromotions = () => {
                     type="number"
                     className="w-full p-2 border rounded-lg"
                     value={newPromotion.value}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, value: e.target.value })}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, value: Number(e.target.value) })}
                     placeholder={newPromotion.type === "percentage" ? "Ví dụ: 20%" : "Ví dụ: 50000đ"}
                     required
                   />
