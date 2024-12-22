@@ -66,18 +66,21 @@ const SignIn = () => {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('/images/bk2.jpg')`,
-        backgroundSize: '100% 100%',  /* Hình ảnh sẽ co giãn để vừa với chiều rộng và chiều cao phần tử */
-        backgroundPosition: 'center',  /* Đặt hình ảnh ở giữa phần tử */
-        backgroundRepeat: 'no-repeat',  /* Không lặp lại hình ảnh */
-        height: '100vh',  /* Đảm bảo chiều cao của phần tử bằng chiều cao màn hình */
-        width: '100%'  
-      }}
+      className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-br from-blue-500 via-green-400 to-blue-500"
+      
     >
-      <motion.div
-        className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl w-full max-w-2xl"
+
+      {/* Dòng chữ ColorGo trên đầu trang */}
+      <div className="absolute top-9 left-1/2 transform -translate-x-1/2 text-4xl font-extrabold text-white z-40 text-4xl md:text-7xl font-black mb-8 text-white drop-shadow-lg tracking-tight leading-tight">
+        ColorGo
+      </div>
+
+      {/* Dòng chữ ColorGo ở chính giữa */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl md:text-8xl font-black mb-8 text-white drop-shadow-lg tracking-tight leading-tight">
+        ColorGo
+      </div>
+          <motion.div
+        className="bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl z-50 w-full max-w-2xl"
         initial={{ opacity: 0 }}   // Hiệu ứng bắt đầu từ opacity 0
         animate={{ opacity: 1 }}   // Sau khi render, opacity sẽ là 1
         transition={{ duration: 1 }} // Thời gian hiệu ứng là 1 giây
