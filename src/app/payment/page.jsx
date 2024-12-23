@@ -6,7 +6,7 @@ import { useUserInfomation } from "@/firebase/authenticate";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { changeMembershipById } from "@/services/membership";
 import { getPromotionList } from "@/services/promotion";
-import { createTicket } from "@/services/ticket";
+import { createTicket, isValidTicket } from "@/services/ticket";
 import { adjustUserBalance } from "@/services/wallet";
 import { generateRandomId } from "@/utils/getRandom";
 import { formatDate } from "@/utils/time-manipulation";
@@ -39,7 +39,8 @@ const PaymentConfirmationPage = () => {
   useEffect(() => {
     (async () => {
       const data = await getPromotionList();
-      setAvailableCoupons(data);
+      const availableCoupons = data.filter(coupon => isValidTicket(coupon.valid));
+      setAvailableCoupons(availableCoupons);
     })();
   }, []);
 
