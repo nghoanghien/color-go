@@ -223,14 +223,14 @@ const PaymentConfirmationPage = () => {
             >
               {paymentMethods.map((method) => (
                 <div
-                  key={method.id}
-                  onClick={() => setSelectedPayment(method.id)}
-                  className={`flex-shrink-0 snap-start flex items-center gap-4 p-4 bg-white rounded-xl cursor-pointer min-w-[200px] transform transition-all duration-300 hover:shadow-lg ${
-                    selectedPayment === method.id
-                      ? "border-2 border-blue-500 scale-[1.02]"
-                      : "border border-gray-200"
-                  }`}
-                >
+                key={method.id}
+                onClick={() => setSelectedPayment(method.id)}
+                className={`flex-shrink-0 snap-start flex items-center gap-4 p-4 rounded-xl cursor-pointer min-w-[200px] transform transition-all duration-300 hover:shadow-lg ${
+                  selectedPayment === method.id
+                    ? "border border-blue-500 bg-blue-50"
+                    : "border border-gray-200 bg-white"
+                }`}
+              >
                   <img
                     src={method.logo}
                     alt={method.name}
