@@ -125,6 +125,7 @@ const PaymentConfirmationPage = () => {
         subtotal: formatter.format(totalAmount),
         total: formatter.format(grandTotal),
         originalPrice: grandTotal,
+        totalPrice: totalAmount
       };
 
       setInvoiceDetails(invoiceDetails);
@@ -185,7 +186,7 @@ const PaymentConfirmationPage = () => {
     setShowCouponModal(false);
   };
 
-  return !invoiceDetails ? (
+  return !invoiceDetails || !userInfo ? (
     <LoadingOverlay isLoading />
   ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-32">
@@ -294,9 +295,16 @@ const PaymentConfirmationPage = () => {
           </button>
           <div className="flex justify-between items-center">
             <span className="text-gray-600 font-semibold">Tổng tiền</span>
-            <span className="text-xl font-bold text-blue-600">
-              {invoiceDetails.total}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 line-through">
+                {invoiceDetails.totalPrice !== invoiceDetails.originalPrice
+                  ? formatCurrencyVN(invoiceDetails.totalPrice)
+                  : ""}
+              </span>
+              <span className="text-xl font-bold text-blue-600">
+                {invoiceDetails.total}
+              </span>
+            </div>
           </div>
           <button
             onClick={handlePayment}
