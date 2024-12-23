@@ -185,7 +185,12 @@ const AdminTickets = () => {
       setIsPending(false);
 
 
-      setTicketsData(ticketsData.filter(ticket2 => ticket2.id !== ticket.id));
+      setTicketsData((prevData) =>
+        prevData.map((ticket2) =>
+          ticket2.id === ticket.id ? { ...ticket2, status: 0 } : ticket2
+        )
+      );
+      
       showNotification("Xóa vé xe thành công!", "success");
     }
   };

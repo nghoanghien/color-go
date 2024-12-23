@@ -374,7 +374,7 @@ const SearchResultsPage = () => {
       </div>
 
       {/* khung "Sắp xếp và Bộ lọc" */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[60%] max-w-sm z-50">
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[60%] max-w-sm z-40">
         <div className="bg-gradient-to-r from-green-300/50 to-blue-300/50 backdrop-blur-sm rounded-full shadow-lg p-2 flex justify-around items-center space-x-2">
           <button
             onClick={() => setShowSortModal(true)}
