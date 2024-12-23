@@ -6,6 +6,7 @@ import { FaCalendarAlt, FaPercent, FaTag, FaTimes } from "react-icons/fa";
 import { getPromotions } from "@/services/routes";
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from "@/components/loading-overlay";
+import { isValidTicket } from "@/services/ticket";
 
 
 const OfferModal = ({ isOpen, onClose, offerDetails }) => {
@@ -174,7 +175,8 @@ const OffersPage = () => {
       console.log("Fetched Promotions:", promotions);
 
       if (Array.isArray(promotions)) {
-        setMyVouchers(promotions);
+        const availablePromotions = promotions.filter(promotion => isValidTicket(promotion.valid))
+        setMyVouchers(availablePromotions);
         promotions.forEach((voucher) => {
           console.log("Voucher properties:", Object.keys(voucher));
         });
