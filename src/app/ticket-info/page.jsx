@@ -18,6 +18,7 @@ import { useUserInfomation } from "@/firebase/authenticate";
 import { fetchCustomer } from "@/services/membership";
 import { fileURLToPath } from "url";
 import PendingOverlay from "@/components/pending-overlay";
+import { isValidEmail, isValidName, isValidPhone } from "@/utils/check";
 
 
 const TripInfoPage = () => {
@@ -140,6 +141,18 @@ const TripInfoPage = () => {
     }
     if (!contactInfo.email.trim()) {
       setModalError("Vui lòng nhập email");
+      return false;
+    }
+    if (!isValidName(contactInfo.name)) {
+      setModalError("Họ và tên chưa đúng định dạng!");
+      return false;
+    }
+    if (!isValidPhone(contactInfo.phone)) {
+      setModalError("Số điện thoại chưa đúng định dạng!");
+      return false;
+    }
+    if (!isValidEmail(contactInfo.email)) {
+      setModalError("Email chưa đúng định dạng!");
       return false;
     }
     return true;
