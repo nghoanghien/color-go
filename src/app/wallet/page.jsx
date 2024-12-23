@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { adjustUserBalance, getUserWallet } from "@/services/wallet";
 import { useUserInfomation } from "@/firebase/authenticate";
 import LoadingOverlay from "@/components/loading-overlay";
+import PendingOverlay from "@/components/pending-overlay";
 
 
 const MyWalletPage = () => {
@@ -20,6 +21,7 @@ const MyWalletPage = () => {
 
   const [isLoading, user] = useUserInfomation();
   const [wallet, setWallet] = useState();
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -68,6 +70,7 @@ const MyWalletPage = () => {
   const handleWithdraw = (e) => {
     e.preventDefault();
     // Handle withdrawal logic here
+    setIsPending(true);
     adjustUserBalance(user.uid, "Rút tiền", -parseInt(withdrawAmount, 10));
 
     const title = "Rút tiền thành công!";
@@ -84,6 +87,7 @@ const MyWalletPage = () => {
   const handleDeposit = (e) => {
     e.preventDefault();
     // Handle deposit logic 
+    setIsPending(true);
     adjustUserBalance(user.uid, "Nạp tiền", parseInt(depositAmount, 10));
 
     const title = "Nạp tiền thành công!";
@@ -97,12 +101,21 @@ const MyWalletPage = () => {
     setBankAccount("");
   };
 
-  return !wallet ? <LoadingOverlay isLoading /> : (
+  return !wallet ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-green-50 pb-32">
+      <PendingOverlay isLoading={isPending} />
       <div className="bg-transparent p-4 sticky top-0 z-10 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center gap-4">
           <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-            <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}} />
+            <FaArrowLeft
+              className="text-gray-600 text-xl"
+              onClick={() => {
+                setIsPending(true);
+                router.back();
+              }}
+            />
           </button>
           <h1 className="text-xl font-bold text-gray-800">Ví của tôi</h1>
         </div>
@@ -124,14 +137,14 @@ const MyWalletPage = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <button 
+            <button
               onClick={() => setShowDepositModal(true)}
               className="flex items-center justify-center gap-2 p-3 bg-blue-50 rounded-xl text-blue-600 font-medium hover:bg-blue-100 transition-colors"
             >
               <FaPlus />
               Nạp tiền
             </button>
-            <button 
+            <button
               onClick={() => setShowWithdrawModal(true)}
               className="flex items-center justify-center gap-2 p-3 bg-green-50 rounded-xl text-green-600 font-medium hover:bg-green-100 transition-colors"
             >
@@ -143,22 +156,38 @@ const MyWalletPage = () => {
 
         {/* Transactions History */}
         <div className="space-y-4">
-          {wallet.history.slice().reverse().map((transaction) => (
-            <div key={transaction.id} className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium text-gray-800">{transaction.title}</h3>
-                  <p className="text-xs text-gray-400">{transaction.datetime}</p>
-                  <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full mt-1 inline-block">
-                    Thành công
+          {wallet.history
+            .slice()
+            .reverse()
+            .map((transaction) => (
+              <div
+                key={transaction.id}
+                className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium text-gray-800">
+                      {transaction.title}
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      {transaction.datetime}
+                    </p>
+                    <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full mt-1 inline-block">
+                      Thành công
+                    </span>
+                  </div>
+                  <span
+                    className={`font-semibold ${
+                      transaction.fluctuation > 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {formatCurrency(parseInt(transaction.fluctuation))}
                   </span>
                 </div>
-                <span className={`font-semibold ${transaction.fluctuation > 0 ? "text-green-500" : "text-red-500"}`}>
-                  {formatCurrency(parseInt(transaction.fluctuation))}
-                </span>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
