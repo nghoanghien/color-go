@@ -87,18 +87,27 @@ const PickupDropoffPage = () => {
   }
 
 
-  return isLoading ? <LoadingOverlay isLoading /> : (
+  return isLoading ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70">
       <PendingOverlay isLoading={isPending} />
       <div className="p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
             <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-              <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}}/>
+              <FaArrowLeft
+                className="text-gray-600 text-xl"
+                onClick={() => {
+                  setIsPending(true);
+                  router.back();
+                }}
+              />
             </button>
-            <h1 className="text-xl font-bold text-gray-800">Chọn điểm đón - điểm trả</h1>
+            <h1 className="text-xl font-bold text-gray-800">
+              Chọn điểm đón - điểm trả
+            </h1>
           </div>
-
 
           <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
             <div className="flex space-x-2 mb-6">
@@ -117,7 +126,6 @@ const PickupDropoffPage = () => {
               ))}
             </div>
 
-
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -128,12 +136,17 @@ const PickupDropoffPage = () => {
                 transition={{ duration: 0.2 }}
                 className="space-y-3"
               >
-                {(activeTab === "pickup" ? filteredPickupPoints : filteredDropoffPoints).map((point) => (
+                {(activeTab === "pickup"
+                  ? filteredPickupPoints
+                  : filteredDropoffPoints
+                ).map((point) => (
                   <div
-                    key={point.stop}  // Sử dụng `stop` thay cho `id` nếu không có id
+                    key={point.stop} // Sử dụng `stop` thay cho `id` nếu không có id
                     onClick={() => handlePointSelection(point, activeTab)}
                     className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
-                      (activeTab === "pickup" ? selectedPickup?.address : selectedDropoff?.address) === point.address
+                      (activeTab === "pickup"
+                        ? selectedPickup?.address
+                        : selectedDropoff?.address) === point.address
                         ? "bg-green-100/50 border-2 border-green-500"
                         : "bg-white/70 hover:bg-white border border-gray-100"
                     }`}
@@ -141,8 +154,12 @@ const PickupDropoffPage = () => {
                     <div className="flex items-start space-x-3">
                       <FaMapMarkerAlt className="text-blue-500 text-xl mt-1" />
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-800">{point.stop}</h3>
-                        <p className="text-sm text-gray-500 mt-1">{point.address}</p>
+                        <h3 className="font-medium text-gray-800">
+                          {point.stop}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {point.address}
+                        </p>
                         <div className="mt-2 inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-sm">
                           {timeString(point.datetime)}
                         </div>
@@ -156,10 +173,8 @@ const PickupDropoffPage = () => {
         </div>
       </div>
 
-
       {/* Thêm padding-bottom cho phần danh sách để tránh bị đè lên bến cuối */}
       <div className="pb-36" />
-
 
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4">
         <div className="max-w-2xl mx-auto space-y-4">

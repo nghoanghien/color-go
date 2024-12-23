@@ -208,7 +208,9 @@ const SearchResultsPage = () => {
     });
   }, []);
 
-  return !tickets ? <LoadingOverlay isLoading /> : (
+  return !tickets ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-20">
       <PendingOverlay isLoading={isPending} />
       {/* Phần thông báo cho nút trái tim yêu thích */}
@@ -233,7 +235,10 @@ const SearchResultsPage = () => {
           <div className="flex items-center gap-2 bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
             <button
               className="p-2 hover:bg-white/20 rounded-full transition-all duration-300"
-              onClick={() => router.back()}
+              onClick={() => {
+                setIsPending(true);
+                router.back();
+              }}
             >
               <FaArrowLeft className="text-gray-600 text-xl" />
             </button>
@@ -517,33 +522,33 @@ const SearchResultsPage = () => {
                 <div>
                   <h4 className="font-medium mb-4 text-gray-700">Nhà xe</h4>
                   <div className="space-y-3">
-                    {Array.from(new Set(originalTickets.map(d => d.name)).values()).map(
-                      (company) => (
-                        <label
-                          key={company}
-                          className="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50/50 transition-all cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedCompanies.includes(company)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedCompanies([
-                                  ...selectedCompanies,
-                                  company,
-                                ]);
-                              } else {
-                                setSelectedCompanies(
-                                  selectedCompanies.filter((c) => c !== company)
-                                );
-                              }
-                            }}
-                            className="w-5 h-5 rounded-md text-green-500 border-gray-300 focus:ring-green-500"
-                          />
-                          <span className="text-gray-700">{company}</span>
-                        </label>
-                      )
-                    )}
+                    {Array.from(
+                      new Set(originalTickets.map((d) => d.name)).values()
+                    ).map((company) => (
+                      <label
+                        key={company}
+                        className="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50/50 transition-all cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCompanies.includes(company)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedCompanies([
+                                ...selectedCompanies,
+                                company,
+                              ]);
+                            } else {
+                              setSelectedCompanies(
+                                selectedCompanies.filter((c) => c !== company)
+                              );
+                            }
+                          }}
+                          className="w-5 h-5 rounded-md text-green-500 border-gray-300 focus:ring-green-500"
+                        />
+                        <span className="text-gray-700">{company}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
                 <div>

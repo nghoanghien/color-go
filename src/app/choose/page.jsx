@@ -258,23 +258,33 @@ const SeatSelectionPage = () => {
     router.push(`/location?${newSearchParams.toString()}`);
   }
 
-  return isLoading ? <LoadingOverlay isLoading /> : (
+  return isLoading ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70 pb-24">
       <PendingOverlay isLoading={isPending} />
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 bg-white/30 backdrop-blur-sm rounded-full px-4 py-3 shadow-sm">
             <button className="p-2 hover:bg-white/20 rounded-full transition-all duration-300">
-              <FaArrowLeft className="text-gray-600 text-xl" onClick={() => {router.back()}}/>
+              <FaArrowLeft
+                className="text-gray-600 text-xl"
+                onClick={() => {
+                  setIsPending(true);
+                  router.back();
+                }}
+              />
             </button>
             <div className="flex flex-col">
               <div className="flex items-center gap-2 text-gray-600 font-semibold">
                 <span className="text-base">{coachCompany.name}</span>
                 <span className="text-sm">•</span>
-                <span className="text-base">{departureTime ? timeString(departureTime) : ''}</span>
+                <span className="text-base">
+                  {departureTime ? timeString(departureTime) : ""}
+                </span>
               </div>
               <div className="text-sm text-gray-500">
-                {departureTime ? formatDate(departureTime) : ''}
+                {departureTime ? formatDate(departureTime) : ""}
               </div>
             </div>
           </div>
@@ -314,19 +324,19 @@ const SeatSelectionPage = () => {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg">
           <div className="flex flex-row justify-center items-start space-x-8">
             <div className="flex-1">
-              <h3 className="text-base font-semibold text-gray-700 mb-1 text-center">Tầng dưới</h3>
+              <h3 className="text-base font-semibold text-gray-700 mb-1 text-center">
+                Tầng dưới
+              </h3>
               <div className="w-full h-[1px] bg-gray-300 mb-3"></div>
-              <div className="space-y-3 w-full">
-                {renderSeats("lower", 1)}
-              </div>
+              <div className="space-y-3 w-full">{renderSeats("lower", 1)}</div>
             </div>
 
             <div className="flex-1">
-              <h3 className="text-base font-semibold text-gray-700 mb-1 text-center">Tầng trên</h3>
+              <h3 className="text-base font-semibold text-gray-700 mb-1 text-center">
+                Tầng trên
+              </h3>
               <div className="w-full h-[1px] bg-gray-300 mb-3"></div>
-              <div className="space-y-3 w-full">
-                {renderSeats("upper", 1)}
-              </div>
+              <div className="space-y-3 w-full">{renderSeats("upper", 1)}</div>
             </div>
           </div>
         </div>
@@ -347,16 +357,22 @@ const SeatSelectionPage = () => {
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Ghế đã chọn: {selectedSeats.join(", ")}</div>
-              <div className="text-lg font-bold text-blue-600">{totalPrice.toLocaleString()}đ</div>
+              <div className="text-sm text-gray-600 mb-1">
+                Ghế đã chọn: {selectedSeats.join(", ")}
+              </div>
+              <div className="text-lg font-bold text-blue-600">
+                {totalPrice.toLocaleString()}đ
+              </div>
             </div>
             <motion.button
               whileTap={{ scale: 0.95 }}
               disabled={selectedSeats.length === 0}
               className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 
-                ${selectedSeats.length > 0 
-                  ? "bg-gradient-to-r from-green-500 to-blue-500 text-white" 
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                ${
+                  selectedSeats.length > 0
+                    ? "bg-gradient-to-r from-green-500 to-blue-500 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               onClick={handleLocationSelectionClick}
             >
               Chọn điểm đón trả

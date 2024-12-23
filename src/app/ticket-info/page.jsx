@@ -236,6 +236,7 @@ const TripInfoPage = () => {
             <FaArrowLeft
               className="text-gray-600 text-xl"
               onClick={() => {
+                setIsPending(true);
                 router.back();
               }}
             />
