@@ -7,6 +7,7 @@ import { useRouteDetail } from "@/hooks/useRouteDetail";
 import { changeMembershipById } from "@/services/membership";
 import { getPromotionList } from "@/services/promotion";
 import { createTicket, isValidTicket } from "@/services/ticket";
+import { addUsedPromotion, getUserById } from "@/services/user";
 import { adjustUserBalance } from "@/services/wallet";
 import { generateRandomId } from "@/utils/getRandom";
 import { formatDate } from "@/utils/time-manipulation";
@@ -35,14 +36,29 @@ const PaymentConfirmationPage = () => {
   const [selectedCoupon, setSelectedCoupon] = useState(null);
 
   const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [userInfo, setUserInfo] = useState();
+  const [_, user] = useUserInfomation();
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     (async () => {
+      const data = await getUserById(user.uid);
+      setUserInfo(data);
+    })();
+  }, [user]);
+
+  useEffect(() => {
+    if (!userInfo) return;
+    (async () => {
+      
       const data = await getPromotionList();
       const availableCoupons = data.filter(coupon => isValidTicket(coupon.valid));
-      setAvailableCoupons(availableCoupons);
+      const remainingCoupons = availableCoupons.filter(coupon => !userInfo.usedPromotions.includes(coupon.code));
+      setAvailableCoupons(remainingCoupons);
     })();
-  }, []);
+  }, [userInfo]);
 
   const paymentMethods = [
     {
@@ -68,7 +84,6 @@ const PaymentConfirmationPage = () => {
   ];
 
   const [isLoading, route] = useRouteDetail(searchParams.get("id"));
-  const [_, user] = useUserInfomation();
 
   const [invoiceDetails, setInvoiceDetails] = useState(null);
   const [grandTotal, setGrandTotal] = useState(0);
@@ -140,6 +155,9 @@ const PaymentConfirmationPage = () => {
     }
     try {
       await adjustUserBalance(user.uid, "Thanh toán vé", -parseInt(invoiceDetails.originalPrice, 10));
+      if (selectedCoupon) {
+        await addUsedPromotion(user.uid, selectedCoupon.code);
+      }
       await createTicket(user.uid, ticketData);
       await changeMembershipById(user.uid, "Đặt vé xe khách", Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000));
       router.push("/payment-success?" + searchParams.toString());

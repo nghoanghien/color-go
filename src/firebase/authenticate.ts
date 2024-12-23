@@ -29,6 +29,7 @@ export const signIn = () =>
         id: user.uid,
         email: user.email,
         favoriteTickets: [],
+        usedPromotions: [],
         tickets: [],
         membership: {
           point: 0,

@@ -115,4 +115,50 @@ export async function deleteUserById(userId: any) {
     }
   }
   
+  export async function getUserById(userId: any) {
+    try {
+      // Tạo tham chiếu đến document cần lấy trong collection users
+      const userDocRef = doc(db, "users", userId);
+
+      // Lấy document từ Firestore
+      const userDoc = await getDoc(userDocRef);
+
+      // Kiểm tra nếu document tồn tại
+      if (userDoc.exists()) {
+        // Trả về dữ liệu của document
+        return { id: userId, ...userDoc.data() };
+      } else {
+        // Trả về lỗi nếu document không tồn tại
+        throw new Error(`User with ID "${userId}" not found.`);
+      }
+    } catch (error) {
+      console.error("Error fetching user: ", error);
+      throw error;
+    }
+  }
+  
+  export async function addUsedPromotion(userId: any, usedCode: any) {
+    try {
+      // Tạo tham chiếu đến document cần cập nhật trong collection users
+      const userDocRef = doc(db, 'users', userId);
+  
+      // Lấy document từ Firestore
+      const userDoc = await getDoc(userDocRef);
+  
+      // Kiểm tra nếu document tồn tại
+      if (!userDoc.exists()) {
+        throw new Error(`User with ID "${userId}" not found.`);
+      }
+  
+      // Thêm usedCode vào mảng usedPromotions
+      await updateDoc(userDocRef, {
+        usedPromotions: arrayUnion(usedCode), // Sử dụng arrayUnion để thêm giá trị mà không bị trùng lặp
+      });
+  
+      console.log(`Successfully added "${usedCode}" to usedPromotions for user "${userId}".`);
+    } catch (error) {
+      console.error('Error adding used promotion: ', error);
+      throw error;
+    }
+  }
   
