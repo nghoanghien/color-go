@@ -252,14 +252,22 @@ const AdminCustomers = () => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 20 }}
             exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
+            className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
           >
-            {notification.type === "success" ? (
-              <FaCheckCircle className="text-xl" />
-            ) : (
-              <FaTimesCircle className="text-xl" />
-            )}
-            <span>{notification.message}</span>
+            <motion.div
+              className={`px-6 py-3 gap-2 z-50 rounded-lg shadow-lg flex items-center ${
+                notification.type === "success"
+                  ? "bg-gradient-to-r from-green-500 to-green-400"
+                  : "bg-gradient-to-r from-red-500 to-red-400"
+              } text-white`}
+            >
+              {notification.type === "success" ? (
+                <FaCheckCircle className="text-xl" />
+              ) : (
+                <FaTimesCircle className="text-xl" />
+              )}
+              <span>{notification.message}</span>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
