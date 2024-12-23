@@ -135,3 +135,18 @@ export function convertTimestampToDatetimeLocalWithoutTime(firestoreTimestamp: a
   return `${year}-${month}-${day}`;
 }
 
+export function formatISOString(isoString: any) {
+  const date = new Date(isoString);
+
+  // Lấy giờ và phút
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  // Lấy ngày, tháng, năm
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+  const year = date.getFullYear();
+
+  // Kết hợp thành chuỗi định dạng
+  return `${hours}:${minutes}, ${day}/${month}/${year}`;
+}

@@ -8,6 +8,7 @@ import { adjustUserBalance, getUserWallet } from "@/services/wallet";
 import { useUserInfomation } from "@/firebase/authenticate";
 import LoadingOverlay from "@/components/loading-overlay";
 import PendingOverlay from "@/components/pending-overlay";
+import { formatFirestoreTimestampToStandard, formatISOString, formatTimestampToCustom, formatTimestampToDate } from "@/utils/time-manipulation";
 
 
 const MyWalletPage = () => {
@@ -170,7 +171,7 @@ const MyWalletPage = () => {
                       {transaction.title}
                     </h3>
                     <p className="text-xs text-gray-400">
-                      {transaction.datetime}
+                      {formatISOString(transaction.datetime)}
                     </p>
                     <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full mt-1 inline-block">
                       Thành công
