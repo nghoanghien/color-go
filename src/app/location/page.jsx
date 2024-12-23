@@ -1,5 +1,6 @@
 'use client';
 
+
 import LoadingOverlay from "@/components/loading-overlay";
 import PendingOverlay from "@/components/pending-overlay";
 import { useRouteDetail } from "@/hooks/useRouteDetail";
@@ -14,16 +15,18 @@ const PickupDropoffPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+
   const [isLoading, route] = useRouteDetail(searchParams.get('id'));
   const [isPending, setIsPending] = useState(false);
+
 
   const [activeTab, setActiveTab] = useState("pickup");
   const [selectedPickup, setSelectedPickup] = useState(null);
   const [selectedDropoff, setSelectedDropoff] = useState(null);
 
+
   const pickupPoints = route.stops ?? [];
 
-  const dropoffPoints = route.stops ?? [];
 
   const tabVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -31,27 +34,43 @@ const PickupDropoffPage = () => {
     exit: { opacity: 0, y: -20 }
   };
 
+
+  // Lọc các điểm đón và điểm trả đã chọn
+  const selectedDropoffIndex = selectedDropoff ? pickupPoints.findIndex((point) => point.stop === selectedDropoff.stop) : -1;
+  const filteredPickupPoints = selectedDropoffIndex > -1 ? route.stops.slice(0, selectedDropoffIndex) : route.stops;
+
+
+  const selectedPickupIndex = selectedPickup ? pickupPoints.findIndex((point) => point.stop === selectedPickup.stop) : -1;
+  const filteredDropoffPoints = selectedPickupIndex > -1 ? route.stops.slice(selectedPickupIndex + 1) : route.stops;
+
+
   useEffect(() => {
     if (selectedPickup && activeTab === "pickup") {
       setTimeout(() => setActiveTab("dropoff"), 200);
     }
 
+
     if (!selectedPickup) return;
-    
+   
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("pickup", selectedPickup.stop);
+
 
     router.replace(`/location?${newSearchParams.toString()}`);
   }, [selectedPickup]);
 
+
   useEffect(() => {
     if (!selectedDropoff) return;
+
 
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("dropoff", selectedDropoff.stop);
 
+
     router.replace(`/location?${newSearchParams.toString()}`);
   }, [selectedDropoff]);
+
 
   const handlePointSelection = (point, type) => {
     if (type === "pickup") {
@@ -61,10 +80,12 @@ const PickupDropoffPage = () => {
     }
   };
 
+
   const handleContinueClick = () => {
     setIsPending(true);
     router.push(`/ticket-info?${searchParams.toString()}`);
   }
+
 
   return isLoading ? <LoadingOverlay isLoading /> : (
     <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70">
@@ -77,6 +98,7 @@ const PickupDropoffPage = () => {
             </button>
             <h1 className="text-xl font-bold text-gray-800">Chọn điểm đón - điểm trả</h1>
           </div>
+
 
           <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
             <div className="flex space-x-2 mb-6">
@@ -95,6 +117,7 @@ const PickupDropoffPage = () => {
               ))}
             </div>
 
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -105,9 +128,9 @@ const PickupDropoffPage = () => {
                 transition={{ duration: 0.2 }}
                 className="space-y-3"
               >
-                {(activeTab === "pickup" ? pickupPoints : dropoffPoints).map((point) => (
+                {(activeTab === "pickup" ? filteredPickupPoints : filteredDropoffPoints).map((point) => (
                   <div
-                    key={point.id}
+                    key={point.stop}  // Sử dụng `stop` thay cho `id` nếu không có id
                     onClick={() => handlePointSelection(point, activeTab)}
                     className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
                       (activeTab === "pickup" ? selectedPickup?.address : selectedDropoff?.address) === point.address
@@ -132,6 +155,11 @@ const PickupDropoffPage = () => {
           </div>
         </div>
       </div>
+
+
+      {/* Thêm padding-bottom cho phần danh sách để tránh bị đè lên bến cuối */}
+      <div className="pb-36" />
+
 
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4">
         <div className="max-w-2xl mx-auto space-y-4">
@@ -164,8 +192,9 @@ const PickupDropoffPage = () => {
   );
 };
 
+
 export default () => {
-  return <Suspense fallback={<LoadingOverlay isLoading />}>
-    <PickupDropoffPage />
-  </Suspense>
+  return <Suspense fallback={<LoadingOverlay isLoading />}><PickupDropoffPage /></Suspense>;
 };
+
+
