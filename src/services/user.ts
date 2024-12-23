@@ -1,5 +1,7 @@
 import { db } from "@/firebase/store";
 import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { getDetailRoute } from "./routes";
+import { convertDatetimeLocalToFirestoreTimestamp } from "@/utils/time-manipulation";
 
 export async function getFavoriteTickets(userId: any) {
   try {
@@ -101,8 +103,10 @@ export async function deleteUserById(userId: any) {
   
       // Kiểm tra nếu user có tickets với status == 1
       const activeTicket = userData.tickets?.find((ticket: any) => ticket.status === 1);
-  
-      if (activeTicket) {
+      const routeInfo = await getDetailRoute(activeTicket.routeId);
+      
+      const now = new Date();
+      if (convertDatetimeLocalToFirestoreTimestamp(now) < routeInfo.departureTime) {
         throw new Error(`Khách hàng tên ${userData.name} vẫn còn vé chưa đến ngày đi.`);
       }
   
