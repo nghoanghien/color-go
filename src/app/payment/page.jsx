@@ -10,6 +10,7 @@ import { createTicket, isValidTicket } from "@/services/ticket";
 import { addUsedPromotion, getUserById } from "@/services/user";
 import { adjustUserBalance } from "@/services/wallet";
 import { generateRandomId } from "@/utils/getRandom";
+import { formatCurrencyVN } from "@/utils/money-manipulation";
 import { formatDate } from "@/utils/time-manipulation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,7 +28,6 @@ const PaymentConfirmationPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, setIsPending] = useState(false);
-
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const [showCouponModal, setShowCouponModal] = useState(false);
@@ -52,10 +52,13 @@ const PaymentConfirmationPage = () => {
   useEffect(() => {
     if (!userInfo) return;
     (async () => {
-      
       const data = await getPromotionList();
-      const availableCoupons = data.filter(coupon => isValidTicket(coupon.valid));
-      const remainingCoupons = availableCoupons.filter(coupon => !userInfo.usedPromotions.includes(coupon.code));
+      const availableCoupons = data.filter((coupon) =>
+        isValidTicket(coupon.valid)
+      );
+      const remainingCoupons = availableCoupons.filter(
+        (coupon) => !userInfo.usedPromotions.includes(coupon.code)
+      );
       setAvailableCoupons(remainingCoupons);
     })();
   }, [userInfo]);
@@ -145,25 +148,33 @@ const PaymentConfirmationPage = () => {
 
     const ticketData = {
       id: generateRandomId(8),
-      routeId: searchParams.get('id'),
-      seats: searchParams.get('seats').split(','),
-      contact: searchParams.get('contact'),
-      pickup: searchParams.get('pickup'),
-      dropoff: searchParams.get('dropoff'),
+      routeId: searchParams.get("id"),
+      seats: searchParams.get("seats").split(","),
+      contact: searchParams.get("contact"),
+      pickup: searchParams.get("pickup"),
+      dropoff: searchParams.get("dropoff"),
       price: invoiceDetails.originalPrice,
       status: 1,
-    }
+    };
     try {
-      await adjustUserBalance(user.uid, "Thanh toán vé", -parseInt(invoiceDetails.originalPrice, 10));
+      await adjustUserBalance(
+        user.uid,
+        "Thanh toán vé",
+        -parseInt(invoiceDetails.originalPrice, 10)
+      );
       if (selectedCoupon) {
         await addUsedPromotion(user.uid, selectedCoupon.code);
       }
       await createTicket(user.uid, ticketData);
-      await changeMembershipById(user.uid, "Đặt vé xe khách", Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000));
+      await changeMembershipById(
+        user.uid,
+        "Đặt vé xe khách",
+        Math.floor(parseInt(invoiceDetails.originalPrice, 10) / 1000)
+      );
       router.push("/payment-success?" + searchParams.toString());
     } catch (error) {
       setIsPending(false);
-      if (error.message === 'Invalid balance') {
+      if (error.message === "Invalid balance") {
         setShowInvalidBalance(true);
         setTimeout(() => setShowInvalidBalance(false), 3000);
       }
@@ -224,9 +235,14 @@ const PaymentConfirmationPage = () => {
                     alt={method.name}
                     className="w-10 h-10 object-cover rounded-lg"
                   />
-                  <span className="font-medium text-gray-800">
-                    {method.name}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-800">
+                      {method.name}
+                    </span>
+                    <div className="text-sm text-gray-500">
+                      {formatCurrencyVN(userInfo.wallet.balance)}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -414,7 +430,9 @@ const PaymentConfirmationPage = () => {
 };
 
 export default () => {
-  return <Suspense fallback={<LoadingOverlay isLoading />}>
-    <PaymentConfirmationPage />
-  </Suspense>
+  return (
+    <Suspense fallback={<LoadingOverlay isLoading />}>
+      <PaymentConfirmationPage />
+    </Suspense>
+  );
 };
