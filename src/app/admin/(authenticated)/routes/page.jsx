@@ -1,7 +1,7 @@
 "use client";
 
 
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
@@ -24,11 +24,14 @@ const AdminRoutes = () => {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
-
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("routes");
   const [searchTerm, setSearchTerm] = useState("");
-  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
   const [expandedRow, setExpandedRow] = useState(null);
   const [sortBy, setSortBy] = useState({ field: null, order: "asc" });
   const [filterDeparture, setFilterDeparture] = useState("");
@@ -36,11 +39,12 @@ const AdminRoutes = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-
   const [fileName, setFileName] = useState("DanhSachChuyenXe");
   const [sheetName, setSheetName] = useState("Chuyến xe");
   const [title, setTitle] = useState("Danh sách chuyến xe");
-  const [fieldsToExclude, setFieldsToExclude] = useState("id, bookSeats, stops");
+  const [fieldsToExclude, setFieldsToExclude] = useState(
+    "id, bookSeats, stops"
+  );
   const [desiredColumnOrder, setDesiredColumnOrder] = useState([
     "name",
     "departureLocation",
@@ -48,11 +52,10 @@ const AdminRoutes = () => {
     "departureTime",
     "arrivalTime",
     "price",
-    "stops"
-  ])
- 
-  const [routesData, setRoutesData] = useState();
+    "stops",
+  ]);
 
+  const [routesData, setRoutesData] = useState();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoute, setEditingRoute] = useState(null);
@@ -63,27 +66,90 @@ const AdminRoutes = () => {
     departureTime: new Date(),
     arrivalTime: new Date(),
     price: "",
-    stops: []
+    stops: [],
   });
 
   const [availableCoachCompanies, setAvailableCoachCompanies] = useState([]);
 
+  // Thêm vào cùng chỗ khai báo state khác
+  const [displayedRoutes, setDisplayedRoutes] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const ITEMS_PER_PAGE = 20; // Số lượng hiển thị mỗi lần
+  const loader = useRef(null); // Thêm useRef vào import React
 
-  const locations = ["TP.HCM", "Hà Nội", "Đà Lạt", "Sapa", "Đà Nẵng", "Nha Trang"];
-  const provinces = [
-    "TP. Hồ Chí Minh", "Hà Nội",
-    "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh",
-    "Bến Tre", "Bình Định", "Bình Dương", "Bình Phước", "Bình Thuận", "Cà Mau",
-    "Cao Bằng", "Cần Thơ", "Đà Nẵng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai",
-    "Đồng Tháp", "Gia Lai", "Hà Giang", "Hà Nam", "Hà Tĩnh", "Hải Dương",
-    "Hải Phòng", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Khánh Hòa", "Kiên Giang",
-    "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", "Nam Định",
-    "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam",
-    "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình",
-    "Thái Nguyên", "Thanh Hóa", "Thừa Thiên - Huế", "Tiền Giang",
-    "Trà Vinh", "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
+  const locations = [
+    "TP.HCM",
+    "Hà Nội",
+    "Đà Lạt",
+    "Sapa",
+    "Đà Nẵng",
+    "Nha Trang",
   ];
-  
+  const provinces = [
+    "TP. Hồ Chí Minh",
+    "Hà Nội",
+    "An Giang",
+    "Bà Rịa - Vũng Tàu",
+    "Bắc Giang",
+    "Bắc Kạn",
+    "Bạc Liêu",
+    "Bắc Ninh",
+    "Bến Tre",
+    "Bình Định",
+    "Bình Dương",
+    "Bình Phước",
+    "Bình Thuận",
+    "Cà Mau",
+    "Cao Bằng",
+    "Cần Thơ",
+    "Đà Nẵng",
+    "Đắk Lắk",
+    "Đắk Nông",
+    "Điện Biên",
+    "Đồng Nai",
+    "Đồng Tháp",
+    "Gia Lai",
+    "Hà Giang",
+    "Hà Nam",
+    "Hà Tĩnh",
+    "Hải Dương",
+    "Hải Phòng",
+    "Hậu Giang",
+    "Hòa Bình",
+    "Hưng Yên",
+    "Khánh Hòa",
+    "Kiên Giang",
+    "Kon Tum",
+    "Lai Châu",
+    "Lâm Đồng",
+    "Lạng Sơn",
+    "Lào Cai",
+    "Long An",
+    "Nam Định",
+    "Nghệ An",
+    "Ninh Bình",
+    "Ninh Thuận",
+    "Phú Thọ",
+    "Phú Yên",
+    "Quảng Bình",
+    "Quảng Nam",
+    "Quảng Ngãi",
+    "Quảng Ninh",
+    "Quảng Trị",
+    "Sóc Trăng",
+    "Sơn La",
+    "Tây Ninh",
+    "Thái Bình",
+    "Thái Nguyên",
+    "Thanh Hóa",
+    "Thừa Thiên - Huế",
+    "Tiền Giang",
+    "Trà Vinh",
+    "Tuyên Quang",
+    "Vĩnh Long",
+    "Vĩnh Phúc",
+    "Yên Bái",
+  ];
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -91,7 +157,6 @@ const AdminRoutes = () => {
       setNotification({ show: false, message: "", type: "" });
     }, 5000);
   };
-
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -101,15 +166,105 @@ const AdminRoutes = () => {
     { id: "customers", label: "Khách Hàng", icon: <FaUsers /> },
     { id: "tickets", label: "Vé xe", icon: <FaTicketAlt /> },
     { id: "account", label: "Tài khoản", icon: <FaUserCircle /> },
-    { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> }
+    { id: "logout", label: "Đăng xuất", icon: <FaSignOutAlt /> },
   ];
 
+  const filteredAndSortedRoutes = useMemo(() => {
+    if (!routesData) return [];
+
+    const newDisplayRoutes = routesData
+      .filter((route) => {
+        return (
+          route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          (!filterDeparture || route.departureLocation === filterDeparture) &&
+          (!filterArrival || route.arrivalLocation === filterArrival) &&
+          (!startDate ||
+            new Date(route.departureTime.seconds * 1000) >= startDate) &&
+          (!endDate || new Date(route.departureTime.seconds * 1000) <= endDate)
+        );
+      })
+      .sort((a, b) => {
+        if (!sortBy.field) return 0;
+
+        let comparison = 0;
+        switch (sortBy.field) {
+          case "price":
+            comparison = a.price - b.price;
+            break;
+          case "departureTime":
+            comparison = a.departureTime - b.departureTime;
+            break;
+          default:
+            comparison = 0;
+        }
+        return sortBy.order === "asc" ? comparison : -comparison;
+      });
+
+      const initialRoutes = newDisplayRoutes.slice(0, ITEMS_PER_PAGE);
+      setDisplayedRoutes(initialRoutes);
+      setCurrentIndex(ITEMS_PER_PAGE);
+
+      return newDisplayRoutes;
+  
+  }, [
+    routesData,
+    searchTerm,
+    filterDeparture,
+    filterArrival,
+    startDate,
+    endDate,
+    sortBy,
+  ]);
+
+  useEffect(() => {
+    const handleObserver = (entries) => {
+      const target = entries[0];
+      if (target.isIntersecting && filteredAndSortedRoutes?.length > currentIndex) {
+        const nextIndex = currentIndex + ITEMS_PER_PAGE;
+        const newRoutes = filteredAndSortedRoutes.slice(0, nextIndex);
+        setDisplayedRoutes(newRoutes);
+        setCurrentIndex(nextIndex);
+      }
+    };
+  
+    const option = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 0
+    };
+  
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) observer.observe(loader.current);
+    
+    return () => {
+      if (loader.current) observer.unobserve(loader.current);
+    };
+  }, [currentIndex, filteredAndSortedRoutes]);
+
+  useEffect(() => {
+    if (filteredAndSortedRoutes) {
+      // Hiển thị batch đầu tiên
+      const initialRoutes = filteredAndSortedRoutes.slice(0, ITEMS_PER_PAGE);
+      setDisplayedRoutes(initialRoutes);
+      setCurrentIndex(ITEMS_PER_PAGE);
+    }
+  }, [routesData]);
+
+  
 
   const onDrop = useCallback(async (acceptedFiles) => {
     setIsPending(true);
 
     const data = await readExcelFile(acceptedFiles);
-    const requiredProps = ["name", "departureTime", "arrivalTime", "departureLocation", "arrivalLocation", "price", "stops"];
+    const requiredProps = [
+      "name",
+      "departureTime",
+      "arrivalTime",
+      "departureLocation",
+      "arrivalLocation",
+      "price",
+      "stops",
+    ];
     const requiredPropsStop = ["stop", "datetime", "address"];
     try {
       // File không có dữ liệu
@@ -123,7 +278,9 @@ const AdminRoutes = () => {
 
       try {
         if (!hasRequiredProperties(data[0], requiredProps)) {
-          throw new Error(`Lỗi đọc file: File cần có đủ các cột (${requiredProps.join(", ")})`);
+          throw new Error(
+            `Lỗi đọc file: File cần có đủ các cột (${requiredProps.join(", ")})`
+          );
         }
       } catch (error) {
         throw new Error(error.message);
@@ -132,10 +289,17 @@ const AdminRoutes = () => {
       for (let index = 0; index < data.length; index++) {
         try {
           try {
-            data[index].departureTime = convertDatetimeLocalToFirestoreTimestamp(data[index].departureTime);
-            data[index].arrivalTime = convertDatetimeLocalToFirestoreTimestamp(data[index].arrivalTime);
+            data[index].departureTime =
+              convertDatetimeLocalToFirestoreTimestamp(
+                data[index].departureTime
+              );
+            data[index].arrivalTime = convertDatetimeLocalToFirestoreTimestamp(
+              data[index].arrivalTime
+            );
           } catch (error) {
-            throw new Error(`Định dạng thời gian chưa chính xác.(Vd đúng: yyyy-mm-ddTHH:mm)`);
+            throw new Error(
+              `Định dạng thời gian chưa chính xác.(Vd đúng: yyyy-mm-ddTHH:mm)`
+            );
           }
 
           try {
@@ -146,27 +310,36 @@ const AdminRoutes = () => {
 
           for (let j = 0; j < data[index].stops.length; j++) {
             try {
-              if (!hasRequiredProperties(data[index].stops[j], requiredPropsStop)) {
-                throw new Error(`Dữ liệu 'Điểm dừng' thứ ${j + 1} chưa có đủ các cột (${requiredPropsStop.join(", ")})`);
+              if (
+                !hasRequiredProperties(data[index].stops[j], requiredPropsStop)
+              ) {
+                throw new Error(
+                  `Dữ liệu 'Điểm dừng' thứ ${
+                    j + 1
+                  } chưa có đủ các cột (${requiredPropsStop.join(", ")})`
+                );
               }
             } catch (error) {
               throw new Error(error.message);
             }
 
             try {
-              data[index].stops[j].datetime = convertDatetimeLocalToFirestoreTimestamp(data[index].stops[j].datetime);
+              data[index].stops[j].datetime =
+                convertDatetimeLocalToFirestoreTimestamp(
+                  data[index].stops[j].datetime
+                );
             } catch (error) {
-              throw new Error(`Điểm dừng thứ ${j + 1} có Định dạng thời gian chưa chính xác.(Vd đúng: yyyy-mm-ddTHH:mm)`);
+              throw new Error(
+                `Điểm dừng thứ ${
+                  j + 1
+                } có Định dạng thời gian chưa chính xác.(Vd đúng: yyyy-mm-ddTHH:mm)`
+              );
             }
           }
 
-
           const newId = await addRoute(data[index]);
 
-          setRoutesData(prev => [
-            ...prev,
-            { ...data[index], id: newId }
-          ]);        
+          setRoutesData((prev) => [...prev, { ...data[index], id: newId }]);
         } catch (error) {
           throw new Error(`Lỗi dòng dữ liệu (${index + 1}): ${error.message}`);
         }
@@ -181,25 +354,21 @@ const AdminRoutes = () => {
     }
   }, []);
 
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: false
+    multiple: false,
   });
 
-
   const handleSort = (field) => {
-    setSortBy(prev => ({
+    setSortBy((prev) => ({
       field,
-      order: prev.field === field && prev.order === "asc" ? "desc" : "asc"
+      order: prev.field === field && prev.order === "asc" ? "desc" : "asc",
     }));
   };
-
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
-
 
   const handleDelete = async (id) => {
     try {
@@ -208,7 +377,7 @@ const AdminRoutes = () => {
         await deleteRoute(id);
         setIsPending(false);
 
-        setRoutesData(routesData.filter(route => route.id !== id));
+        setRoutesData(routesData.filter((route) => route.id !== id));
         showNotification("Xóa chuyến xe thành công!", "success");
       }
     } catch (error) {
@@ -218,13 +387,11 @@ const AdminRoutes = () => {
     }
   };
 
-
   const handleEdit = (route) => {
     setEditingRoute(route);
     setNewRoute(route);
     setIsModalOpen(true);
   };
-
 
   const handleAdd = () => {
     setEditingRoute(null);
@@ -238,29 +405,33 @@ const AdminRoutes = () => {
       departureTime: convertDatetimeLocalToFirestoreTimestamp(now),
       arrivalTime: convertDatetimeLocalToFirestoreTimestamp(now),
       price: "",
-      stops: []
+      stops: [],
     });
     setIsModalOpen(true);
   };
 
-
   const handleAddStop = () => {
     const now = new Date();
     now.toISOString();
-    setNewRoute(prev => ({
+    setNewRoute((prev) => ({
       ...prev,
-      stops: [...prev.stops, { stop: "", address: "", datetime: convertDatetimeLocalToFirestoreTimestamp(now) }]
+      stops: [
+        ...prev.stops,
+        {
+          stop: "",
+          address: "",
+          datetime: convertDatetimeLocalToFirestoreTimestamp(now),
+        },
+      ],
     }));
   };
-
 
   const handleRemoveStop = (index) => {
-    setNewRoute(prev => ({
+    setNewRoute((prev) => ({
       ...prev,
-      stops: prev.stops.filter((_, i) => i !== index)
+      stops: prev.stops.filter((_, i) => i !== index),
     }));
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -270,14 +441,16 @@ const AdminRoutes = () => {
         await updateRoute(newRoute);
         setIsPending(false);
 
-        setRoutesData(routesData.map(route =>
-          route.id === editingRoute.id ? { ...newRoute, id: route.id } : route
-        ));
+        setRoutesData(
+          routesData.map((route) =>
+            route.id === editingRoute.id ? { ...newRoute, id: route.id } : route
+          )
+        );
         showNotification("Cập nhật chuyến xe thành công!", "success");
       } else {
         const newId = await addRoute(newRoute);
         setIsPending(false);
-        
+
         setRoutesData([...routesData, { ...newRoute, id: newId }]);
         showNotification("Thêm chuyến xe mới thành công!", "success");
       }
@@ -290,101 +463,65 @@ const AdminRoutes = () => {
     }
   };
 
-
   const handleNavigate = (tab) => {
     setIsPending(true);
     setActiveTab(tab);
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
-    }
-    else {
+    } else {
       router.replace("/admin/admin-login");
     }
-  }
+  };
 
+  
 
-
-
-const filteredAndSortedRoutes = useMemo(() => {
-  if (!routesData) return [];
-
-
-  return routesData
-    .filter(route => {
-      return (
-        route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (!filterDeparture || route.departureLocation === filterDeparture) &&
-        (!filterArrival || route.arrivalLocation === filterArrival) &&
-        (!startDate || new Date(route.departureTime.seconds * 1000) >= startDate) &&
-        (!endDate || new Date(route.departureTime.seconds * 1000) <= endDate)
-      );
-    })
-    .sort((a, b) => {
-      if (!sortBy.field) return 0;
-
-
-      let comparison = 0;
-      switch (sortBy.field) {
-        case "price":
-          comparison = a.price - b.price;
-          break;
-        case "departureTime":
-          comparison = a.departureTime - b.departureTime;
-          break;
-        default:
-          comparison = 0;
-      }
-      return sortBy.order === "asc" ? comparison : -comparison;
-    });
-}, [routesData, searchTerm, filterDeparture, filterArrival, startDate, endDate, sortBy]);
-
-
-
-
-    const fetchRoutesData = async () => {
-      try {
-        const fetchedRoute = await fetchRoute();
-        setRoutesData(fetchedRoute);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu:", error.message);
-      }
-    };
-
-    const getAvailableCoachCompanies = async () => {
-      const data = await fetchCoachCompanies();
-      const coachCompanies = data.map((coachCompany) => coachCompany.name)
-      setAvailableCoachCompanies(coachCompanies);
+  const fetchRoutesData = async () => {
+    try {
+      const fetchedRoute = await fetchRoute();
+      setRoutesData(fetchedRoute);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu:", error.message);
     }
- 
-    useEffect(() => {
-      getAvailableCoachCompanies();
-      fetchRoutesData();
-    }, []);
+  };
 
-    useEffect(() => {
-      if (isPending) {
-        console.log(isPending);
-      }
-    }, [isPending]);
-    
+  const getAvailableCoachCompanies = async () => {
+    const data = await fetchCoachCompanies();
+    const coachCompanies = data.map((coachCompany) => coachCompany.name);
+    setAvailableCoachCompanies(coachCompanies);
+  };
 
+  useEffect(() => {
+    getAvailableCoachCompanies();
+    fetchRoutesData();
+  }, []);
 
-    const handleExportToExcel = () => {
-      const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-      const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
-      exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
-    };
- 
- 
-    const handleExportToPDF = () => {
-      const fieldsArray = fieldsToExclude.split(',').map(field => field.trim());
-      const dataToExport = formatDataForExport(filteredAndSortedRoutes, desiredColumnOrder);
-      exportToPDF(dataToExport, fileName, fieldsArray, title);
-     
-    };
+  useEffect(() => {
+    if (isPending) {
+      console.log(isPending);
+    }
+  }, [isPending]);
 
+  const handleExportToExcel = () => {
+    const fieldsArray = fieldsToExclude.split(",").map((field) => field.trim());
+    const dataToExport = formatDataForExport(
+      filteredAndSortedRoutes,
+      desiredColumnOrder
+    );
+    exportToExcel(dataToExport, fileName, sheetName, fieldsArray);
+  };
 
-    return !routesData ? <LoadingOverlay isLoading /> : (
+  const handleExportToPDF = () => {
+    const fieldsArray = fieldsToExclude.split(",").map((field) => field.trim());
+    const dataToExport = formatDataForExport(
+      filteredAndSortedRoutes,
+      desiredColumnOrder
+    );
+    exportToPDF(dataToExport, fileName, fieldsArray, title);
+  };
+
+  return !routesData ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       {/* Rest of the component remains the same until the filters section */}
       <PendingOverlay isLoading={isPending} />
@@ -395,7 +532,11 @@ const filteredAndSortedRoutes = useMemo(() => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 20 }}
             exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 max-w-xl ${notification.type === "success" ? "bg-gradient-to-r from-green-500 to-green-400" : "bg-gradient-to-r from-red-500 to-red-400"} text-white`}
+            className={`fixed top-0 left-1/3 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 max-w-xl ${
+              notification.type === "success"
+                ? "bg-gradient-to-r from-green-500 to-green-400"
+                : "bg-gradient-to-r from-red-500 to-red-400"
+            } text-white`}
           >
             {notification.type === "success" ? (
               <FaCheckCircle className="text-xl" />
@@ -406,7 +547,6 @@ const filteredAndSortedRoutes = useMemo(() => {
           </motion.div>
         )}
       </AnimatePresence>
-
 
       {/* Sidebar */}
       <motion.div
@@ -420,7 +560,9 @@ const filteredAndSortedRoutes = useMemo(() => {
             initial={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             animate={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             transition={{ duration: 0.2 }}
-            className={`text-2xl font-bold ${isSidebarCollapsed ? "hidden" : "block"}`}
+            className={`text-2xl font-bold ${
+              isSidebarCollapsed ? "hidden" : "block"
+            }`}
           >
             Quản trị viên
           </motion.h2>
@@ -444,14 +586,19 @@ const filteredAndSortedRoutes = useMemo(() => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleNavigate(item.id)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all ${activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"}`}
+            className={`w-full flex items-center ${
+              isSidebarCollapsed ? "justify-center" : "space-x-3"
+            } px-4 py-3 rounded-lg transition-all ${
+              activeTab === item.id
+                ? "bg-white/20 shadow-lg"
+                : "hover:bg-white/10"
+            }`}
           >
             <span className="text-xl">{item.icon}</span>
             {!isSidebarCollapsed && <span>{item.label}</span>}
           </motion.button>
         ))}
       </motion.div>
-
 
       {/* Main Content */}
       <div className="flex-1 p-8">
@@ -462,22 +609,23 @@ const filteredAndSortedRoutes = useMemo(() => {
           className="max-w-7xl mx-auto"
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Quản lý chuyến xe</h1>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Quản lý chuyến xe
+            </h1>
             <div className="flex space-x-4">
-            <motion.button
+              <motion.button
                 {...getRootProps()} // Thêm props cho drag-and-drop
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 className={`shadow-md px-6 py-2 bg-gradient-to-r from-gray-500 to-gray-400 text-white rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 font-medium ${
-                            isDragActive ? "border border-blue-500 bg-blue-50" : ""
+                  isDragActive ? "border border-blue-500 bg-blue-50" : ""
                 }`}
               >
                 <input {...getInputProps()} hidden /> {/* Ẩn input */}
                 <FiUploadCloud className="inline-block w-5 h-5 mr-2 text-white" />
                 Tải file
               </motion.button>
-
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -509,7 +657,6 @@ const filteredAndSortedRoutes = useMemo(() => {
             </div>
           </div>
 
-
           {/* Search and Filters */}
           <div className="mb-6 space-y-4">
             <div className="relative">
@@ -525,31 +672,32 @@ const filteredAndSortedRoutes = useMemo(() => {
               />
             </div>
 
-
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
               <select
                 value={filterDeparture}
                 onChange={(e) => setFilterDeparture(e.target.value)}
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
-                >
+              >
                 <option value="">Điểm đi</option>
-                {provinces.map(location => (
-                  <option key={location} value={location}>{location}</option>
+                {provinces.map((location) => (
+                  <option key={location} value={location}>
+                    {location}
+                  </option>
                 ))}
               </select>
-
 
               <select
                 value={filterArrival}
                 onChange={(e) => setFilterArrival(e.target.value)}
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
-                >
+              >
                 <option value="">Điểm đến</option>
-                {provinces.map(location => (
-                  <option key={location} value={location}>{location}</option>
+                {provinces.map((location) => (
+                  <option key={location} value={location}>
+                    {location}
+                  </option>
                 ))}
               </select>
-
 
               <div className="flex items-center space-x-2">
                 <DatePicker
@@ -564,11 +712,12 @@ const filteredAndSortedRoutes = useMemo(() => {
                 />
               </div>
 
-
               <div className="flex items-center space-x-2">
                 <DatePicker
                   selected={endDate}
-                  onChange={(date) => setEndDate(date.setHours(23, 59, 59, 999))}
+                  onChange={(date) =>
+                    setEndDate(date.setHours(23, 59, 59, 999))
+                  }
                   selectsEnd
                   startDate={startDate}
                   endDate={endDate}
@@ -579,32 +728,49 @@ const filteredAndSortedRoutes = useMemo(() => {
                 />
               </div>
 
-
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleSort("price")}
-                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${sortBy.field === "price" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${
+                  sortBy.field === "price"
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
                 <span>Giá vé</span>
                 {sortBy.field === "price" ? (
-                  sortBy.order === "asc" ? <FaSortAmountUpAlt /> : <FaSortAmountDown />
-                ) : <FaSortAmountDown className="text-gray-400" />}
+                  sortBy.order === "asc" ? (
+                    <FaSortAmountUpAlt />
+                  ) : (
+                    <FaSortAmountDown />
+                  )
+                ) : (
+                  <FaSortAmountDown className="text-gray-400" />
+                )}
               </motion.button>
-
 
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleSort("departureTime")}
-                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${sortBy.field === "departureTime" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${
+                  sortBy.field === "departureTime"
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
                 <span>Giờ đi</span>
                 {sortBy.field === "departureTime" ? (
-                  sortBy.order === "asc" ? <FaSortAmountUpAlt /> : <FaSortAmountDown />
-                ) : <FaSortAmountDown className="text-gray-400" />}
+                  sortBy.order === "asc" ? (
+                    <FaSortAmountUpAlt />
+                  ) : (
+                    <FaSortAmountDown />
+                  )
+                ) : (
+                  <FaSortAmountDown className="text-gray-400" />
+                )}
               </motion.button>
             </div>
           </div>
-
 
           {/* Routes Table */}
           <motion.div
@@ -624,20 +790,34 @@ const filteredAndSortedRoutes = useMemo(() => {
                 </tr>
               </thead>
               <tbody>
-                {filteredAndSortedRoutes.map((route) => (
+                {displayedRoutes.map((route) => (
                   <React.Fragment key={route.id}>
                     <motion.tr
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
-                      onClick={() => setExpandedRow(expandedRow === route.id ? null : route.id)}
+                      onClick={() =>
+                        setExpandedRow(
+                          expandedRow === route.id ? null : route.id
+                        )
+                      }
                     >
                       <td className="px-6 py-4">{route.name}</td>
                       <td className="px-6 py-4">{route.departureLocation}</td>
                       <td className="px-6 py-4">{route.arrivalLocation}</td>
-                      <td className="px-6 py-4">{timeString(route.departureTime) + ", " + formatDate(route.departureTime)}</td>
-                      <td className="px-6 py-4">{timeString(route.arrivalTime) + ", " + formatDate(route.arrivalTime)}</td>
-                      <td className="px-6 py-4 text-right">{route.price.toLocaleString()}đ</td>
+                      <td className="px-6 py-4">
+                        {timeString(route.departureTime) +
+                          ", " +
+                          formatDate(route.departureTime)}
+                      </td>
+                      <td className="px-6 py-4">
+                        {timeString(route.arrivalTime) +
+                          ", " +
+                          formatDate(route.arrivalTime)}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {route.price.toLocaleString()}đ
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button
@@ -674,17 +854,26 @@ const filteredAndSortedRoutes = useMemo(() => {
                       >
                         <td colSpan="7" className="px-6 py-4">
                           <div className="space-y-4">
-                            <h3 className="font-semibold text-lg text-gray-700">Điểm dừng</h3>
+                            <h3 className="font-semibold text-lg text-gray-700">
+                              Điểm dừng
+                            </h3>
                             <div className="grid grid-cols-3 gap-4">
                               {route.stops.map((stopp, index) => (
                                 <div
                                   key={index}
                                   className="bg-white p-4 rounded-lg shadow"
                                 >
-                                  <h4 className="font-medium text-blue-600">{stopp.stop}</h4>
-                                  <p className="text-sm text-gray-600 mt-1">{stopp.address}</p>
+                                  <h4 className="font-medium text-blue-600">
+                                    {stopp.stop}
+                                  </h4>
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    {stopp.address}
+                                  </p>
                                   <p className="text-sm text-gray-500 mt-2">
-                                    Giờ đến: {formatFirestoreTimestampToStandard(stopp.datetime)}
+                                    Giờ đến:{" "}
+                                    {formatFirestoreTimestampToStandard(
+                                      stopp.datetime
+                                    )}
                                   </p>
                                 </div>
                               ))}
@@ -697,10 +886,27 @@ const filteredAndSortedRoutes = useMemo(() => {
                 ))}
               </tbody>
             </table>
+
+            {currentIndex < filteredAndSortedRoutes?.length && (
+              <div className="text-center p-4">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent" />
+              </div>
+            )}
+
+            <div ref={loader} className="h-4" />
+
+            {currentIndex >= filteredAndSortedRoutes?.length && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center p-4 text-gray-500"
+              >
+                Đã hiển thị tất cả dữ liệu
+              </motion.div>
+            )}
           </motion.div>
         </motion.div>
       </div>
-
 
       {/* Modal */}
       <AnimatePresence>
@@ -723,13 +929,17 @@ const filteredAndSortedRoutes = useMemo(() => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Nhà xe</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Nhà xe
+                    </label>
                     <>
                       <input
                         type="text"
                         className="w-full p-3 border rounded-lg"
                         value={newRoute.name}
-                        onChange={(e) => setNewRoute({ ...newRoute, name: e.target.value })}
+                        onChange={(e) =>
+                          setNewRoute({ ...newRoute, name: e.target.value })
+                        }
                         list="name-suggestions" // Kết nối với datalist
                         required
                       />
@@ -742,27 +952,41 @@ const filteredAndSortedRoutes = useMemo(() => {
                     </>
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Giá vé</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Giá vé
+                    </label>
                     <input
                       type="number"
                       className="w-full p-3 border rounded-lg"
                       value={newRoute.price}
-                      onChange={(e) => setNewRoute({ ...newRoute, price: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setNewRoute({
+                          ...newRoute,
+                          price: parseInt(e.target.value),
+                        })
+                      }
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Điểm đi</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Điểm đi
+                    </label>
                     <>
                       <input
                         type="text"
                         className="w-full p-3 border rounded-lg"
                         value={newRoute.departureLocation}
-                        onChange={(e) => setNewRoute({ ...newRoute, departureLocation: e.target.value })}
+                        onChange={(e) =>
+                          setNewRoute({
+                            ...newRoute,
+                            departureLocation: e.target.value,
+                          })
+                        }
                         list="departure-locations" // Kết nối với datalist
                         required
                       />
-                      
+
                       <datalist id="departure-locations">
                         {provinces.map((location, index) => (
                           <option key={index} value={location} />
@@ -771,13 +995,20 @@ const filteredAndSortedRoutes = useMemo(() => {
                     </>
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Điểm đến</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Điểm đến
+                    </label>
                     <>
                       <input
                         type="text"
                         className="w-full p-3 border rounded-lg"
                         value={newRoute.arrivalLocation}
-                        onChange={(e) => setNewRoute({ ...newRoute, arrivalLocation: e.target.value })}
+                        onChange={(e) =>
+                          setNewRoute({
+                            ...newRoute,
+                            arrivalLocation: e.target.value,
+                          })
+                        }
                         list="arrival-locations" // Kết nối với datalist
                         required
                       />
@@ -790,22 +1021,45 @@ const filteredAndSortedRoutes = useMemo(() => {
                     </>
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Giờ đi</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Giờ đi
+                    </label>
                     <input
                       type="datetime-local"
-                      value={convertTimestampToDatetimeLocal(newRoute.departureTime)}
-                      onChange={(e) => setNewRoute({ ...newRoute, departureTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
+                      value={convertTimestampToDatetimeLocal(
+                        newRoute.departureTime
+                      )}
+                      onChange={(e) =>
+                        setNewRoute({
+                          ...newRoute,
+                          departureTime:
+                            convertDatetimeLocalToFirestoreTimestamp(
+                              e.target.value
+                            ),
+                        })
+                      }
                       className="w-full p-3 border rounded-lg"
                       min={new Date().toISOString().slice(0, 16)}
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Giờ đến</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Giờ đến
+                    </label>
                     <input
                       type="datetime-local"
-                      value={convertTimestampToDatetimeLocal(newRoute.arrivalTime)}
-                      onChange={(e) => setNewRoute({ ...newRoute, arrivalTime: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
+                      value={convertTimestampToDatetimeLocal(
+                        newRoute.arrivalTime
+                      )}
+                      onChange={(e) =>
+                        setNewRoute({
+                          ...newRoute,
+                          arrivalTime: convertDatetimeLocalToFirestoreTimestamp(
+                            e.target.value
+                          ),
+                        })
+                      }
                       className="w-full p-3 border rounded-lg"
                       min={new Date().toISOString().slice(0, 16)}
                       required
@@ -813,11 +1067,12 @@ const filteredAndSortedRoutes = useMemo(() => {
                   </div>
                 </div>
 
-
                 {/* Stops Section */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold text-gray-700">Điểm dừng</h3>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Điểm dừng
+                    </h3>
                     <button
                       type="button"
                       onClick={handleAddStop}
@@ -828,7 +1083,10 @@ const filteredAndSortedRoutes = useMemo(() => {
                     </button>
                   </div>
                   {newRoute.stops.map((stopp, index) => (
-                    <div key={index} className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg relative">
+                    <div
+                      key={index}
+                      className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg relative"
+                    >
                       <button
                         type="button"
                         onClick={() => handleRemoveStop(index)}
@@ -837,7 +1095,9 @@ const filteredAndSortedRoutes = useMemo(() => {
                         <FaTimesCircle />
                       </button>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">Tên điểm dừng</label>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Tên điểm dừng
+                        </label>
                         <input
                           type="text"
                           className="w-full p-3 border rounded-lg"
@@ -851,7 +1111,9 @@ const filteredAndSortedRoutes = useMemo(() => {
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">Địa chỉ</label>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Địa chỉ
+                        </label>
                         <input
                           type="text"
                           className="w-full p-3 border rounded-lg"
@@ -865,13 +1127,20 @@ const filteredAndSortedRoutes = useMemo(() => {
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-medium mb-2">Giờ đến</label>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Giờ đến
+                        </label>
                         <input
                           type="datetime-local"
-                          value={convertTimestampToDatetimeLocal(stopp.datetime)}
+                          value={convertTimestampToDatetimeLocal(
+                            stopp.datetime
+                          )}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
-                            newStops[index].datetime = convertDatetimeLocalToFirestoreTimestamp(e.target.value);
+                            newStops[index].datetime =
+                              convertDatetimeLocalToFirestoreTimestamp(
+                                e.target.value
+                              );
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
                           className="w-full p-3 border rounded-lg"
@@ -882,7 +1151,6 @@ const filteredAndSortedRoutes = useMemo(() => {
                     </div>
                   ))}
                 </div>
-
 
                 <div className="flex justify-end space-x-4">
                   <motion.button
