@@ -20,7 +20,7 @@ const PendingOverlay = ({ isLoading }) => (
           opacity: isLoading ? 1 : 0
         }}
         transition={{ 
-          duration: 0.4,
+          duration: 0.3,
           ease: "easeInOut"
         }}
         className="relative"

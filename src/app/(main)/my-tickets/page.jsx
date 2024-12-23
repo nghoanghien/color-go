@@ -464,9 +464,12 @@ const TicketHistoryPage = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed top-4 left-20 right-20 z-50 flex justify-center px-4 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2"
-          >
-            Một vé vừa mới bị hủy
+            className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
+            >
+             <div className="bg-red-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+              <FaExclamationCircle />
+              <span>Một vé vừa mới bị hủy</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
