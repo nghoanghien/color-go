@@ -665,7 +665,7 @@ const AdminPromotions = () => {
                   <label className="block text-gray-700 mb-2">Hạn sử dụng</label>
                   <CustomDateTimePicker
                     //type="datetime-local"
-                    //className="w-full p-2 border rounded-lg"
+                    className="w-full p-2 border rounded-lg"
                     value={convertTimestampToDatetimeLocal(newPromotion.valid)}
                     onChange={(e) => setNewPromotion({ ...newPromotion, valid: convertDatetimeLocalToFirestoreTimestamp(e) })}
                     min={new Date().toISOString().slice(0, 16)}
