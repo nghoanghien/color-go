@@ -19,6 +19,7 @@ import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportP
 import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLocal, formatDate, formatFirestoreTimestampToStandard, formatTimestampToCustom, formatTimestampToDate, timeString } from "@/utils/time-manipulation";
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 import PendingOverlay from "@/components/pending-overlay";
+import CustomDateTimePicker from "../../../../components/CustomDatetimePicker";
 
 
 const AdminPromotions = () => {
@@ -662,13 +663,13 @@ const AdminPromotions = () => {
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2">Hạn sử dụng</label>
-                  <input
-                    type="datetime-local"
-                    className="w-full p-2 border rounded-lg"
+                  <CustomDateTimePicker
+                    //type="datetime-local"
+                    //className="w-full p-2 border rounded-lg"
                     value={convertTimestampToDatetimeLocal(newPromotion.valid)}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, valid: convertDatetimeLocalToFirestoreTimestamp(e.target.value) })}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, valid: convertDatetimeLocalToFirestoreTimestamp(e) })}
                     min={new Date().toISOString().slice(0, 16)}
-                    required
+                    //required
                   />
                 </div>
                 <div className="flex justify-end space-x-4 mt-6">
