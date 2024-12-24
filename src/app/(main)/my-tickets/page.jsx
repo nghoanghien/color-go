@@ -18,6 +18,7 @@ import {
   FaTicketAlt,
   FaTimes,
 } from "react-icons/fa";
+import InfoTooltip from "../../../components/infoToolTip";
 
 const TicketHistoryPage = () => {
   const [isLoading, user] = useUserInfomation();
@@ -273,6 +274,7 @@ const TicketHistoryPage = () => {
                               <FaTimes /> Hủy vé
                             </button>
                           )}
+                          {!isValidForCancel(ticket) && <InfoTooltip text="Sau 4h trước giờ khởi hành, vé sẽ không thể hủy!" />}
                         </div>
                       )}
 
