@@ -18,6 +18,7 @@ import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportP
 import { fetchCoachCompanies } from "@/services/coachCompany";
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 import PendingOverlay from "@/components/pending-overlay";
+import CustomDateTimePicker from "@/components/CustomDatetimePicker";
 
 
 const AdminRoutes = () => {
@@ -1028,8 +1029,8 @@ const AdminRoutes = () => {
                     <label className="block text-gray-700 font-medium mb-2">
                       Giờ đi
                     </label>
-                    <input
-                      type="datetime-local"
+                    <CustomDateTimePicker
+                      //type="datetime-local"
                       value={convertTimestampToDatetimeLocal(
                         newRoute.departureTime
                       )}
@@ -1038,21 +1039,21 @@ const AdminRoutes = () => {
                           ...newRoute,
                           departureTime:
                             convertDatetimeLocalToFirestoreTimestamp(
-                              e.target.value
+                              e
                             ),
                         })
                       }
                       className="w-full p-3 border rounded-lg"
                       min={new Date().toISOString().slice(0, 16)}
-                      required
+                      //required
                     />
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
                       Giờ đến
                     </label>
-                    <input
-                      type="datetime-local"
+                    <CustomDateTimePicker
+                      //type="datetime-local"
                       value={convertTimestampToDatetimeLocal(
                         newRoute.arrivalTime
                       )}
@@ -1060,13 +1061,13 @@ const AdminRoutes = () => {
                         setNewRoute({
                           ...newRoute,
                           arrivalTime: convertDatetimeLocalToFirestoreTimestamp(
-                            e.target.value
+                            e
                           ),
                         })
                       }
                       className="w-full p-3 border rounded-lg"
                       min={new Date().toISOString().slice(0, 16)}
-                      required
+                      //required
                     />
                   </div>
                 </div>
@@ -1134,8 +1135,8 @@ const AdminRoutes = () => {
                         <label className="block text-gray-700 font-medium mb-2">
                           Giờ đến
                         </label>
-                        <input
-                          type="datetime-local"
+                        <CustomDateTimePicker
+                          //type="datetime-local"
                           value={convertTimestampToDatetimeLocal(
                             stopp.datetime
                           )}
@@ -1143,13 +1144,13 @@ const AdminRoutes = () => {
                             const newStops = [...newRoute.stops];
                             newStops[index].datetime =
                               convertDatetimeLocalToFirestoreTimestamp(
-                                e.target.value
+                                e
                               );
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
                           className="w-full p-3 border rounded-lg"
                           min={new Date().toISOString().slice(0, 16)}
-                          required
+                          //required
                         />
                       </div>
                     </div>

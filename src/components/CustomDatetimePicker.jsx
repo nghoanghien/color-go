@@ -64,8 +64,8 @@ const CustomDateTimePicker = ({ value = new Date().toISOString(), onChange, min,
   
     setShowAbove(shouldShowAbove);
     setPosition({
-      top: shouldShowAbove ? buttonRect.top - pickerHeight - 80 : buttonRect.bottom + 60, // Khoảng cách 10px giữa button và picker
-      left: buttonRect.left, // Căn trái của picker với nút chọn
+      top: shouldShowAbove ? buttonRect.top - pickerHeight - 80 : buttonRect.bottom + 5, // Khoảng cách 10px giữa button và picker
+      left: buttonRect.left - (350 - buttonRect.width / 2), // Căn trái của picker với nút chọn
       width: 700, // Đảm bảo picker có cùng chiều rộng với nút
     });
   };
