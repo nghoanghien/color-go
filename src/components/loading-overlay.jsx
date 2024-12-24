@@ -17,7 +17,7 @@ const LoadingOverlay = ({ isLoading }) => (
           }
         }}        
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/0 backdrop-blur-sm"
       >
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
