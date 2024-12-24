@@ -8,14 +8,18 @@ import { addTicketToFavorites, removeTicketFromFavorites } from "@/services/user
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
+import { SearchX } from 'lucide-react'
 import {
   FaArrowLeft,
   FaBus,
+  FaBusAlt,
+  FaClipboardList,
   FaExclamationCircle,
   FaFilter,
   FaHeart,
   FaMapMarker,
   FaMapMarkerAlt,
+  FaSadTear,
   FaSort,
 } from "react-icons/fa";
 
@@ -293,6 +297,17 @@ const SearchResultsPage = () => {
       </div>
 
       <div className="max-w-2xl mx-auto mt-4 px-4 space-y-4">
+        {tickets.length === 0 && (
+          <div className="flex flex-col items-center justify-center p-8 text-center">
+            <FaClipboardList size={64} className="text-gray-400 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              Không tìm thấy vé nào rồi
+            </h3>
+            <p className="text-gray-500 mb-4">
+              Thử lại với các ngày lân cận xem sao nhé.
+            </p>
+          </div>
+        )}
         {tickets.map((ticket) => (
           <motion.div
             key={ticket.id}
