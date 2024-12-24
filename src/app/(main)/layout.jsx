@@ -103,7 +103,7 @@ export default function Layout({ children }) {
   }, [pathname]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-b from-green-100/70 via-blue-100/70 to-yellow-100/70">
       {children}
       <PendingOverlay isLoading={isLoading} />
       <BottomNavigation 
