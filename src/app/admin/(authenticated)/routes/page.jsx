@@ -20,6 +20,7 @@ import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 import PendingOverlay from "@/components/pending-overlay";
 import CustomDateTimePicker from "@/components/CustomDatetimePicker";
 import CustomDateRangePicker from "@/components/CustomDateRangePicker";
+import AnimatedMultiSelect from "@/components/AnimatedMultiSelect";
 
 
 const AdminRoutes = () => {
@@ -182,8 +183,8 @@ const AdminRoutes = () => {
       .filter((route) => {
         return (
           route.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          (!filterDeparture || route.departureLocation === filterDeparture) &&
-          (!filterArrival || route.arrivalLocation === filterArrival) &&
+          (!filterDeparture || filterDeparture.includes(route.departureLocation) || filterDeparture.length === 0) &&
+          (!filterArrival || filterArrival.includes(route.arrivalLocation) || filterArrival.length === 0) &&
           (!startDate ||
             new Date(route.departureTime.seconds * 1000) >= startDate) &&
           (!endDate || new Date(route.departureTime.seconds * 1000) <= endDate)
@@ -683,31 +684,25 @@ const AdminRoutes = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-              <select
-                value={filterDeparture}
-                onChange={(e) => setFilterDeparture(e.target.value)}
-                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
-              >
-                <option value="">Điểm đi</option>
-                {provinces.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center space-x-2">
+                <AnimatedMultiSelect
+                  options={provinces}
+                  value={filterDeparture}
+                  onChange={setFilterDeparture}
+                  placeholder="Điểm đi"
+                  maxSelections={4} // Đặt là 1 cho single-select
+                />
+              </div>
 
-              <select
-                value={filterArrival}
-                onChange={(e) => setFilterArrival(e.target.value)}
-                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-md transition duration-200 ease-in-out hover:border-blue-400"
-              >
-                <option value="">Điểm đến</option>
-                {provinces.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center space-x-2">
+                <AnimatedMultiSelect
+                  options={provinces}
+                  value={filterArrival}
+                  onChange={setFilterArrival}
+                  placeholder="Điểm đến"
+                  maxSelections={4} // Đặt là 1 cho single-select
+                />
+              </div>
 
               <div className="flex items-center space-x-2">
                 <CustomDateRangePicker
@@ -731,47 +726,51 @@ const AdminRoutes = () => {
                 />
               </div>
 
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleSort("price")}
-                className={`p-2 rounded-2xl flex items-center justify-center space-x-2 ${
-                  sortBy.field === "price"
-                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
-                    : "bg-gray-200 text-gray-700"
-                } transition-all duration-300`}
-              >
-                <span>Giá vé</span>
-                {sortBy.field === "price" ? (
-                  sortBy.order === "asc" ? (
-                    <FaSortAmountUpAlt />
+              <div className="flex items-center space-x-2">
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleSort("price")}
+                  className={`p-2 w-full h-14 rounded-2xl flex items-center justify-center space-x-2 ${
+                    sortBy.field === "price"
+                      ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } transition-all duration-300`}
+                >
+                  <span>Giá vé</span>
+                  {sortBy.field === "price" ? (
+                    sortBy.order === "asc" ? (
+                      <FaSortAmountUpAlt />
+                    ) : (
+                      <FaSortAmountDown />
+                    )
                   ) : (
-                    <FaSortAmountDown />
-                  )
-                ) : (
-                  <FaSortAmountDown className="text-gray-400" />
-                )}
-              </motion.button>
+                    <FaSortAmountDown className="text-gray-400" />
+                  )}
+                </motion.button>
+              </div>
 
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleSort("departureTime")}
-                className={`p-2 rounded-2xl flex items-center justify-center space-x-2 ${
-                  sortBy.field === "departureTime"
-                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
-                    : "bg-gray-200 text-gray-700"
-                } transition-all duration-300`}
-              >
-                <span>Giờ đi</span>
-                {sortBy.field === "departureTime" ? (
-                  sortBy.order === "asc" ? (
-                    <FaSortAmountUpAlt />
+              <div className="flex items-center space-x-2">
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleSort("departureTime")}
+                  className={`p-2 w-full h-14 rounded-2xl flex items-center justify-center space-x-2 ${
+                    sortBy.field === "departureTime"
+                      ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } transition-all duration-300`}
+                >
+                  <span>Giờ đi</span>
+                  {sortBy.field === "departureTime" ? (
+                    sortBy.order === "asc" ? (
+                      <FaSortAmountUpAlt />
+                    ) : (
+                      <FaSortAmountDown />
+                    )
                   ) : (
-                    <FaSortAmountDown />
-                  )
-                ) : (
-                  <FaSortAmountDown className="text-gray-400" />
-                )}
-              </motion.button>
+                    <FaSortAmountDown className="text-gray-400" />
+                  )}
+                </motion.button>
+              </div>
             </div>
           </div>
 
@@ -1036,9 +1035,7 @@ const AdminRoutes = () => {
                         setNewRoute({
                           ...newRoute,
                           departureTime:
-                            convertDatetimeLocalToFirestoreTimestamp(
-                              e
-                            ),
+                            convertDatetimeLocalToFirestoreTimestamp(e),
                         })
                       }
                       className="w-full p-3 border rounded-lg"
@@ -1058,9 +1055,8 @@ const AdminRoutes = () => {
                       onChange={(e) =>
                         setNewRoute({
                           ...newRoute,
-                          arrivalTime: convertDatetimeLocalToFirestoreTimestamp(
-                            e
-                          ),
+                          arrivalTime:
+                            convertDatetimeLocalToFirestoreTimestamp(e),
                         })
                       }
                       className="w-full p-3 border rounded-lg"
@@ -1141,9 +1137,7 @@ const AdminRoutes = () => {
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
                             newStops[index].datetime =
-                              convertDatetimeLocalToFirestoreTimestamp(
-                                e
-                              );
+                              convertDatetimeLocalToFirestoreTimestamp(e);
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
                           className="w-full p-3 border rounded-lg"
