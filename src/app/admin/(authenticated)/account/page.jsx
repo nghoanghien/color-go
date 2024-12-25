@@ -212,7 +212,7 @@ const AdminAccount = () => {
 
 					<motion.div
 						layout
-						className="bg-white rounded-2xl shadow-xl p-8"
+						className="border-4 border-blue-100 bg-white rounded-2xl shadow-xl p-8"
 					>
 						<form onSubmit={handleSubmit} className="space-y-6">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -222,7 +222,7 @@ const AdminAccount = () => {
 									</label>
 									<input
 										type="text"
-										className={`w-full p-3 rounded-lg border ${
+										className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full transition-shadow duration-200 ease-in-out ${
 											isEditing
 												? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 												: "border-gray-200 bg-gray-50"
@@ -245,7 +245,7 @@ const AdminAccount = () => {
 									</label>
 									<input
 										type="tel"
-										className={`w-full p-3 rounded-lg border ${
+										className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full transition-shadow duration-200 ease-in-out ${
 											isEditing
 												? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 												: "border-gray-200 bg-gray-50"
@@ -268,7 +268,7 @@ const AdminAccount = () => {
 									</label>
 									<input
 										type="text"
-										className={`w-full p-3 rounded-lg border ${
+										className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full transition-shadow duration-200 ease-in-out ${
 											isEditing
 												? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 												: "border-gray-200 bg-gray-50"
@@ -291,7 +291,7 @@ const AdminAccount = () => {
 									</label>
 									<input
 										type="email"
-										className="w-full p-3 rounded-lg border border-gray-200 bg-gray-50"
+										className="w-full p-3 rounded-2xl shadow-md border-2 border-gray-200 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full transition-shadow duration-200 ease-in-out bg-gray-50"
 										value={editedData.email}
 										disabled
 									/>
@@ -303,7 +303,7 @@ const AdminAccount = () => {
 									</label>
 									<input
 										type="date"
-										className={`w-full p-3 rounded-lg border ${
+										className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full transition-shadow duration-200 ease-in-out ${
 											isEditing
 												? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 												: "border-gray-200 bg-gray-50"
