@@ -193,7 +193,7 @@ const CustomDateRangePicker = ({
           ref={pickerRef}
           style={{
             position: "fixed",
-            top: `${position.top}px`,
+            top: `${position.top + 2}px`,
             left: `${position.left}px`,
             width: `${position.width}px`,
             zIndex: 50,
