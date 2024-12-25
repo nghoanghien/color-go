@@ -19,6 +19,7 @@ import { fetchCoachCompanies } from "@/services/coachCompany";
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 import PendingOverlay from "@/components/pending-overlay";
 import CustomDateTimePicker from "@/components/CustomDatetimePicker";
+import CustomDateRangePicker from "@/components/CustomDateRangePicker";
 
 
 const AdminRoutes = () => {
@@ -158,6 +159,10 @@ const AdminRoutes = () => {
       setNotification({ show: false, message: "", type: "" });
     }, 5000);
   };
+
+  const setEndOfDay = (date) => {
+    setEndDate(date.setHours(23, 59, 59, 999));
+  }
 
   const sidebarItems = [
     { id: "dashboard", label: "Trang chủ", icon: <FaHome /> },
@@ -705,31 +710,22 @@ const AdminRoutes = () => {
               </select>
 
               <div className="flex items-center space-x-2">
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  selectsStart
+                <CustomDateRangePicker
                   startDate={startDate}
                   endDate={endDate}
-                  placeholderText="Từ ngày (khởi hành)"
-                  className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
-                  dateFormat="dd/MM/yyyy"
+                  onStartDateChange={setStartDate}
+                  onEndDateChange={setEndDate}
+                  placeholder="Từ ngày"
                 />
               </div>
-
               <div className="flex items-center space-x-2">
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) =>
-                    setEndDate(date.setHours(23, 59, 59, 999))
-                  }
-                  selectsEnd
+                <CustomDateRangePicker
                   startDate={startDate}
                   endDate={endDate}
-                  minDate={startDate}
-                  placeholderText="Đến ngày (khởi hành)"
-                  className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
-                  dateFormat="dd/MM/yyyy"
+                  onStartDateChange={setStartDate}
+                  onEndDateChange={setEndDate}
+                  isEndDate={true}
+                  placeholder="Đến ngày"
                 />
               </div>
 
