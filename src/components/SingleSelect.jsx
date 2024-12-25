@@ -56,7 +56,7 @@ const SingleSelect = ({
       >
         <div
           className={`
-            w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 bg-white 
+            w-full p-4 rounded-2xl shadow-md bg-white 
             cursor-pointer flex items-center gap-2 
             hover:shadow-lg transition-all duration-200 
             focus:ring-2 focus:ring-blue-200 focus:bg-blue-50

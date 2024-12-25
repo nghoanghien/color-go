@@ -939,7 +939,7 @@ const AdminRoutes = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="border-8 border-blue-100 bg-white rounded-2xl p-8 w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh]"
+              className="bg-white/90 border-8 border-blue-100 bg-white rounded-2xl p-8 w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh]"
             >
               <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                 {editingRoute ? "Chỉnh sửa chuyến xe" : "Thêm chuyến xe mới"}
@@ -967,7 +967,7 @@ const AdminRoutes = () => {
                     <input
                       type="number"
                       placeholder="Nhập giá vé..."
-                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                      className="w-full bg-white p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newRoute.price}
                       onChange={(e) =>
                         setNewRoute({
@@ -1017,7 +1017,7 @@ const AdminRoutes = () => {
                             convertDatetimeLocalToFirestoreTimestamp(e),
                         })
                       }
-                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                      className="w-full bg-white p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       min={new Date().toISOString().slice(0, 16)}
                       //required
                     />
@@ -1038,7 +1038,7 @@ const AdminRoutes = () => {
                             convertDatetimeLocalToFirestoreTimestamp(e),
                         })
                       }
-                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                      className="w-full bg-white p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       min={new Date().toISOString().slice(0, 16)}
                       //required
                     />
@@ -1054,7 +1054,7 @@ const AdminRoutes = () => {
                     <button
                       type="button"
                       onClick={handleAddStop}
-                      className="text-blue-500 hover:text-blue-700 flex items-center space-x-1"
+                      className="p-2 rounded-xl bg-white shadow-md text-blue-500 hover:text-blue-700 flex items-center space-x-1"
                     >
                       <FaPlus />
                       <span>Thêm điểm dừng</span>
@@ -1063,12 +1063,12 @@ const AdminRoutes = () => {
                   {newRoute.stops.map((stopp, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg relative"
+                      className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-2xl shadow-md relative"
                     >
                       <button
                         type="button"
                         onClick={() => handleRemoveStop(index)}
-                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                        className="absolute shadow-md rounded-full top-2 right-2 text-red-500 hover:text-red-700"
                       >
                         <FaTimesCircle />
                       </button>
@@ -1079,7 +1079,7 @@ const AdminRoutes = () => {
                         <input
                           type="text"
                           placeholder="Nhập tên điểm dừng..."
-                          className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                          className="w-full p-3 border border-gray rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                           value={stopp.stop}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
@@ -1096,7 +1096,7 @@ const AdminRoutes = () => {
                         <input
                           type="text"
                           placeholder="Nhập địa chỉ..."
-                          className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                          className="w-full p-3 border border-gray rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                           value={stopp.address}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
@@ -1121,7 +1121,7 @@ const AdminRoutes = () => {
                               convertDatetimeLocalToFirestoreTimestamp(e);
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
-                          className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                          className="w-full p-3 border border-gray rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                           min={new Date().toISOString().slice(0, 16)}
                           //required
                         />
@@ -1136,7 +1136,7 @@ const AdminRoutes = () => {
                     whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300"
+                    className="px-6 py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-all duration-300"
                   >
                     Hủy
                   </motion.button>
