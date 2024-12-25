@@ -15,6 +15,7 @@ import { adjustUserBalance } from "@/services/wallet";
 import { changeMembershipById } from "@/services/membership";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import PendingOverlay from "@/components/pending-overlay";
+import CustomDateRangePicker from "@/components/CustomDateRangePicker";
 
 
 
@@ -383,29 +384,28 @@ const AdminTickets = () => {
           {/* Filter Options */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="flex items-center space-x-2">
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
+              <CustomDateRangePicker
+                startDate={startDate}
+                endDate={endDate}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}          
                 placeholderText="Từ ngày"
-                customInput={<CustomDateInput />}
-                dateFormat="dd/MM/yyyy"
+                //customInput={<CustomDateInput />}
+                //dateFormat="dd/MM/yyyy"
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
               />
-              <div>
-                <FaArrowRight
-                  style={{ color: "gray", fontSize: "24px" }}
-                  className="ml-6"
-                />
-              </div>
             </div>
 
-            <div className="flex items-center space-x-2 pl-6">
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date.setHours(23, 59, 59, 999))}
+            <div className="flex items-center space-x-2">
+              <CustomDateRangePicker
+                startDate={startDate}
+                endDate={endDate}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}
+                isEndDate={true}
                 placeholderText="Đến ngày"
-                customInput={<CustomDateInput />}
-                dateFormat="dd/MM/yyyy"
+                //customInput={<CustomDateInput />}
+                //dateFormat="dd/MM/yyyy"
                 className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
               />
             </div>
