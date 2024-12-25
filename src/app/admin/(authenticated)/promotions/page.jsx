@@ -394,7 +394,9 @@ const AdminPromotions = () => {
           className="max-w-7xl mx-auto"
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 drop-shadow-md">Quản lý ưu đãi</h1>
+            <h1 className="text-3xl font-bold text-gray-800 drop-shadow-md">
+              Quản lý ưu đãi
+            </h1>
             <div className="flex space-x-4">
               <motion.button
                 {...getRootProps()} // Thêm props cho drag-and-drop
@@ -537,15 +539,15 @@ const AdminPromotions = () => {
                 </tr>
               </thead>
               {filteredAndSortedPromotions().length === 0 && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center gap-2 text-center p-4 text-gray-500"
-                  >
-                    <FaExclamationCircle className="text-xl text-gray-500" />
-                    <span>Không tìm thấy dữ liệu trùng khớp!</span>
-                  </motion.div>
-                )}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center gap-2 text-center p-4 text-gray-500"
+                >
+                  <FaExclamationCircle className="text-xl text-gray-500" />
+                  <span>Không tìm thấy dữ liệu trùng khớp!</span>
+                </motion.div>
+              )}
               <tbody>
                 <AnimatePresence>
                   {filteredAndSortedPromotions().map((promotion) => (
@@ -615,7 +617,7 @@ const AdminPromotions = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white/90 border-8 border-blue-100 rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
             >
-              <h2 className="text-2xl font-bold mb-6">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                 {editingPromotion ? "Chỉnh sửa ưu đãi" : "Thêm ưu đãi mới"}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
