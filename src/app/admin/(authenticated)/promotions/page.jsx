@@ -20,6 +20,7 @@ import { convertDatetimeLocalToFirestoreTimestamp, convertTimestampToDatetimeLoc
 import { hasRequiredProperties, readExcelFile } from "@/utils/import-export";
 import PendingOverlay from "@/components/pending-overlay";
 import CustomDateTimePicker from "../../../../components/CustomDatetimePicker";
+import SingleSelect from "@/components/SingleSelect";
 
 
 const AdminPromotions = () => {
@@ -689,20 +690,22 @@ const AdminPromotions = () => {
                   <label className="block text-gray-700 mb-2">
                     Loại giảm giá
                   </label>
-                  <select
-                    className="w-full p-2 border rounded-lg"
-                    value={newPromotion.type}
-                    onChange={(e) =>
+                  <SingleSelect
+                    options={["Phần trăm (%)", "Số tiền cố định"]}
+                    value={
+                      newPromotion.type === 1
+                        ? "Phần trăm (%)"
+                        : "Số tiền cố định"
+                    }
+                    onChange={(selectedOption) => {
                       setNewPromotion({
                         ...newPromotion,
-                        type: parseInt(e.target.value, 10),
-                      })
-                    }
-                    required
-                  >
-                    <option value="1">Phần trăm (%)</option>
-                    <option value="0">Số tiền cố định</option>
-                  </select>
+                        type: selectedOption === "Phần trăm (%)" ? 1 : 0,
+                      });
+                    }}
+                    placeholder="Chọn loại khuyến mãi..."
+                    className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                  />
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2">
