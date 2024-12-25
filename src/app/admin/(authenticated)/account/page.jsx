@@ -202,7 +202,7 @@ const AdminAccount = () => {
 								whileHover={{ scale: 1.05 }}
 								whileTap={{ scale: 0.95 }}
 								onClick={() => setIsEditing(true)}
-								className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+								className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-4 py-2 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
 							>
 								<FaEdit />
 								<span>Chỉnh sửa</span>
@@ -380,7 +380,7 @@ const AdminAccount = () => {
 										whileTap={{ scale: 0.95 }}
 										type="button"
 										onClick={handleCancel}
-										className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+										className="px-6 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-colors"
 									>
 										Hủy
 									</motion.button>
@@ -388,7 +388,7 @@ const AdminAccount = () => {
 										whileHover={{ scale: 1.05 }}
 										whileTap={{ scale: 0.95 }}
 										type="submit"
-										className="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-lg hover:shadow-lg transition-all duration-300"
+										className="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl hover:shadow-lg transition-all duration-300"
 									>
 										Lưu thay đổi
 									</motion.button>

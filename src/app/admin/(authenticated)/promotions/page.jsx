@@ -402,7 +402,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 type="button"
-                className={`shadow-md px-6 py-2 bg-gradient-to-r from-gray-500 to-gray-400 text-white rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 font-medium ${
+                className={`shadow-md px-6 py-2 bg-gradient-to-r from-gray-500 to-gray-400 text-white rounded-xl hover:from-gray-600 hover:to-gray-500 transition-all duration-300 font-medium ${
                             isDragActive ? "border border-blue-500 bg-blue-50" : ""
                 }`}
               >
@@ -414,7 +414,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleExportToExcel}
-                className="shadow-md bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+                className="shadow-md bg-gradient-to-r from-green-500 to-green-400 text-white px-4 py-2 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFileDownload />
                 <span>Xuất Excel</span>
@@ -423,7 +423,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleExportToPDF}
-                className="shadow-md bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+                className="shadow-md bg-gradient-to-r from-red-700 to-red-500 text-white px-4 py-2 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
               >
                 <FaFilePdf />
                 <span>Xuất PDF</span>
@@ -432,7 +432,7 @@ const AdminPromotions = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleAdd}
-              className="shadow-md bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+              className="shadow-md bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-4 py-2 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
             >
               <FaPlus />
               <span>Thêm ưu đãi</span>
