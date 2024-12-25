@@ -220,7 +220,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen w-full flex bg-gray-50">
       <PendingOverlay isLoading={isPending} />
       {/* Sidebar */}
-      <div className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 transition-all duration-300 relative`}>
+      <div className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} rounded-tr-3xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 transition-all duration-300 relative`}>
         <div className="mb-8 text-center relative">
           <h2 className={`text-2xl font-bold ${isSidebarCollapsed ? 'hidden' : 'block'}`}>Quản trị viên</h2>
           <button
@@ -234,7 +234,7 @@ const AdminDashboard = () => {
           <button
             key={item.id}
             onClick={() => handleNavigate(item.id)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-3'} px-4 py-3 rounded-lg transition-all ${activeTab === item.id ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10'}`}
+            className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-3'} px-4 py-3 rounded-2xl transition-all ${activeTab === item.id ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10'}`}
           >
             <span className="text-xl">{item.icon}</span>
             {!isSidebarCollapsed && <span>{item.label}</span>}

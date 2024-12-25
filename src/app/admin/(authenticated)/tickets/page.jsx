@@ -280,7 +280,7 @@ const AdminTickets = () => {
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         animate={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         transition={{ duration: 0.3 }}
-        className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative top-0 left-0 h-screen"
+        className="rounded-tr-3xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative top-0 left-0 h-screen"
         style={{ position: "sticky" }}
       >
         <div className="mb-8 text-center relative">
@@ -313,7 +313,7 @@ const AdminTickets = () => {
             onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${
               isSidebarCollapsed ? "justify-center" : "space-x-3"
-            } px-4 py-3 rounded-lg ${
+            } px-4 py-3 rounded-2xl ${
               activeTab === item.id ? "bg-white/20" : "hover:bg-white/10"
             }`}
           >

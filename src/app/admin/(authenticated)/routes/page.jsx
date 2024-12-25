@@ -564,7 +564,7 @@ const AdminRoutes = () => {
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         animate={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className={`bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative sticky top-0 left-0 h-screen`}
+        className={`rounded-tr-3xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 space-y-2 relative sticky top-0 left-0 h-screen`}
       >
         <div className="mb-8 text-center relative">
           <motion.h2
@@ -599,7 +599,7 @@ const AdminRoutes = () => {
             onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${
               isSidebarCollapsed ? "justify-center" : "space-x-3"
-            } px-4 py-3 rounded-lg transition-all ${
+            } px-4 py-3 rounded-2xl transition-all ${
               activeTab === item.id
                 ? "bg-white/20 shadow-lg"
                 : "hover:bg-white/10"
