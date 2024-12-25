@@ -71,7 +71,7 @@ const AnimatedMultiSelect = ({
   return (
     <div className={`relative w-full ${containerClassName}`} ref={dropdownRef}>
       <motion.div
-        className="relative w-full z-40"
+        className={`relative w-full ${isOpen ? "z-40" : ""}`}
         initial={false}
         animate={{ scale: isOpen ? 1.02 : 1 }}
         transition={{ duration: 0.2 }}
