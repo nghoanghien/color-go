@@ -613,7 +613,7 @@ const AdminPromotions = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white border-8 border-blue-100 rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
+              className="bg-white/90 border-8 border-blue-100 rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
             >
               <h2 className="text-2xl font-bold mb-6">
                 {editingPromotion ? "Chỉnh sửa ưu đãi" : "Thêm ưu đãi mới"}
@@ -627,7 +627,7 @@ const AdminPromotions = () => {
                     <input
                       type="text"
                       placeholder="Nhập mã ưu đãi..."
-                      className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out ${
+                      className={`w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out ${
                         editingPromotion ? "bg-gray-100" : ""
                       }`}
                       value={newPromotion.code}
@@ -646,7 +646,7 @@ const AdminPromotions = () => {
                     <input
                       type="text"
                       placeholder="Nhập nội dung giảm giá..."
-                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                      className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newPromotion.title}
                       onChange={(e) =>
                         setNewPromotion({
@@ -666,7 +666,7 @@ const AdminPromotions = () => {
                     <input
                       type="number"
                       placeholder="Nhập giá trị đơn tối thiểu..."
-                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                      className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newPromotion.minApply}
                       onChange={(e) =>
                         setNewPromotion({
@@ -684,7 +684,7 @@ const AdminPromotions = () => {
                     <input
                       type="number"
                       placeholder="Nhập mức giảm tối đa..."
-                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                      className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newPromotion.max}
                       onChange={(e) =>
                         setNewPromotion({
@@ -714,7 +714,7 @@ const AdminPromotions = () => {
                       });
                     }}
                     placeholder="Chọn loại khuyến mãi..."
-                    className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                    className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                   />
                 </div>
                 <div>
@@ -723,7 +723,7 @@ const AdminPromotions = () => {
                   </label>
                   <input
                     type="number"
-                    className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                    className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                     value={newPromotion.value}
                     onChange={(e) =>
                       setNewPromotion({
@@ -745,7 +745,7 @@ const AdminPromotions = () => {
                   </label>
                   <CustomDateTimePicker
                     //type="datetime-local"
-                    className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+                    className="w-full p-4 rounded-2xl shadow-md bg-white focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                     value={convertTimestampToDatetimeLocal(newPromotion.valid)}
                     onChange={(e) =>
                       setNewPromotion({
@@ -761,7 +761,7 @@ const AdminPromotions = () => {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-xl hover:bg-gray-400 transition-colors"
                   >
                     Hủy
                   </button>
