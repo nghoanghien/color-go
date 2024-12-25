@@ -21,6 +21,7 @@ import PendingOverlay from "@/components/pending-overlay";
 import CustomDateTimePicker from "@/components/CustomDatetimePicker";
 import CustomDateRangePicker from "@/components/CustomDateRangePicker";
 import AnimatedMultiSelect from "@/components/AnimatedMultiSelect";
+import SingleSelect from "@/components/SingleSelect";
 
 
 const AdminRoutes = () => {
@@ -59,6 +60,21 @@ const AdminRoutes = () => {
   ]);
 
   const [routesData, setRoutesData] = useState();
+
+  const setNewRouteName = (e) => {
+    setNewRoute({ ...newRoute, name: e });
+  }
+  const setNewRouteDepartureLocation = (e) =>
+    setNewRoute({
+      ...newRoute,
+      departureLocation: e,
+    });
+  const setNewRouteArrivalLocation = (e) =>
+    setNewRoute({
+      ...newRoute,
+      arrivalLocation: e,
+    })
+  
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoute, setEditingRoute] = useState(null);
@@ -935,22 +951,13 @@ const AdminRoutes = () => {
                       Nhà xe
                     </label>
                     <>
-                      <input
-                        type="text"
-                        className="w-full p-3 border rounded-lg"
+                      
+                      <SingleSelect
+                        options={availableCoachCompanies}
                         value={newRoute.name}
-                        onChange={(e) =>
-                          setNewRoute({ ...newRoute, name: e.target.value })
-                        }
-                        list="name-suggestions" // Kết nối với datalist
-                        required
+                        onChange={setNewRouteName}
+                        placeholder="Chọn tên nhà xe..."
                       />
-
-                      <datalist id="name-suggestions">
-                        {availableCoachCompanies.map((value, index) => (
-                          <option key={index} value={value} />
-                        ))}
-                      </datalist>
                     </>
                   </div>
                   <div>
@@ -959,7 +966,8 @@ const AdminRoutes = () => {
                     </label>
                     <input
                       type="number"
-                      className="w-full p-3 border rounded-lg"
+                      placeholder="Nhập giá vé..."
+                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newRoute.price}
                       onChange={(e) =>
                         setNewRoute({
@@ -974,53 +982,24 @@ const AdminRoutes = () => {
                     <label className="block text-gray-700 font-medium mb-2">
                       Điểm đi
                     </label>
-                    <>
-                      <input
-                        type="text"
-                        className="w-full p-3 border rounded-lg"
+                    <SingleSelect
+                        options={provinces}
                         value={newRoute.departureLocation}
-                        onChange={(e) =>
-                          setNewRoute({
-                            ...newRoute,
-                            departureLocation: e.target.value,
-                          })
-                        }
-                        list="departure-locations" // Kết nối với datalist
-                        required
-                      />
-
-                      <datalist id="departure-locations">
-                        {provinces.map((location, index) => (
-                          <option key={index} value={location} />
-                        ))}
-                      </datalist>
-                    </>
+                        onChange={setNewRouteDepartureLocation}
+                        placeholder="Chọn nơi khởi hành..."
+                    />
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
                       Điểm đến
                     </label>
-                    <>
-                      <input
-                        type="text"
-                        className="w-full p-3 border rounded-lg"
+                   
+                    <SingleSelect
+                        options={provinces}
                         value={newRoute.arrivalLocation}
-                        onChange={(e) =>
-                          setNewRoute({
-                            ...newRoute,
-                            arrivalLocation: e.target.value,
-                          })
-                        }
-                        list="arrival-locations" // Kết nối với datalist
-                        required
+                        onChange={setNewRouteArrivalLocation}
+                        placeholder="Chọn nơi đến..."
                       />
-
-                      <datalist id="arrival-locations">
-                        {provinces.map((location, index) => (
-                          <option key={index} value={location} />
-                        ))}
-                      </datalist>
-                    </>
                   </div>
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">
@@ -1038,7 +1017,7 @@ const AdminRoutes = () => {
                             convertDatetimeLocalToFirestoreTimestamp(e),
                         })
                       }
-                      className="w-full p-3 border rounded-lg"
+                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       min={new Date().toISOString().slice(0, 16)}
                       //required
                     />
@@ -1059,7 +1038,7 @@ const AdminRoutes = () => {
                             convertDatetimeLocalToFirestoreTimestamp(e),
                         })
                       }
-                      className="w-full p-3 border rounded-lg"
+                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       min={new Date().toISOString().slice(0, 16)}
                       //required
                     />
@@ -1099,7 +1078,8 @@ const AdminRoutes = () => {
                         </label>
                         <input
                           type="text"
-                          className="w-full p-3 border rounded-lg"
+                          placeholder="Nhập tên điểm dừng..."
+                          className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                           value={stopp.stop}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
@@ -1115,7 +1095,8 @@ const AdminRoutes = () => {
                         </label>
                         <input
                           type="text"
-                          className="w-full p-3 border rounded-lg"
+                          placeholder="Nhập địa chỉ..."
+                          className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                           value={stopp.address}
                           onChange={(e) => {
                             const newStops = [...newRoute.stops];
@@ -1140,7 +1121,7 @@ const AdminRoutes = () => {
                               convertDatetimeLocalToFirestoreTimestamp(e);
                             setNewRoute({ ...newRoute, stops: newStops });
                           }}
-                          className="w-full p-3 border rounded-lg"
+                          className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                           min={new Date().toISOString().slice(0, 16)}
                           //required
                         />

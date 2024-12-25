@@ -183,7 +183,7 @@ const CustomDateTimePicker = ({ value = new Date().toISOString(), onChange, min,
         type="button" // Prevent form submission
         ref={buttonRef}
         onClick={showPicker ? handleClose : handleOpen}
-        className={`w-full flex items-center justify-between hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`} // Áp dụng className chỉ cho button
+        className={`w-full flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`} // Áp dụng className chỉ cho button
         aria-label="Select date and time"
       >
         <span className="flex items-center gap-2">

@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const AnimatedMultiSelect = ({ 
+const SingleSelect = ({ 
   options = [], 
   placeholder = "Chọn địa điểm...",
   onChange,
-  maxSelections = 1,
-  value = [],
+  value = "",
   className = "",
   containerClassName = "",
   dropdownClassName = "",
@@ -14,7 +13,6 @@ const AnimatedMultiSelect = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -36,23 +34,8 @@ const AnimatedMultiSelect = ({
   };
 
   const handleOptionSelect = (option) => {
-    if (maxSelections === 1) {
-      onChange([option]);
-      setIsOpen(false);
-      return;
-    }
-
-    const isSelected = value.includes(option);
-    if (isSelected) {
-      onChange(value.filter(item => item !== option));
-    } else {
-      if (value.length >= maxSelections) {
-        setError(`Chỉ được chọn tối đa ${maxSelections} lựa chọn`);
-        return;
-      }
-      onChange([...value, option]);
-    }
-    setError("");
+    onChange(option);
+    setIsOpen(false);
   };
 
   const handleSearchChange = (e) => {
@@ -62,11 +45,6 @@ const AnimatedMultiSelect = ({
   const filteredOptions = options.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const removeOption = (optionToRemove) => {
-    onChange(value.filter(option => option !== optionToRemove));
-    setError("");
-  };
 
   return (
     <div className={`relative w-full ${containerClassName}`} ref={dropdownRef}>
@@ -78,10 +56,10 @@ const AnimatedMultiSelect = ({
       >
         <div
           className={`
-            w-full p-3 rounded-2xl shadow-md border-4 border-blue-100 bg-white 
-            cursor-pointer flex flex-wrap items-center gap-2 
-            hover:shadow-xl transition-all duration-200 
-            focus:ring-2 focus:ring-blue-200 focus:bg-blue-50  /* Thêm các class focus vào đây */
+            w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 bg-white 
+            cursor-pointer flex items-center gap-2 
+            hover:shadow-lg transition-all duration-200 
+            focus:ring-2 focus:ring-blue-200 focus:bg-blue-50
             ${isFocused ? 'ring-2 ring-blue-200 bg-blue-50' : ''}
             ${className}
           `}
@@ -97,32 +75,12 @@ const AnimatedMultiSelect = ({
           aria-haspopup="listbox"
           tabIndex={0}
         >
-          <AnimatePresence>
-            {value.length > 0 ? (
-              value.map((option) => (
-                <motion.span
-                  key={option}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-xl flex items-center gap-1"
-                >
-                  {option}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeOption(option);
-                    }}
-                    className="hover:text-red-500 transition-colors duration-200"
-                  >
-                    ×
-                  </button>
-                </motion.span>
-              ))
-            ) : (
-              <span className="text-gray-500 text-md">{placeholder}</span>
-            )}
-          </AnimatePresence>
+          {value ? (
+            <span className="text-black">{value}</span>
+          ) : (
+            <span className="text-gray-400 text-md">{placeholder}</span>
+          )}
+          
           <motion.svg
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.3 }}
@@ -142,9 +100,8 @@ const AnimatedMultiSelect = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className={`absolute w-full mt-2 bg-white border-4 border-blue-100 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
+            className={`absolute w-full mt-2 bg-white border-2 border-blue-100 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
           >
-            {/* Rest of the dropdown content remains the same */}
             <div className="p-2 border-b border-gray-200">
               <input
                 type="text"
@@ -169,37 +126,11 @@ const AnimatedMultiSelect = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className={`p-3 cursor-pointer flex items-center gap-2 transition-all ${
-                    value.includes(option)
-                      ? "bg-blue-50 text-blue-700"
-                      : "hover:bg-gray-100"
+                  className={`p-3 cursor-pointer hover:bg-gray-50 ${
+                    value === option ? "text-black" : "text-gray-700"
                   } ${optionClassName}`}
                   onClick={() => handleOptionSelect(option)}
                 >
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      scale: value.includes(option) ? 1.1 : 1,
-                      backgroundColor: value.includes(option) ? "#3B82F6" : "#fff"
-                    }}
-                    className={`w-4 h-4 border-2 rounded-md text-gray-700 ${
-                      value.includes(option)
-                        ? "border-blue-500"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {value.includes(option) && (
-                      <motion.svg
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="w-full h-full text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </motion.svg>
-                    )}
-                  </motion.div>
                   {option}
                 </motion.div>
               ))}
@@ -217,21 +148,8 @@ const AnimatedMultiSelect = ({
           </motion.div>
         )}
       </AnimatePresence>
-
-      <AnimatePresence>
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-red-500 text-sm mt-2"
-          >
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
 
-export default AnimatedMultiSelect;
+export default SingleSelect;
