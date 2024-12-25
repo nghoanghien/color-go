@@ -939,6 +939,8 @@ const AdminRoutes = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
+              style={{ scrollbarWidth: "thin" }}
+
               className="bg-white/90 border-8 border-blue-100 bg-white rounded-2xl p-8 w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh]"
             >
               <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
