@@ -437,7 +437,7 @@ const AdminTransport = () => {
 						<input
 							type="text"
 							placeholder="Tìm kiếm theo tên nhà xe..."
-							className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
+							className="p-3 pl-9 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
 							value={searchTerm}
 							onChange={handleSearch}
 						/>
