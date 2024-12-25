@@ -180,10 +180,10 @@ const CustomDateRangePicker = ({
       <button
         ref={buttonRef}
         onClick={showPicker ? handleClose : handleOpen}
-        className={`p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out ${className}`}
+        className={`p-3 focus:ring-2 focus:bg-blue-50 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out ${className}`}
       >
-        <span className="flex items-center gap-2">
-          <Calendar className="text-gray-500" />
+        <span className="flex items-center gap-2 text-gray-600">
+          <Calendar className="text-gray-400" />
           {isEndDate ? formatDisplayDate(endDate) : formatDisplayDate(startDate)}
         </span>
       </button>

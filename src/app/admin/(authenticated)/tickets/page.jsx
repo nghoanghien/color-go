@@ -362,7 +362,7 @@ const AdminTickets = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm theo tên nhà xe..."
-                className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                className="p-3 pl-9 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
                 value={searchTransport}
                 onChange={(e) => setSearchTransport(e.target.value)}
               />
@@ -374,7 +374,7 @@ const AdminTickets = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm theo tên khách hàng..."
-                className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                className="p-3 pl-9 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
                 value={searchCustomer}
                 onChange={(e) => setSearchCustomer(e.target.value)}
               />
@@ -389,10 +389,10 @@ const AdminTickets = () => {
                 endDate={endDate}
                 onStartDateChange={setStartDate}
                 onEndDateChange={setEndDate}          
-                placeholderText="Từ ngày"
+                placeholder="Từ ngày"
                 //customInput={<CustomDateInput />}
                 //dateFormat="dd/MM/yyyy"
-                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                className="p-3 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:ring-blue-200 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
               />
             </div>
 
@@ -403,10 +403,10 @@ const AdminTickets = () => {
                 onStartDateChange={setStartDate}
                 onEndDateChange={setEndDate}
                 isEndDate={true}
-                placeholderText="Đến ngày"
+                placeholder="Đến ngày"
                 //customInput={<CustomDateInput />}
                 //dateFormat="dd/MM/yyyy"
-                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                className="p-3 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:ring-blue-200 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
               />
             </div>
             <CustomSelect
