@@ -313,7 +313,7 @@ const AdminTickets = () => {
             onClick={() => handleNavigate(item.id)}
             className={`w-full flex items-center ${
               isSidebarCollapsed ? "justify-center" : "space-x-3"
-            } px-4 py-3 rounded-2xl ${
+            } px-4 py-3 rounded-xl ${
               activeTab === item.id ? "bg-white/20" : "hover:bg-white/10"
             }`}
           >
