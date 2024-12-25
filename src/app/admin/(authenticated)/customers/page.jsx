@@ -242,7 +242,9 @@ const AdminCustomers = () => {
     exportToPDF(dataToExport, fileName, fieldsArray, title);
   };
  
-  return (!customersData) ? <LoadingOverlay isLoading /> : (
+  return !customersData ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       <PendingOverlay isLoading={isPending} />
       {/* Notification */}
@@ -272,7 +274,6 @@ const AdminCustomers = () => {
         )}
       </AnimatePresence>
 
-
       {/* Sidebar */}
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
@@ -285,7 +286,9 @@ const AdminCustomers = () => {
             initial={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             animate={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             transition={{ duration: 0.2 }}
-            className={`text-2xl font-bold ${isSidebarCollapsed ? "hidden" : "block"}`}
+            className={`text-2xl font-bold ${
+              isSidebarCollapsed ? "hidden" : "block"
+            }`}
           >
             Quản trị viên
           </motion.h2>
@@ -309,14 +312,19 @@ const AdminCustomers = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleNavigate(item.id)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-xl transition-all ${activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"}`}
+            className={`w-full flex items-center ${
+              isSidebarCollapsed ? "justify-center" : "space-x-3"
+            } px-4 py-3 rounded-xl transition-all ${
+              activeTab === item.id
+                ? "bg-white/20 shadow-lg"
+                : "hover:bg-white/10"
+            }`}
           >
             <span className="text-xl">{item.icon}</span>
             {!isSidebarCollapsed && <span>{item.label}</span>}
           </motion.button>
         ))}
       </motion.div>
-
 
       {/* Main Content */}
       <div className="flex-1 p-8">
@@ -327,7 +335,9 @@ const AdminCustomers = () => {
           className="max-w-7xl mx-auto"
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 drop-shadow-md">Quản lý khách hàng</h1>
+            <h1 className="text-3xl font-bold text-gray-800 drop-shadow-md">
+              Quản lý khách hàng
+            </h1>
             <div className="flex space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -350,7 +360,6 @@ const AdminCustomers = () => {
             </div>
           </div>
 
-
           {/* Search and Sort */}
           <div className="mb-6 space-y-4">
             <div className="relative">
@@ -368,22 +377,38 @@ const AdminCustomers = () => {
             <div className="flex space-x-4">
               <button
                 onClick={() => handleSort("points")}
-                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${sortBy === "points" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${
+                  sortBy === "points"
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
                 <span>Điểm hội viên</span>
                 {sortBy === "points" ? (
-                  sortOrder === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />
+                  sortOrder === "asc" ? (
+                    <FaSortAmountUp />
+                  ) : (
+                    <FaSortAmountDown />
+                  )
                 ) : (
                   <FaSort />
                 )}
               </button>
               <button
                 onClick={() => handleSort("balance")}
-                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${sortBy === "balance" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${
+                  sortBy === "balance"
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
                 <span>Số dư</span>
                 {sortBy === "balance" ? (
-                  sortOrder === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />
+                  sortOrder === "asc" ? (
+                    <FaSortAmountUp />
+                  ) : (
+                    <FaSortAmountDown />
+                  )
                 ) : (
                   <FaSort />
                 )}
@@ -391,9 +416,11 @@ const AdminCustomers = () => {
             </div>
           </div>
 
-
           {/* Customers Table */}
-          <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <motion.div
+            layout
+            className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          >
             <table className="w-full">
               <thead className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white">
                 <tr>
@@ -414,16 +441,30 @@ const AdminCustomers = () => {
                     >
                       <td
                         className="px-6 py-4"
-                        onClick={() => setExpandedCustomer(expandedCustomer === customer.id ? null : customer.id)}
+                        onClick={() =>
+                          setExpandedCustomer(
+                            expandedCustomer === customer.id
+                              ? null
+                              : customer.id
+                          )
+                        }
                       >
                         <div className="flex items-center space-x-2">
-                          {expandedCustomer === customer.id ? <FaChevronUp /> : <FaChevronDown />}
+                          {expandedCustomer === customer.id ? (
+                            <FaChevronUp />
+                          ) : (
+                            <FaChevronDown />
+                          )}
                           <span>{customer.name}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">{customer.email}</td>
-                      <td className="px-6 py-4">{Math.round(customer.points)}</td>
-                      <td className="px-6 py-4">{customer.balance.toLocaleString("vi-VN")} VNĐ</td>
+                      <td className="px-6 py-4">
+                        {Math.round(customer.points)}
+                      </td>
+                      <td className="px-6 py-4">
+                        {customer.balance.toLocaleString("vi-VN")} VNĐ
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
                           <motion.button
@@ -437,7 +478,7 @@ const AdminCustomers = () => {
                         </div>
                       </td>
                     </motion.tr>
-                    {expandedCustomer === customer.id && (
+                    {expandedCustomer === customer.id && customer.tickets.length !== 0 && (
                       <motion.tr
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
@@ -448,14 +489,30 @@ const AdminCustomers = () => {
                             <table className="w-full">
                               <thead className="bg-gray-100">
                                 <tr>
-                                  <th className="px-4 py-2 text-left">Tên khách hàng</th>
-                                  <th className="px-4 py-2 text-left">Số điện thoại</th>
-                                  <th className="px-4 py-2 text-left">Điểm đón</th>
-                                  <th className="px-4 py-2 text-left">Điểm trả</th>
-                                  <th className="px-4 py-2 text-left">Giờ khởi hành</th>
-                                  <th className="px-4 py-2 text-left">Số ghế</th>
-                                  <th className="px-4 py-2 text-left">Giá tiền</th>
-                                  <th className="px-4 py-2 text-center">Thao tác</th>
+                                  <th className="px-4 py-2 text-left">
+                                    Tên khách hàng
+                                  </th>
+                                  <th className="px-4 py-2 text-left">
+                                    Số điện thoại
+                                  </th>
+                                  <th className="px-4 py-2 text-left">
+                                    Điểm đón
+                                  </th>
+                                  <th className="px-4 py-2 text-left">
+                                    Điểm trả
+                                  </th>
+                                  <th className="px-4 py-2 text-left">
+                                    Giờ khởi hành
+                                  </th>
+                                  <th className="px-4 py-2 text-left">
+                                    Số ghế
+                                  </th>
+                                  <th className="px-4 py-2 text-left">
+                                    Giá tiền
+                                  </th>
+                                  <th className="px-4 py-2 text-center">
+                                    Thao tác
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -466,19 +523,40 @@ const AdminCustomers = () => {
                                     animate={{ opacity: 1 }}
                                     className="border-b border-gray-200"
                                   >
-                                    <td className="px-4 py-2">{ticket.customerName}</td>
-                                    <td className="px-4 py-2">{ticket.phone}</td>
-                                    <td className="px-4 py-2">{ticket.pickupPoint}</td>
-                                    <td className="px-4 py-2">{ticket.dropoffPoint}</td>
-                                    <td className="px-4 py-2">{timeString(ticket.departureTime) + ", " + formatDate(ticket.departureTime)}</td>
-                                    <td className="px-4 py-2">{ticket.seatNumber}</td>
-                                    <td className="px-4 py-2">{ticket.price.toLocaleString("vi-VN")} VNĐ</td>
+                                    <td className="px-4 py-2">
+                                      {ticket.customerName}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                      {ticket.phone}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                      {ticket.pickupPoint}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                      {ticket.dropoffPoint}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                      {timeString(ticket.departureTime) +
+                                        ", " +
+                                        formatDate(ticket.departureTime)}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                      {ticket.seatNumber}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                      {ticket.price.toLocaleString("vi-VN")} VNĐ
+                                    </td>
                                     <td className="px-4 py-2">
                                       <div className="flex justify-center">
                                         <motion.button
                                           whileHover={{ scale: 1.2 }}
                                           whileTap={{ scale: 0.9 }}
-                                          onClick={() => handleDeleteTicket(customer.id, ticket)}
+                                          onClick={() =>
+                                            handleDeleteTicket(
+                                              customer.id,
+                                              ticket
+                                            )
+                                          }
                                           className="text-red-500 hover:text-red-700"
                                         >
                                           <FaTrash size={16} />
@@ -493,6 +571,16 @@ const AdminCustomers = () => {
                         </td>
                       </motion.tr>
                     )}
+                    {expandedCustomer === customer.id &&
+                      customer.tickets.length === 0 && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-center p-4 text-gray-500"
+                        >
+                          Khách hàng này không còn vé khả dụng!
+                        </motion.div>
+                      )}
                   </React.Fragment>
                 ))}
               </tbody>
