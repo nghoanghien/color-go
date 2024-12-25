@@ -537,7 +537,8 @@ const AdminTransport = () => {
 									</label>
 									<input
 										type="text"
-										className={`w-full p-3 border rounded-lg transition-all duration-300 ${
+										placeholder="Nhập tên nhà xe..."
+										className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out ${
 											editingTransport ? "bg-gray-100" : ""
 										} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
 										value={newTransport.name}
@@ -557,7 +558,8 @@ const AdminTransport = () => {
 									</label>
 									<input
 										type="text"
-										className="w-full p-3 border rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										placeholder="Nhập loại xe..."
+										className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
 										value={newTransport.type}
 										onChange={(e) =>
 											setNewTransport({
@@ -574,7 +576,7 @@ const AdminTransport = () => {
 									</label>
 									<input
 										type="number"
-										className="w-full p-3 border rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
 										value={newTransport.numberSeat}
 										onChange={(e) =>
 											setNewTransport({
@@ -592,7 +594,8 @@ const AdminTransport = () => {
 									</label>
 									<input
 										type="text"
-										className="w-full p-3 border rounded-lg transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										placeholder="Nhập các tiện ích..."
+										className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
 										value={newTransport.facility}
 										onChange={(e) =>
 											setNewTransport({
