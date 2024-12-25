@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CustomDatePicker = ({ 
   value, 
@@ -13,6 +14,7 @@ const CustomDatePicker = ({
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
   const [showAbove, setShowAbove] = useState(false);
   
   const buttonRef = useRef(null);
@@ -71,6 +73,12 @@ const CustomDatePicker = ({
     setPosition({
       top: shouldShowAbove ? buttonRect.top - pickerHeight - 80 : buttonRect.bottom + 5,
       left: buttonRect.left,
+    });
+    setButtonPosition({
+      top: buttonRect.top,
+      left: buttonRect.left,
+      width: buttonRect.width,
+      height: buttonRect.height,
     });
   };
   
@@ -154,6 +162,33 @@ const CustomDatePicker = ({
     return date < minDate;
   };
 
+  const PortalButton = () => (
+    <button
+        type="button"
+        ref={buttonRef}
+        onClick={handleOpen}
+        disabled={disabled || !isEditing}
+        style={{
+          position: 'fixed',
+          top: `${buttonPosition.top}px`,
+          left: `${buttonPosition.left}px`,
+          width: `${buttonPosition.width}px`,
+          height: `${buttonPosition.height}px`,
+          zIndex: 9999,
+        }}
+        className={`w-full p-3 z-50 bg-white/90 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none transition-shadow duration-200 ease-in-out text-left ${
+          isEditing
+            ? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            : "border-gray-200 bg-gray-50"
+        } ${className}`}
+      >
+        <span className="flex items-center gap-2">
+          <Calendar className="text-gray-500" />
+          {formatDisplayDate(selectedDate)}
+        </span>
+      </button>
+  );
+
   return (
     <>
       <button
@@ -161,7 +196,7 @@ const CustomDatePicker = ({
         ref={buttonRef}
         onClick={handleOpen}
         disabled={disabled || !isEditing}
-        className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none transition-shadow duration-200 ease-in-out text-left ${
+        className={`w-full p-3 z-50 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none transition-shadow duration-200 ease-in-out text-left ${
           isEditing
             ? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             : "border-gray-200 bg-gray-50"
@@ -173,93 +208,116 @@ const CustomDatePicker = ({
         </span>
       </button>
 
-      {showPicker && positionReady &&
-        createPortal(
-          <div
-            ref={pickerRef}
-            style={{
-              position: "fixed",
-              top: `${position.top}px`,
-              left: `${position.left}px`,
-              width: `${position.width}px`,
-              zIndex: 50,
-            }}
-            className={`transition-all duration-200 ease-in-out rounded-2xl shadow-xl border-8 border-blue-100 ${
-              isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
-            }`}
-          >
-            <div className="bg-white rounded-lg shadow-lg p-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <button
-                    type="button"
-                    onClick={prevMonth}
-                    className="p-2 hover:bg-gray-200 rounded-full"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <span className="font-medium text-lg">{`${months[currentMonth]} ${currentYear}`}</span>
-                  <button
-                    type="button"
-                    onClick={nextMonth}
-                    className="p-2 hover:bg-gray-200 rounded-full"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
+      <AnimatePresence>
+        {showPicker && positionReady && (
+          <>
+            {/* Overlay with blur effect */}
+            {createPortal(
+              <motion.div
+                onClick={handleClose}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40"
+              />,
+              document.body
+            )}
+            {createPortal(<PortalButton />, document.body)}
 
-                <div className="grid grid-cols-7 gap-2 mb-2">
-                  {days.map((day) => (
-                    <div
-                      key={day}
-                      className="text-center text-sm font-medium text-gray-600"
-                    >
-                      {day}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-7 gap-2">
-                  {generateCalendarDays().map((day, index) => {
-                    const currentDate = day
-                      ? new Date(currentYear, currentMonth, day)
-                      : null;
-                    const isDisabled = currentDate
-                      ? isDateDisabled(currentDate)
-                      : true;
-
-                    return (
+            {createPortal(
+              <div
+                ref={pickerRef}
+                style={{
+                  position: "fixed",
+                  top: `${position.top}px`,
+                  left: `${position.left}px`,
+                  width: `${position.width}px`,
+                  zIndex: 50,
+                }}
+                className={`transition-all duration-200 ease-in-out rounded-2xl shadow-xl border-8 border-blue-100 ${
+                  isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
+                }`}
+              >
+                <div className="bg-white rounded-lg shadow-lg p-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
                       <button
                         type="button"
-                        key={index}
-                        onClick={(e) => !isDisabled && handleDateSelect(e, day)}
-                        className={`
+                        onClick={prevMonth}
+                        className="p-2 hover:bg-gray-200 rounded-full"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <span className="font-medium text-lg">{`${months[currentMonth]} ${currentYear}`}</span>
+                      <button
+                        type="button"
+                        onClick={nextMonth}
+                        className="p-2 hover:bg-gray-200 rounded-full"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-2 mb-2">
+                      {days.map((day) => (
+                        <div
+                          key={day}
+                          className="text-center text-sm font-medium text-gray-600"
+                        >
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-2">
+                      {generateCalendarDays().map((day, index) => {
+                        const currentDate = day
+                          ? new Date(currentYear, currentMonth, day)
+                          : null;
+                        const isDisabled = currentDate
+                          ? isDateDisabled(currentDate)
+                          : true;
+
+                        return (
+                          <button
+                            type="button"
+                            key={index}
+                            onClick={(e) =>
+                              !isDisabled && handleDateSelect(e, day)
+                            }
+                            className={`
                           p-2 rounded-lg text-sm font-medium
-                          ${!day
-                            ? "invisible"
-                            : isDisabled
-                            ? "text-gray-300 cursor-not-allowed"
-                            : "hover:bg-blue-100"
+                          ${
+                            !day
+                              ? "invisible"
+                              : isDisabled
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "hover:bg-blue-100"
                           }
-                          ${day === selectedDate.getDate() &&
-                          currentMonth === selectedDate.getMonth() &&
-                          currentYear === selectedDate.getFullYear()
-                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                            : "text-gray-700"
+                          ${
+                            day === selectedDate.getDate() &&
+                            currentMonth === selectedDate.getMonth() &&
+                            currentYear === selectedDate.getFullYear()
+                              ? "bg-blue-500 text-white hover:bg-blue-600"
+                              : "text-gray-700"
                           }
                         `}
-                        disabled={isDisabled}
-                      >
-                        {day}
-                      </button>
-                    );
-                  })}
+                            disabled={isDisabled}
+                          >
+                            {day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>,
-          document.body
+              </div>,
+              document.body
+            )}
+          </>
         )}
+      </AnimatePresence>
     </>
   );
 };
