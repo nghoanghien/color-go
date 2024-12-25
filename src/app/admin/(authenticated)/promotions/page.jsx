@@ -302,10 +302,11 @@ const AdminPromotions = () => {
   };
 
 
-  return !promotionsData ? <LoadingOverlay isLoading /> :  (
+  return !promotionsData ? (
+    <LoadingOverlay isLoading />
+  ) : (
     <div className="min-h-screen w-full flex bg-gray-50 relative">
       <PendingOverlay isLoading={isPending} />
-
 
       <AnimatePresence>
         {notification.show && (
@@ -333,13 +334,6 @@ const AdminPromotions = () => {
         )}
       </AnimatePresence>
 
-
-
-
-
-
-
-
       <motion.div
         initial={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
         animate={{ width: isSidebarCollapsed ? "5rem" : "16rem" }}
@@ -351,7 +345,9 @@ const AdminPromotions = () => {
             initial={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             animate={{ opacity: isSidebarCollapsed ? 0 : 1 }}
             transition={{ duration: 0.2 }}
-            className={`text-2xl font-bold ${isSidebarCollapsed ? "hidden" : "block"}`}
+            className={`text-2xl font-bold ${
+              isSidebarCollapsed ? "hidden" : "block"
+            }`}
           >
             Quản trị viên
           </motion.h2>
@@ -361,7 +357,10 @@ const AdminPromotions = () => {
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 rounded-full p-1 shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            <motion.div animate={{ rotate: isSidebarCollapsed ? 180 : 0 }} transition={{ duration: 0.3 }}>
+            <motion.div
+              animate={{ rotate: isSidebarCollapsed ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
               <FaChevronLeft />
             </motion.div>
           </motion.button>
@@ -372,20 +371,19 @@ const AdminPromotions = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleNavigate(item.id)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-xl transition-all ${activeTab === item.id ? "bg-white/20 shadow-lg" : "hover:bg-white/10"}`}
+            className={`w-full flex items-center ${
+              isSidebarCollapsed ? "justify-center" : "space-x-3"
+            } px-4 py-3 rounded-xl transition-all ${
+              activeTab === item.id
+                ? "bg-white/20 shadow-lg"
+                : "hover:bg-white/10"
+            }`}
           >
             <span className="text-xl">{item.icon}</span>
             {!isSidebarCollapsed && <span>{item.label}</span>}
           </motion.button>
         ))}
       </motion.div>
-
-
-
-
-
-
-
 
       <div className="flex-1 p-8">
         <motion.div
@@ -397,13 +395,13 @@ const AdminPromotions = () => {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Quản lý ưu đãi</h1>
             <div className="flex space-x-4">
-            <motion.button
+              <motion.button
                 {...getRootProps()} // Thêm props cho drag-and-drop
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 className={`shadow-md px-6 py-2 bg-gradient-to-r from-gray-500 to-gray-400 text-white rounded-xl hover:from-gray-600 hover:to-gray-500 transition-all duration-300 font-medium ${
-                            isDragActive ? "border border-blue-500 bg-blue-50" : ""
+                  isDragActive ? "border border-blue-500 bg-blue-50" : ""
                 }`}
               >
                 <input {...getInputProps()} hidden /> {/* Ẩn input */}
@@ -428,24 +426,17 @@ const AdminPromotions = () => {
                 <FaFilePdf />
                 <span>Xuất PDF</span>
               </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleAdd}
-              className="shadow-md bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-4 py-2 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
-            >
-              <FaPlus />
-              <span>Thêm ưu đãi</span>
-            </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleAdd}
+                className="shadow-md bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-4 py-2 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all duration-300"
+              >
+                <FaPlus />
+                <span>Thêm ưu đãi</span>
+              </motion.button>
             </div>
           </div>
-
-
-
-
-
-
-
 
           <div className="mb-6 space-y-4">
             <div className="relative">
@@ -461,55 +452,77 @@ const AdminPromotions = () => {
               />
             </div>
 
-
             <div className="flex flex-wrap gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("percentage")}
-                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.percentage ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${
+                  filters.percentage
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
                 <FaPercentage />
                 <span>Giảm theo %</span>
               </motion.button>
 
-
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("amount")}
-                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.amount ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${
+                  filters.amount
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
                 <FaDollarSign />
                 <span>Giảm theo tiền</span>
               </motion.button>
 
-
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("value")}
-                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.sortValue ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${
+                  filters.sortValue
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
-                {filters.sortValue === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
+                {filters.sortValue === "asc" ? (
+                  <FaSortAmountUp />
+                ) : (
+                  <FaSortAmountDown />
+                )}
                 <span>Giá trị giảm</span>
               </motion.button>
-
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("date")}
-                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.sortDate ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${
+                  filters.sortDate
+                    ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } transition-all duration-300`}
               >
-                {filters.sortDate === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
+                {filters.sortDate === "asc" ? (
+                  <FaSortAmountUp />
+                ) : (
+                  <FaSortAmountDown />
+                )}
                 <span>Hạn sử dụng</span>
               </motion.button>
             </div>
           </div>
 
-
-          <motion.div layout className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <motion.div
+            layout
+            className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          >
             <table className="w-full">
               <thead className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white">
                 <tr>
@@ -535,10 +548,19 @@ const AdminPromotions = () => {
                     >
                       <td className="px-6 py-4">{promotion.code}</td>
                       <td className="px-6 py-4">{promotion.title}</td>
-                      <td className="px-6 py-4">{promotion.minApply.toLocaleString()}đ</td>
-                      <td className="px-6 py-4">{promotion.max.toLocaleString()}đ</td>
-                      <td className="px-6 py-4">{promotion.value.toLocaleString()}{promotion.type === 1 ? "%" : "đ"}</td>
-                      <td className="px-6 py-4">{formatFirestoreTimestampToStandard(promotion.valid)}</td>
+                      <td className="px-6 py-4">
+                        {promotion.minApply.toLocaleString()}đ
+                      </td>
+                      <td className="px-6 py-4">
+                        {promotion.max.toLocaleString()}đ
+                      </td>
+                      <td className="px-6 py-4">
+                        {promotion.value.toLocaleString()}
+                        {promotion.type === 1 ? "%" : "đ"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {formatFirestoreTimestampToStandard(promotion.valid)}
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center space-x-3">
                           <motion.button
@@ -568,13 +590,6 @@ const AdminPromotions = () => {
         </motion.div>
       </div>
 
-
-
-
-
-
-
-
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -595,12 +610,22 @@ const AdminPromotions = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-700 mb-2">Mã ưu đãi</label>
+                    <label className="block text-gray-700 mb-2">
+                      Mã ưu đãi
+                    </label>
                     <input
                       type="text"
-                      className={`w-full p-2 border rounded-lg ${editingPromotion ? "bg-gray-100" : ""}`}
+                      placeholder="Nhập mã ưu đãi..."
+                      className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out ${
+                        editingPromotion ? "bg-gray-100" : ""
+                      }`}
                       value={newPromotion.code}
-                      onChange={(e) => setNewPromotion({ ...newPromotion, code: e.target.value })}
+                      onChange={(e) =>
+                        setNewPromotion({
+                          ...newPromotion,
+                          code: e.target.value,
+                        })
+                      }
                       required
                       disabled={editingPromotion}
                     />
@@ -609,41 +634,70 @@ const AdminPromotions = () => {
                     <label className="block text-gray-700 mb-2">Nội dung</label>
                     <input
                       type="text"
-                      className="w-full p-2 border rounded-lg"
+                      placeholder="Nhập nội dung giảm giá..."
+                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newPromotion.title}
-                      onChange={(e) => setNewPromotion({ ...newPromotion, title: e.target.value })}
+                      onChange={(e) =>
+                        setNewPromotion({
+                          ...newPromotion,
+                          title: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-700 mb-2">Đơn tối thiểu (đ)</label>
+                    <label className="block text-gray-700 mb-2">
+                      Đơn tối thiểu (đ)
+                    </label>
                     <input
                       type="number"
-                      className="w-full p-2 border rounded-lg"
+                      placeholder="Nhập giá trị đơn tối thiểu..."
+                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newPromotion.minApply}
-                      onChange={(e) => setNewPromotion({ ...newPromotion, minApply: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setNewPromotion({
+                          ...newPromotion,
+                          minApply: Number(e.target.value),
+                        })
+                      }
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-700 mb-2">Giảm tối đa (đ)</label>
+                    <label className="block text-gray-700 mb-2">
+                      Giảm tối đa (đ)
+                    </label>
                     <input
                       type="number"
-                      className="w-full p-2 border rounded-lg"
+                      placeholder="Nhập mức giảm tối đa..."
+                      className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                       value={newPromotion.max}
-                      onChange={(e) => setNewPromotion({ ...newPromotion, max: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setNewPromotion({
+                          ...newPromotion,
+                          max: Number(e.target.value),
+                        })
+                      }
                       required
                     />
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Loại giảm giá</label>
+                  <label className="block text-gray-700 mb-2">
+                    Loại giảm giá
+                  </label>
                   <select
                     className="w-full p-2 border rounded-lg"
                     value={newPromotion.type}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, type: parseInt(e.target.value, 10) })}
+                    onChange={(e) =>
+                      setNewPromotion({
+                        ...newPromotion,
+                        type: parseInt(e.target.value, 10),
+                      })
+                    }
                     required
                   >
                     <option value="1">Phần trăm (%)</option>
@@ -651,23 +705,41 @@ const AdminPromotions = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-2">Giá trị giảm</label>
+                  <label className="block text-gray-700 mb-2">
+                    Giá trị giảm
+                  </label>
                   <input
                     type="number"
-                    className="w-full p-2 border rounded-lg"
+                    className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                     value={newPromotion.value}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, value: Number(e.target.value) })}
-                    placeholder={newPromotion.type === "percentage" ? "Ví dụ: 20%" : "Ví dụ: 50000đ"}
+                    onChange={(e) =>
+                      setNewPromotion({
+                        ...newPromotion,
+                        value: Number(e.target.value),
+                      })
+                    }
+                    placeholder={
+                      newPromotion.type === "percentage"
+                        ? "Ví dụ: 20%"
+                        : "Ví dụ: 50000đ"
+                    }
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-2">Hạn sử dụng</label>
+                  <label className="block text-gray-700 mb-2">
+                    Hạn sử dụng
+                  </label>
                   <CustomDateTimePicker
                     //type="datetime-local"
-                    className="w-full p-2 border rounded-lg"
+                    className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
                     value={convertTimestampToDatetimeLocal(newPromotion.valid)}
-                    onChange={(e) => setNewPromotion({ ...newPromotion, valid: convertDatetimeLocalToFirestoreTimestamp(e) })}
+                    onChange={(e) =>
+                      setNewPromotion({
+                        ...newPromotion,
+                        valid: convertDatetimeLocalToFirestoreTimestamp(e),
+                      })
+                    }
                     min={new Date().toISOString().slice(0, 16)}
                     //required
                   />
@@ -692,8 +764,6 @@ const AdminPromotions = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-
     </div>
   );
 };

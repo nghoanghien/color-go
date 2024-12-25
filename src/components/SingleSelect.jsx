@@ -126,8 +126,8 @@ const SingleSelect = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className={`p-3 cursor-pointer hover:bg-gray-50 ${
-                    value === option ? "text-black" : "text-gray-700"
+                  className={`p-3 cursor-pointer hover:bg-gray-100 ${
+                    value === option ? "bg-blue-50 text-black" : "text-gray-700"
                   } ${optionClassName}`}
                   onClick={() => handleOptionSelect(option)}
                 >
