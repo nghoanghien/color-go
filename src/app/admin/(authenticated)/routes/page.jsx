@@ -636,7 +636,7 @@ const AdminRoutes = () => {
           className="max-w-7xl mx-auto"
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-gray-800 drop-shadow-md">
               Quản lý chuyến xe
             </h1>
             <div className="flex space-x-4">

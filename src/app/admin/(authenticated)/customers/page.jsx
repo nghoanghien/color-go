@@ -327,7 +327,7 @@ const AdminCustomers = () => {
           className="max-w-7xl mx-auto"
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Quản lý khách hàng</h1>
+            <h1 className="text-3xl font-bold text-gray-800 drop-shadow-md">Quản lý khách hàng</h1>
             <div className="flex space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}

@@ -246,7 +246,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">Tổng Quan</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-8 drop-shadow-md">Tổng Quan</h1>
          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map((stat) => (
