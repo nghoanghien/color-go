@@ -2,7 +2,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import { FaHome, FaBus, FaRoute, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt, FaFileDownload, FaFilePdf, FaArrowRight } from "react-icons/fa";
+import { FaHome, FaBus, FaRoute, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaAngleDown, FaAngleUp, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaGift, FaTicketAlt, FaFileDownload, FaFilePdf, FaArrowRight, FaExclamationCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -449,6 +449,16 @@ const AdminTickets = () => {
                   <th className="px-6 py-4 text-center">Thao tác</th>
                 </tr>
               </thead>
+              {filteredTickets.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 text-center p-4 text-gray-500"
+                  >
+                    <FaExclamationCircle className="text-xl text-gray-500" />
+                    <span>Không tìm thấy dữ liệu trùng khớp!</span>
+                  </motion.div>
+                )}
               <tbody>
                 {filteredTickets.map((ticket) => (
                   <React.Fragment key={ticket.id}>

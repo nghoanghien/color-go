@@ -3,7 +3,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
-import { FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaFileDownload, FaSort, FaSortAmountDown, FaSortAmountUp, FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaUserCircle, FaGift, FaTicketAlt } from "react-icons/fa";
+import { FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaTrash, FaFileDownload, FaSort, FaSortAmountDown, FaSortAmountUp, FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaUserCircle, FaGift, FaTicketAlt, FaExclamationCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
@@ -431,7 +431,18 @@ const AdminCustomers = () => {
                   <th className="px-6 py-4 text-center">Thao tác</th>
                 </tr>
               </thead>
+             
               <tbody>
+                {sortedCustomers.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 text-center p-4 text-gray-500"
+                  >
+                    <FaExclamationCircle className="text-xl text-gray-500" />
+                    <span>Không tìm thấy dữ liệu trùng khớp!</span>
+                  </motion.div>
+                )}
                 {sortedCustomers.map((customer) => (
                   <React.Fragment key={customer.id}>
                     <motion.tr
@@ -478,99 +489,101 @@ const AdminCustomers = () => {
                         </div>
                       </td>
                     </motion.tr>
-                    {expandedCustomer === customer.id && customer.tickets.length !== 0 && (
-                      <motion.tr
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                      >
-                        <td colSpan="5" className="px-6 py-4 bg-gray-50">
-                          <div className="overflow-x-auto">
-                            <table className="w-full">
-                              <thead className="bg-gray-100">
-                                <tr>
-                                  <th className="px-4 py-2 text-left">
-                                    Tên khách hàng
-                                  </th>
-                                  <th className="px-4 py-2 text-left">
-                                    Số điện thoại
-                                  </th>
-                                  <th className="px-4 py-2 text-left">
-                                    Điểm đón
-                                  </th>
-                                  <th className="px-4 py-2 text-left">
-                                    Điểm trả
-                                  </th>
-                                  <th className="px-4 py-2 text-left">
-                                    Giờ khởi hành
-                                  </th>
-                                  <th className="px-4 py-2 text-left">
-                                    Số ghế
-                                  </th>
-                                  <th className="px-4 py-2 text-left">
-                                    Giá tiền
-                                  </th>
-                                  <th className="px-4 py-2 text-center">
-                                    Thao tác
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {customer.tickets.map((ticket) => (
-                                  <motion.tr
-                                    key={ticket.id}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="border-b border-gray-200"
-                                  >
-                                    <td className="px-4 py-2">
-                                      {ticket.customerName}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      {ticket.phone}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      {ticket.pickupPoint}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      {ticket.dropoffPoint}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      {timeString(ticket.departureTime) +
-                                        ", " +
-                                        formatDate(ticket.departureTime)}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      {ticket.seatNumber}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      {ticket.price.toLocaleString("vi-VN")} VNĐ
-                                    </td>
-                                    <td className="px-4 py-2">
-                                      <div className="flex justify-center">
-                                        <motion.button
-                                          whileHover={{ scale: 1.2 }}
-                                          whileTap={{ scale: 0.9 }}
-                                          onClick={() =>
-                                            handleDeleteTicket(
-                                              customer.id,
-                                              ticket
-                                            )
-                                          }
-                                          className="text-red-500 hover:text-red-700"
-                                        >
-                                          <FaTrash size={16} />
-                                        </motion.button>
-                                      </div>
-                                    </td>
-                                  </motion.tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                      </motion.tr>
-                    )}
+                    {expandedCustomer === customer.id &&
+                      customer.tickets.length !== 0 && (
+                        <motion.tr
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                        >
+                          <td colSpan="5" className="px-6 py-4 bg-gray-50">
+                            <div className="overflow-x-auto">
+                              <table className="w-full">
+                                <thead className="bg-gray-100">
+                                  <tr>
+                                    <th className="px-4 py-2 text-left">
+                                      Tên khách hàng
+                                    </th>
+                                    <th className="px-4 py-2 text-left">
+                                      Số điện thoại
+                                    </th>
+                                    <th className="px-4 py-2 text-left">
+                                      Điểm đón
+                                    </th>
+                                    <th className="px-4 py-2 text-left">
+                                      Điểm trả
+                                    </th>
+                                    <th className="px-4 py-2 text-left">
+                                      Giờ khởi hành
+                                    </th>
+                                    <th className="px-4 py-2 text-left">
+                                      Số ghế
+                                    </th>
+                                    <th className="px-4 py-2 text-left">
+                                      Giá tiền
+                                    </th>
+                                    <th className="px-4 py-2 text-center">
+                                      Thao tác
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {customer.tickets.map((ticket) => (
+                                    <motion.tr
+                                      key={ticket.id}
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      className="border-b border-gray-200"
+                                    >
+                                      <td className="px-4 py-2">
+                                        {ticket.customerName}
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        {ticket.phone}
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        {ticket.pickupPoint}
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        {ticket.dropoffPoint}
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        {timeString(ticket.departureTime) +
+                                          ", " +
+                                          formatDate(ticket.departureTime)}
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        {ticket.seatNumber}
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        {ticket.price.toLocaleString("vi-VN")}{" "}
+                                        VNĐ
+                                      </td>
+                                      <td className="px-4 py-2">
+                                        <div className="flex justify-center">
+                                          <motion.button
+                                            whileHover={{ scale: 1.2 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() =>
+                                              handleDeleteTicket(
+                                                customer.id,
+                                                ticket
+                                              )
+                                            }
+                                            className="text-red-500 hover:text-red-700"
+                                          >
+                                            <FaTrash size={16} />
+                                          </motion.button>
+                                        </div>
+                                      </td>
+                                    </motion.tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      )}
                     {expandedCustomer === customer.id &&
                       customer.tickets.length === 0 && (
                         <motion.div
@@ -583,6 +596,7 @@ const AdminCustomers = () => {
                       )}
                   </React.Fragment>
                 ))}
+                
               </tbody>
             </table>
           </motion.div>

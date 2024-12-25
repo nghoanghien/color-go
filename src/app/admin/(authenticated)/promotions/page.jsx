@@ -5,7 +5,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 
 
-import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle, FaTicketAlt } from "react-icons/fa";
+import { FaFileDownload, FaFilePdf, FaHome, FaBus, FaRoute, FaFileInvoice, FaSignOutAlt, FaUsers, FaChevronLeft, FaSearch, FaEdit, FaTrash, FaPlus, FaCheckCircle, FaTimesCircle, FaSort, FaPercentage, FaDollarSign, FaSortAmountDown, FaSortAmountUp, FaCalendarAlt, FaGift, FaUserCircle, FaTicketAlt, FaExclamationCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 
@@ -536,6 +536,16 @@ const AdminPromotions = () => {
                   <th className="px-6 py-4 text-center">Thao tác</th>
                 </tr>
               </thead>
+              {filteredAndSortedPromotions().length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 text-center p-4 text-gray-500"
+                  >
+                    <FaExclamationCircle className="text-xl text-gray-500" />
+                    <span>Không tìm thấy dữ liệu trùng khớp!</span>
+                  </motion.div>
+                )}
               <tbody>
                 <AnimatePresence>
                   {filteredAndSortedPromotions().map((promotion) => (
