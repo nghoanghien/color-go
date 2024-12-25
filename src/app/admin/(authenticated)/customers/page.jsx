@@ -360,7 +360,7 @@ const AdminCustomers = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm theo tên khách hàng..."
-                className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                className="p-3 pl-9 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
                 value={searchTerm}
                 onChange={handleSearch}
               />
@@ -368,7 +368,7 @@ const AdminCustomers = () => {
             <div className="flex space-x-4">
               <button
                 onClick={() => handleSort("points")}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${sortBy === "points" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${sortBy === "points" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <span>Điểm hội viên</span>
                 {sortBy === "points" ? (
@@ -379,7 +379,7 @@ const AdminCustomers = () => {
               </button>
               <button
                 onClick={() => handleSort("balance")}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${sortBy === "balance" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${sortBy === "balance" ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <span>Số dư</span>
                 {sortBy === "balance" ? (
