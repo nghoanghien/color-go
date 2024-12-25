@@ -734,7 +734,7 @@ const AdminRoutes = () => {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleSort("price")}
-                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${
+                className={`p-2 rounded-2xl flex items-center justify-center space-x-2 ${
                   sortBy.field === "price"
                     ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
                     : "bg-gray-200 text-gray-700"
@@ -755,7 +755,7 @@ const AdminRoutes = () => {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleSort("departureTime")}
-                className={`p-2 rounded-lg flex items-center justify-center space-x-2 ${
+                className={`p-2 rounded-2xl flex items-center justify-center space-x-2 ${
                   sortBy.field === "departureTime"
                     ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
                     : "bg-gray-200 text-gray-700"

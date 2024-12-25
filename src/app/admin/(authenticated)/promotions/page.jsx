@@ -455,7 +455,7 @@ const AdminPromotions = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm theo mã..."
-                className="p-3 pl-9 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
+                className="p-3 pl-9 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full shadow-md hover:shadow-xl transition-shadow duration-200 ease-in-out"
                 value={searchTerm}
                 onChange={handleSearch}
               />
@@ -467,7 +467,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("percentage")}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${filters.percentage ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.percentage ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <FaPercentage />
                 <span>Giảm theo %</span>
@@ -478,7 +478,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("amount")}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${filters.amount ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.amount ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 <FaDollarSign />
                 <span>Giảm theo tiền</span>
@@ -489,7 +489,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("value")}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${filters.sortValue ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.sortValue ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 {filters.sortValue === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
                 <span>Giá trị giảm</span>
@@ -500,7 +500,7 @@ const AdminPromotions = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterToggle("date")}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${filters.sortDate ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
+                className={`px-4 py-2 rounded-xl flex items-center space-x-2 ${filters.sortDate ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white" : "bg-gray-200 text-gray-700"} transition-all duration-300`}
               >
                 {filters.sortDate === "asc" ? <FaSortAmountUp /> : <FaSortAmountDown />}
                 <span>Hạn sử dụng</span>
