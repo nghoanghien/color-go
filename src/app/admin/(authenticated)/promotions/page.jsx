@@ -587,7 +587,7 @@ const AdminPromotions = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
+              className="bg-white border-8 border-blue-100 rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
             >
               <h2 className="text-2xl font-bold mb-6">
                 {editingPromotion ? "Chỉnh sửa ưu đãi" : "Thêm ưu đãi mới"}
@@ -676,13 +676,13 @@ const AdminPromotions = () => {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-colors"
                   >
                     Hủy
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium"
+                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
                   >
                     {editingPromotion ? "Cập nhật" : "Thêm"}
                   </button>

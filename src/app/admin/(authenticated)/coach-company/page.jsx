@@ -523,7 +523,7 @@ const AdminTransport = () => {
 							animate={{ scale: 1, opacity: 1 }}
 							exit={{ scale: 0.9, opacity: 0 }}
 							transition={{ type: "spring", duration: 0.3 }}
-							className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border-t-4 border-blue-500"
+							className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border-8 border-blue-100"
 						>
 							<h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
 								{editingTransport
