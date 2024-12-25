@@ -16,6 +16,7 @@ import { changeMembershipById } from "@/services/membership";
 import { exportToExcel, exportToPDF, formatDataForExport } from "@/utils/exportPDF";
 import PendingOverlay from "@/components/pending-overlay";
 import CustomDateRangePicker from "@/components/CustomDateRangePicker";
+import AnimatedMultiSelect from "@/components/AnimatedMultiSelect";
 
 
 
@@ -203,8 +204,8 @@ const AdminTickets = () => {
       console.log(startDate, new Date(endDate));
       const matchesTransport = ticket.transportName.toLowerCase().includes(searchTransport.toLowerCase());
       const matchesCustomer = ticket.customerName.toLowerCase().includes(searchCustomer.toLowerCase());
-      const matchesDeparture = !selectedDeparture || ticket.departure === selectedDeparture;
-      const matchesDestination = !selectedDestination || ticket.destination === selectedDestination;
+      const matchesDeparture = !selectedDeparture || selectedDeparture.includes(ticket.departure) || selectedDeparture.length === 0;
+      const matchesDestination = !selectedDestination || selectedDestination.includes(ticket.destination) || selectedDestination.length === 0;
       const ticketDate = new Date(ticket.date.seconds * 1000);
       const matchesDateRange = (!startDate || ticketDate >= startDate) && (!endDate || ticketDate <= endDate);
  
@@ -409,18 +410,26 @@ const AdminTickets = () => {
                 className="p-3 rounded-2xl shadow-lg border-4 border-blue-100 focus:ring-2 focus:ring-blue-200 focus:outline-none w-full shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
               />
             </div>
-            <CustomSelect
-              value={selectedDeparture}
-              onChange={(e) => setSelectedDeparture(e.target.value)}
-              placeholder="Chọn điểm đi"
-              options={departureLocations}
-            />
-            <CustomSelect
-              value={selectedDestination}
-              onChange={(e) => setSelectedDestination(e.target.value)}
-              placeholder="Chọn điểm đến"
-              options={arrivalLocations}
-            />
+            
+            <div className="flex items-center space-x-2">
+                <AnimatedMultiSelect
+                  options={departureLocations}
+                  value={selectedDeparture}
+                  onChange={setSelectedDeparture}
+                  placeholder="Chọn điểm đi"
+                  maxSelections={4} // Đặt là 1 cho single-select
+                />
+              </div>
+            
+              <div className="flex items-center space-x-2">
+                <AnimatedMultiSelect
+                  options={arrivalLocations}
+                  value={selectedDestination}
+                  onChange={setSelectedDestination}
+                  placeholder="Chọn điểm đến"
+                  maxSelections={4} // Đặt là 1 cho single-select
+                />
+              </div>
           </div>
 
           {/* Tickets Table */}
