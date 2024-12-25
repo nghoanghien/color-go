@@ -534,7 +534,7 @@ const AdminTransport = () => {
 							animate={{ scale: 1, opacity: 1 }}
 							exit={{ scale: 0.9, opacity: 0 }}
 							transition={{ type: "spring", duration: 0.3 }}
-							className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border-8 border-blue-100"
+							className="bg-white/90 rounded-3xl p-8 w-full max-w-md shadow-2xl border-8 border-blue-100"
 						>
 							<h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
 								{editingTransport
@@ -549,7 +549,7 @@ const AdminTransport = () => {
 									<input
 										type="text"
 										placeholder="Nhập tên nhà xe..."
-										className={`w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out ${
+										className={`w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out ${
 											editingTransport ? "bg-gray-100" : ""
 										} focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
 										value={newTransport.name}
@@ -570,7 +570,7 @@ const AdminTransport = () => {
 									<input
 										type="text"
 										placeholder="Nhập loại xe..."
-										className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+										className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
 										value={newTransport.type}
 										onChange={(e) =>
 											setNewTransport({
@@ -587,7 +587,7 @@ const AdminTransport = () => {
 									</label>
 									<input
 										type="number"
-										className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+										className="w-full bg-white p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
 										value={newTransport.numberSeat}
 										onChange={(e) =>
 											setNewTransport({
@@ -606,7 +606,7 @@ const AdminTransport = () => {
 									<input
 										type="text"
 										placeholder="Nhập các tiện ích..."
-										className="w-full p-3 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
+										className="w-full p-4 rounded-2xl shadow-md focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none w-full hover:shadow-lg transition-shadow duration-200 ease-in-out"
 										value={newTransport.facility}
 										onChange={(e) =>
 											setNewTransport({
@@ -623,7 +623,7 @@ const AdminTransport = () => {
 										whileTap={{ scale: 0.95 }}
 										type="button"
 										onClick={() => setIsModalOpen(false)}
-										className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-medium"
+										className="px-6 py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-all duration-300 font-medium"
 									>
 										Hủy
 									</motion.button>
