@@ -71,18 +71,18 @@ const AnimatedMultiSelect = ({
   return (
     <div className={`relative w-full ${containerClassName}`} ref={dropdownRef}>
       <motion.div
-        className="relative w-full"
+        className="relative w-full z-40"
         initial={false}
         animate={{ scale: isOpen ? 1.02 : 1 }}
         transition={{ duration: 0.2 }}
       >
         <div
           className={`
-            w-full p-3 rounded-2xl shadow-md border-4 border-blue-100 bg-white 
+            w-full p-3 rounded-2xl shadow-md border-4 border-blue-100 bg-white/90 
             cursor-pointer flex flex-wrap items-center gap-2 
-            hover:shadow-xl transition-all duration-200 
+            hover:shadow-xl transition-all duration-200
             focus:ring-2 focus:ring-blue-200 focus:bg-blue-50  /* Thêm các class focus vào đây */
-            ${isFocused ? 'ring-2 ring-blue-200 bg-blue-50' : ''}
+            ${isFocused ? "ring-2 ring-blue-200 bg-blue-50" : ""}
             ${className}
           `}
           onClick={toggleDropdown}
@@ -130,91 +130,112 @@ const AnimatedMultiSelect = ({
             viewBox="0 0 20 20"
             fill="currentColor"
           >
-            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
           </motion.svg>
         </div>
       </motion.div>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className={`absolute w-full mt-2 bg-white border-4 border-blue-100 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
-          >
-            {/* Rest of the dropdown content remains the same */}
-            <div className="p-2 border-b border-gray-200">
-              <input
-                type="text"
-                className="w-full p-2 border-2 border-blue-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-200"
-                placeholder="Tìm kiếm..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-
+          <>
+            {/* Overlay */}
             <motion.div
-              className="max-h-96 overflow-auto"
-              initial={false}
-              animate={{ height: "auto" }}
-              style={{ scrollbarWidth: "thin" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-30"
+              onClick={() => setIsOpen(false)} // Đóng dropdown khi nhấn vào overlay
+            ></motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className={`absolute w-full mt-2 bg-white/90 border-4 border-blue-100 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
             >
-              {filteredOptions.map((option) => (
-                <motion.div
-                  key={option}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className={`p-3 cursor-pointer flex items-center gap-2 transition-all ${
-                    value.includes(option)
-                      ? "bg-blue-50 text-blue-700"
-                      : "hover:bg-gray-100"
-                  } ${optionClassName}`}
-                  onClick={() => handleOptionSelect(option)}
-                >
+              {/* Rest of the dropdown content remains the same */}
+              <div className="p-2 border-b border-gray-200">
+                <input
+                  type="text"
+                  className="w-full p-2 border-2 border-blue-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  placeholder="Tìm kiếm..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+
+              <motion.div
+                className="max-h-96 overflow-auto"
+                initial={false}
+                animate={{ height: "auto" }}
+                style={{ scrollbarWidth: "thin" }}
+              >
+                {filteredOptions.map((option) => (
                   <motion.div
-                    initial={false}
-                    animate={{
-                      scale: value.includes(option) ? 1.1 : 1,
-                      backgroundColor: value.includes(option) ? "#3B82F6" : "#fff"
-                    }}
-                    className={`w-4 h-4 border-2 rounded-md text-gray-700 ${
+                    key={option}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className={`p-3 cursor-pointer flex items-center gap-2 transition-all ${
                       value.includes(option)
-                        ? "border-blue-500"
-                        : "border-gray-300"
-                    }`}
+                        ? "bg-blue-50 text-blue-700"
+                        : "hover:bg-gray-100"
+                    } ${optionClassName}`}
+                    onClick={() => handleOptionSelect(option)}
                   >
-                    {value.includes(option) && (
-                      <motion.svg
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="w-full h-full text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </motion.svg>
-                    )}
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        scale: value.includes(option) ? 1.1 : 1,
+                        backgroundColor: value.includes(option)
+                          ? "#3B82F6"
+                          : "#fff",
+                      }}
+                      className={`w-4 h-4 border-2 rounded-md text-gray-700 ${
+                        value.includes(option)
+                          ? "border-blue-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {value.includes(option) && (
+                        <motion.svg
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="w-full h-full text-white"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </motion.svg>
+                      )}
+                    </motion.div>
+                    {option}
                   </motion.div>
-                  {option}
-                </motion.div>
-              ))}
-              
-              {filteredOptions.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="p-3 text-center text-gray-500"
-                >
-                  Không tìm thấy kết quả
-                </motion.div>
-              )}
+                ))}
+
+                {filteredOptions.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-3 text-center text-gray-500"
+                  >
+                    Không tìm thấy kết quả
+                  </motion.div>
+                )}
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
 
