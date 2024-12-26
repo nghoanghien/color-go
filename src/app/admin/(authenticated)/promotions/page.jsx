@@ -615,7 +615,7 @@ const AdminPromotions = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white/90 border-8 border-blue-100 rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
+              className="bg-white/90 rounded-2xl p-8 w-full max-w-3xl shadow-2xl"
             >
               <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                 {editingPromotion ? "Chỉnh sửa ưu đãi" : "Thêm ưu đãi mới"}
