@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { FaArrowLeft, FaCrown, FaPlus, FaTicketAlt, FaHistory, FaShare, FaComments, FaStar } from "react-icons/fa";
+import { FaArrowLeft, FaCrown, FaGem,  FaPlus, FaTicketAlt, FaHistory, FaShare, FaComments, FaStar } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useUserInfomation } from "@/firebase/authenticate";
