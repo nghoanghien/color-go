@@ -437,12 +437,12 @@ const TripInfoPage = () => {
               exit="exit"
               className="bg-white/85 backdrop-blur-md rounded-3xl p-6 m-4 w-full max-w-md shadow-xl border border-white/20 relative"
             >
-              <button
+              {/*<button
                 onClick={() => setShowContactModal(false)}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-300"
               >
                 <FaTimes className="text-gray-500" />
-              </button>
+              </button>*/ }
               <h3 className="text-2xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-blue-600">
                 Thông tin liên hệ
               </h3>
