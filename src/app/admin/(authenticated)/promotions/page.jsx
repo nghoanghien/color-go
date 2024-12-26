@@ -75,6 +75,7 @@ const AdminPromotions = () => {
     "title",
     "minApply",
     "max",
+    "type",
     "value",
     "valid"
   ])
