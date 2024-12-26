@@ -1,13 +1,19 @@
 'use client';
 
 
+
+
 import React, { useState, useEffect } from "react";
 import { FaHome, FaBus, FaRoute, FaFileInvoice, FaChartBar, FaSignOutAlt, FaUsers, FaCar, FaChevronLeft, FaTicketAlt, FaGift, FaUserCircle } from "react-icons/fa";
 import { Line, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from "chart.js";
 
 
+
+
 import { useRouter } from "next/navigation";
+
+
 
 
 import { fetchRoute } from "@/services/routes";
@@ -16,11 +22,17 @@ import LoadingOverlay from "@/components/loading-overlay";
 import PendingOverlay from "@/components/pending-overlay";
 
 
+
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
+
+
 
 
 const AdminDashboard = () => {
   const router = useRouter();
+
+
 
 
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -28,7 +40,11 @@ const AdminDashboard = () => {
   const [isPending, setIsPending] = useState(false);
 
 
+
+
   const [totalRoute, setTotalRoute] = useState();
+
+
 
 
   const sidebarItems = [
@@ -43,17 +59,22 @@ const AdminDashboard = () => {
   ];
 
 
+
+
   const [stats,setStats] = useState([
-    { id: 1, title: "Tổng số khách hàng", count: "0", icon: <FaUsers />, color: "from-blue-500 to-cyan-400", fluctuation: "", unit: "khách hàng" },
-    { id: 2, title: "Tổng số chuyến xe", count: "0", icon: <FaCar />, color: "from-green-500 to-emerald-400", fluctuation: "", unit: "chuyến"  },
-    { id: 3, title: "Tổng số lượt đặt vé", count: "0", icon: <FaTicketAlt />, color: "from-emerald-500 to-green-400", fluctuation: "", unit: "vé"  }
+    { id: 1, title: "Tổng số khách hàng", count: "0", icon: <FaUsers />, color: "from-blue-500 to-cyan-400", fluctuation: "", unit: "Tăng khách hàng", taga: "" },
+    { id: 2, title: "Tổng số chuyến xe", count: "0", icon: <FaCar />, color: "from-green-500 to-emerald-400", fluctuation: "", unit: "chuyến", taga: ""   },
+    { id: 3, title: "Tổng số lượt đặt vé", count: "0", icon: <FaTicketAlt />, color: "from-emerald-500 to-green-400", fluctuation: "", unit: "vé", taga: ""   }
   ]);
+
+
 
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
  
   const [bookingData, setBookingData] = useState();
   const [routeData,setRouteData] = useState()
+
 
   const options = {
     responsive: true,
@@ -74,10 +95,12 @@ const AdminDashboard = () => {
   };
 
 
+
+
   const handleNavigate = (tab) => {
     setActiveTab(tab);
     setIsPending(true);
-    
+   
     if (tab !== "logout") {
       router.replace(`/admin/${tab}`);
     }
@@ -87,129 +110,147 @@ const AdminDashboard = () => {
   }
 
 
+
+
   const fetchRoutesData = async () => {
-
-
     const fetchedRoute = await fetchRoute(); // Giả sử dữ liệu được trả về từ API
     console.log("Dữ liệu lấy được từ fetchRoute:", fetchedRoute);
-
-
+ 
     // Mảng tháng (1 đến 12) để đếm số chuyến xe theo từng tháng
     const monthlyCounts = Array(12).fill(0); // Khởi tạo mảng có 12 phần tử, tất cả là 0
-
-
+ 
     // Lặp qua fetchedRoute và đếm số chuyến xe cho từng tháng
     fetchedRoute.forEach(route => {
       const departureDate = new Date(route.departureTime.seconds * 1000); // Chuyển timestamp thành đối tượng Date
       const month = departureDate.getMonth(); // Lấy tháng (0 = Jan, 11 = Dec)
       monthlyCounts[month] += 1; // Tăng số chuyến xe cho tháng tương ứng
     });
+ 
+    // Tính toán sự thay đổi số lượng chuyến xe
+    const currentMonth = new Date().getMonth();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
 
-    const fluct = monthlyCounts[new Date().getMonth()] - monthlyCounts[new Date().getMonth() -1]
+      let fluct = monthlyCounts[currentMonth] - monthlyCounts[previousMonth];
+      let tanggiam = "↑ tăng";
+    if (fluct < 0) {
+      fluct = -fluct; // Đổi dấu nếu fluct âm
+      tanggiam = "↓ giảm";
+    }
+    console.log(monthlyCounts[0])
     const total = monthlyCounts.reduce((sum, count) => sum + count, 0);
+ 
+    // Sắp xếp lại thứ tự: tháng 11 và 12 lên đầu
+    const reorderedLabels = ["Nov", "Dec", ...months.slice(0, 10)]; // Nhãn mới
+    const reorderedData = [
+      monthlyCounts[10], // Tháng 11
+      monthlyCounts[11], // Tháng 12
+      ...monthlyCounts.slice(0, 10) // Tháng 1-10
+    ];
+ 
     setStats(prevStats =>
       prevStats.map(stat =>
-        stat.id === 2 ? { ...stat, count: total, fluctuation: fluct } : stat
+        stat.id === 2 ? { ...stat, count: total, fluctuation: fluct, taga: tanggiam } : stat
       )
     );
-
-
-   
-
-
+ 
     setRouteData({
-      labels: months, // Mảng tháng
+      labels: reorderedLabels, // Nhãn mới
       datasets: [
         {
           label: "Số chuyến xe",
-          data: monthlyCounts, // Mảng số chuyến xe theo từng tháng
+          data: reorderedData, // Dữ liệu sắp xếp lại
           backgroundColor: "rgba(16, 185, 129, 0.7)"
         }
       ]
     });
-
-
   };
-
-
 
 
   const fetchCustomerData = async () => {
     const fetchedRoute = await fetchRoute();
     const fetchedCustomer = await fetchCustomer(); // Giả sử dữ liệu được trả về từ API
     console.log("Dữ liệu lấy được từ fetchCustomer:", fetchedCustomer);
-
-
+ 
     const totalTickets = fetchedCustomer.reduce((total, customer) => {
       return total + (customer.tickets ? customer.tickets.length : 0); // Cộng số ticket của mỗi khách hàng
     }, 0);
-
-
+ 
     const routeIds = fetchedCustomer
       .flatMap(customer => customer.tickets || []) // Lấy tất cả tickets của mỗi khách hàng, nếu không có thì trả về mảng rỗng
-      .map(ticket => ticket.routeId) // Lấy routeId từ mỗi ticket
-
-
-
-
-
-
+      .map(ticket => ticket.routeId); // Lấy routeId từ mỗi ticket
+ 
     const matchedRoutes = routeIds.map(routeId => {
       const route = fetchedRoute.find(route => route.id === routeId); // Tìm route tương ứng
       return route ? route.departureTime : null; // Trả về departureTime nếu route tồn tại
     }).filter(departureTime => departureTime); // Loại bỏ các giá trị null hoặc undefined
-
-
+ 
     const monthlyCounts = Array(12).fill(0); // Khởi tạo mảng có 12 phần tử, tất cả là 0
-
-
-    // Lặp qua fetchedRoute và đếm số chuyến xe cho từng tháng
+ 
+    // Lặp qua matchedRoutes và đếm số lượt đặt vé cho từng tháng
     matchedRoutes.forEach(date => {
       const departureDate = new Date(date.seconds * 1000); // Chuyển timestamp thành đối tượng Date
       const month = departureDate.getMonth(); // Lấy tháng (0 = Jan, 11 = Dec)
-      monthlyCounts[month] += 1; // Tăng số chuyến xe cho tháng tương ứng
+      monthlyCounts[month] += 1; // Tăng số lượt đặt vé cho tháng tương ứng
     });
-
-
-    const fluct = monthlyCounts[new Date().getMonth()] - monthlyCounts[new Date().getMonth() -1]
+    const currentMonth = new Date().getMonth();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    let fluct = monthlyCounts[currentMonth] - monthlyCounts[previousMonth];
+      let tanggiam = "↑ tăng";
+    if (fluct < 0) {
+      fluct = -fluct; // Đổi dấu nếu fluct âm
+      tanggiam = "↓ giảm";
+    }
  
-
-
+    // Sắp xếp lại thứ tự: tháng 11 và 12 lên đầu
+    const reorderedLabels = ["Nov", "Dec", ...months.slice(0, 10)]; // Nhãn mới
+    const reorderedData = [
+      monthlyCounts[10], // Tháng 11
+      monthlyCounts[11], // Tháng 12
+      ...monthlyCounts.slice(0, 10) // Tháng 1-10
+    ];
+ 
+    // Cập nhật stats và dữ liệu booking
     setStats(prevStats =>
       prevStats.map(stat =>
         stat.id === 1 ? { ...stat, count: fetchedCustomer.length } : stat
       )
     );
-
-
+ 
     setStats(prevStats =>
       prevStats.map(stat =>
-        stat.id === 3 ? { ...stat, count: totalTickets, fluctuation: fluct } : stat
+        stat.id === 3 ? { ...stat, count: totalTickets, fluctuation: fluct, taga: tanggiam } : stat
       )
     );
-
-
-    setBookingData({
-      labels: months,
-      datasets: [
-      {
-        label: "Số lượt đặt vé",
-        data: monthlyCounts,
-        borderColor: "rgb(59, 130, 246)",
-        backgroundColor: "rgba(59, 130, 246, 0.5)",
-        tension: 0.4
-      }
-    ]
-    })
  
+    setBookingData({
+      labels: reorderedLabels, // Nhãn mới
+      datasets: [
+        {
+          label: "Số lượt đặt vé",
+          data: reorderedData, // Dữ liệu sắp xếp lại
+          borderColor: "rgb(59, 130, 246)",
+          backgroundColor: "rgba(59, 130, 246, 0.5)",
+          tension: 0.4
+        }
+      ]
+    });
   };
+ 
+
+
 
 
   useEffect(() => {
     fetchCustomerData();
     fetchRoutesData();
   }, [])
+
+
+
+
+
+
 
 
 
@@ -243,6 +284,8 @@ const AdminDashboard = () => {
       </div>
 
 
+
+
       {/* Main Content */}
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
@@ -265,13 +308,15 @@ const AdminDashboard = () => {
                 </div>
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-green-600 font-medium">↑ Tăng {stat.fluctuation} {stat.unit} </span>
+                    <span className="text-green-600 font-medium">{stat.taga} {stat.fluctuation} {stat.unit} </span>
                     <span className="text-gray-500">so với tháng trước</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
+
 
 
           {/* Statistics Charts */}
@@ -292,4 +337,8 @@ const AdminDashboard = () => {
 };
 
 
+
+
 export default AdminDashboard;
+
+
