@@ -123,6 +123,7 @@ const CustomDateTimePicker = ({
     setIsAnimating(true);
     setTimeout(() => {
       setShowPicker(false);
+      setPositionReady(false);
       setIsAnimating(false);
     }, 150);
   };
@@ -220,7 +221,6 @@ const CustomDateTimePicker = ({
   const PortalButton = () => (
     <button
       type="button"
-      ref={buttonRef}
       onClick={showPicker ? handleClose : handleOpen}
       style={{
         position: 'fixed',
