@@ -114,12 +114,12 @@ const SingleSelect = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className={`absolute w-full mt-2 bg-white/90 backdrop-blur-sm border-2 border-blue-100 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
+              className={`absolute w-full mt-2 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
             >
               <div className="p-2 border-b border-gray-200">
                 <input
                   type="text"
-                  className="w-full p-2 border-2 border-blue-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className="w-full p-2 border-2 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="Tìm kiếm..."
                   value={searchTerm}
                   onChange={handleSearchChange}

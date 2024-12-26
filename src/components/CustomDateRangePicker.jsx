@@ -236,7 +236,7 @@ const CustomDateRangePicker = ({
                   width: `${position.width}px`,
                   zIndex: 50, // Higher than overlay
                 }}
-                className={`transition-all duration-200 ease-in-out bg-white/90 rounded-2xl shadow-xl border-4 border-blue-100 ${
+                className={`transition-all duration-200 ease-in-out bg-white/90 rounded-2xl shadow-xl ${
                   isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
                 }`}
               >

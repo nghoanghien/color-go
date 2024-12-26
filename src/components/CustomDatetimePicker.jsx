@@ -281,19 +281,19 @@ const CustomDateTimePicker = ({
                   width: `${position.width}px`,
                   zIndex: 50,
                 }}
-                className={`transition-all duration-200 ease-in-out rounded-2xl shadow-xl border-4 border-blue-100 ${
+                className={`transition-all duration-200 ease-in-out rounded-2xl shadow-xl ${
                   isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
                 }`}
               >
-                <div className="bg-white rounded-xl shadow-lg p-4">
+                <div className="bg-white/90 rounded-xl shadow-lg p-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Calendar Section */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-white/90 p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-4">
                         <button
                           type="button"
                           onClick={prevMonth}
-                          className="p-2 hover:bg-gray-200 rounded-full"
+                          className="p-2 hover:bg-gray-50 rounded-full"
                         >
                           <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -301,7 +301,7 @@ const CustomDateTimePicker = ({
                         <button
                           type="button"
                           onClick={nextMonth}
-                          className="p-2 hover:bg-gray-200 rounded-full"
+                          className="p-2 hover:bg-gray-50 rounded-full"
                         >
                           <ChevronRight className="w-5 h-5" />
                         </button>
@@ -361,14 +361,14 @@ const CustomDateTimePicker = ({
                     </div>
 
                     {/* Time Section */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-white/90 p-4 rounded-lg">
                       <div className="grid grid-cols-2 gap-4">
                         {/* Hours */}
                         <div
-                          className="bg-white rounded-lg p-2 h-48 overflow-y-auto"
-                          style={{ scrollbarWidth: "thin" }}
+                          className="bg-white/90 rounded-lg p-2 h-72 overflow-y-auto"
+                          style={{ scrollbarWidth: "none" }}
                         >
-                          <div className="text-center text-sm font-medium text-gray-600 mb-2">
+                          <div className="text-center rounded-lg text-md font-medium text-gray-600 mb-2 bg-white/90 sticky top-0 z-10">
                             Giờ (24h)
                           </div>
                           {generateHours().map((hour) => (
@@ -396,11 +396,11 @@ const CustomDateTimePicker = ({
 
                         {/* Minutes */}
                         <div
-                          className="bg-white rounded-lg p-2 h-48 overflow-y-auto"
-                          style={{ scrollbarWidth: "thin" }}
+                          className="bg-white/90 rounded-lg p-2 h-72 overflow-y-auto"
+                          style={{ scrollbarWidth: "none" }}
                         >
-                          <div className="text-center text-sm font-medium text-gray-600 mb-2">
-                            Phút
+                          <div className="text-center rounded-lg text-md font-medium text-gray-600 mb-2 bg-white/90 sticky top-0 z-10">
+                          Phút
                           </div>
                           {generateMinutes().map((minute) => (
                             <button

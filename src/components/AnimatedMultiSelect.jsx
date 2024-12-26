@@ -78,7 +78,7 @@ const AnimatedMultiSelect = ({
       >
         <div
           className={`
-            w-full p-3 rounded-2xl shadow-md border-4 border-blue-100 bg-white/90 
+            w-full p-3 rounded-2xl shadow-md border-4 border-gray-200 bg-white/90 
             cursor-pointer flex flex-wrap items-center gap-2 
             hover:shadow-xl transition-all duration-200
             focus:ring-2 focus:ring-blue-200 focus:bg-blue-50  /* Thêm các class focus vào đây */
@@ -156,13 +156,13 @@ const AnimatedMultiSelect = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className={`absolute w-full mt-2 bg-white/90 border-4 border-blue-100 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
+              className={`absolute w-full mt-2 bg-white/90 rounded-2xl shadow-lg z-50 overflow-hidden ${dropdownClassName}`}
             >
               {/* Rest of the dropdown content remains the same */}
               <div className="p-2 border-b border-gray-200">
                 <input
                   type="text"
-                  className="w-full p-2 border-2 border-blue-100 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className="w-full p-2 border rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="Tìm kiếm..."
                   value={searchTerm}
                   onChange={handleSearchChange}
