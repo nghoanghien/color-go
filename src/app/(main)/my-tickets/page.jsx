@@ -210,7 +210,7 @@ const TicketHistoryPage = () => {
       <div className="bg-transparent p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-center bg-white/30 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm mb-6">
-            <span className="text-gray-600 font-semibold text-lg">
+            <span className="text-gray-700 font-bold text-xl">
               Vé của tôi
             </span>
           </div>
@@ -274,6 +274,7 @@ const TicketHistoryPage = () => {
                               <FaTimes /> Hủy vé
                             </button>
                           )}
+                          {!isValidForCancel(ticket) && <InfoTooltip message="Sau 4h trước giờ khởi hành, vé sẽ không thể hủy!" />}
                         </div>
                       )}
 
