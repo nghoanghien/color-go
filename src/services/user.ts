@@ -103,13 +103,20 @@ export async function deleteUserById(userId: any) {
   
       // Kiểm tra nếu user có tickets với status == 1
       const activeTicket = userData.tickets?.find((ticket: any) => ticket.status === 1);
-      const routeInfo = await getDetailRoute(activeTicket.routeId);
-      
-      const now = new Date();
-      if (convertDatetimeLocalToFirestoreTimestamp(now) < routeInfo.departureTime) {
-        throw new Error(`Khách hàng tên ${userData.name} vẫn còn vé chưa đến ngày đi.`);
+      if (activeTicket) {
+        const routeInfo = await getDetailRoute(activeTicket.routeId);
+
+        const now = new Date();
+        if (
+          convertDatetimeLocalToFirestoreTimestamp(now) <
+          routeInfo.departureTime
+        ) {
+          throw new Error(
+            `Khách hàng tên ${userData.name} vẫn còn vé chưa đến ngày đi.`
+          );
+        }
       }
-  
+   
       // Xóa document
       await deleteDoc(userDocRef);
       console.log('Document successfully deleted!');
