@@ -274,7 +274,6 @@ const TicketHistoryPage = () => {
                               <FaTimes /> Hủy vé
                             </button>
                           )}
-                          {!isValidForCancel(ticket) && <InfoTooltip text="Sau 4h trước giờ khởi hành, vé sẽ không thể hủy!" />}
                         </div>
                       )}
 
