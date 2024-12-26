@@ -71,7 +71,7 @@ const CustomDatePicker = ({
   
     setShowAbove(shouldShowAbove);
     setPosition({
-      top: shouldShowAbove ? buttonRect.top - pickerHeight - 80 : buttonRect.bottom + 5,
+      top: shouldShowAbove ? buttonRect.top - pickerHeight - 65 : buttonRect.bottom + 5,
       left: buttonRect.left,
     });
     setButtonPosition({
@@ -196,7 +196,7 @@ const CustomDatePicker = ({
         ref={buttonRef}
         onClick={handleOpen}
         disabled={disabled || !isEditing}
-        className={`w-full p-3 z-50 rounded-2xl shadow-md border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none transition-shadow duration-200 ease-in-out text-left ${
+        className={`w-full p-3 z-50 rounded-2xl border-2 border-blue-100 focus:ring-2 focus:bg-blue-50 focus:ring-blue-200 focus:border-transparent focus:outline-none transition-shadow duration-200 ease-in-out text-left ${
           isEditing
             ? "border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             : "border-gray-200 bg-gray-50"
@@ -235,7 +235,7 @@ const CustomDatePicker = ({
                   width: `${position.width}px`,
                   zIndex: 50,
                 }}
-                className={`transition-all duration-200 ease-in-out rounded-2xl shadow-xl border-8 border-blue-100 ${
+                className={`transition-all duration-200 ease-in-out rounded-2xl shadow-xl ${
                   isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
                 }`}
               >
