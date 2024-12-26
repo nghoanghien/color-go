@@ -24,7 +24,7 @@ const InfoTooltip = ({
 
     setPosition({
       top: buttonRect.top + scrollY + (buttonRect.height / 2),
-      left: buttonRect.left + scrollX - 326,
+      left: buttonRect.left + scrollX - 255,
     });
     setButtonPosition({
       top: buttonRect.top,
@@ -154,7 +154,7 @@ const InfoTooltip = ({
                   isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
                 }`}
               >
-                <div className="bg-white/90 rounded-lg shadow-lg p-4 max-w-xs">
+                <div className="bg-white/90 rounded-lg shadow-lg p-4 max-w-[250px]">
                   <p className="text-gray-700 font-bold">{message}</p>
                 </div>
               </div>,
