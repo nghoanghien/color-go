@@ -215,8 +215,15 @@ const CustomDateTimePicker = ({
   const isDateDisabled = (date) => {
     if (!min) return false;
     const minDate = new Date(min);
-    return date < minDate;
-  };
+    return (
+      date.getFullYear() < minDate.getFullYear() ||
+      (date.getFullYear() === minDate.getFullYear() &&
+        date.getMonth() < minDate.getMonth()) ||
+      (date.getFullYear() === minDate.getFullYear() &&
+        date.getMonth() === minDate.getMonth() &&
+        date.getDate() < minDate.getDate())
+    );
+    };
 
   const PortalButton = () => (
     <button
