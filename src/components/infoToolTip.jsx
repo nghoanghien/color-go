@@ -23,7 +23,7 @@ const InfoTooltip = ({
     const scrollY = window.scrollY;
 
     setPosition({
-      top: buttonRect.top + scrollY + (buttonRect.height / 2),
+      top: buttonRect.top + (buttonRect.height / 2),
       left: buttonRect.left + scrollX - 255,
     });
     setButtonPosition({
