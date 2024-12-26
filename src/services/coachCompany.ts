@@ -1,5 +1,6 @@
 import { db } from "@/firebase/store";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { FaRegCaretSquareLeft } from "react-icons/fa";
 
 export async function getCoachDetail(name: string) {
   const q = query(
@@ -52,12 +53,19 @@ export async function updateCoachCompany(info: any) {
 export async function addCoachCompany(info: any) {
   try {
     // Tạo truy vấn để kiểm tra nếu document với name đã tồn tại
-    const q = query(collection(db, 'coachCompanies'), where('name', '==', info.name));
+    const q = query(collection(db, "coachCompanies"));
     const querySnapshot = await getDocs(q);
+
+    // Lọc kết quả không phân biệt hoa thường
+    const results = querySnapshot.docs.filter(
+      (doc) =>
+        doc.data().name.trim().toLowerCase() === info.name.trim().toLowerCase()
+    );
+
     
     // Nếu tìm thấy document trùng lặp, thông báo lỗi
-    if (!querySnapshot.empty) {
-      throw new Error(`Nhà xe với tên "${info.name}" đã tồn tại.`);
+    if (results.length > 0) {
+      throw new Error(`Nhà xe với tên "${results[0].data().name}" đã tồn tại.`);
       return;
     }
     // Nếu không tìm thấy trùng lặp, thêm document mới
